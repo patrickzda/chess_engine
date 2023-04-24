@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chess_engine.iml" beforeDir="false" afterPath="$PROJECT_DIR$/chess_engine.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,10 +44,12 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
     "create.test.in.the.same.root": "true",
+    "git-widget-placeholder": "main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -83,7 +84,10 @@
       <option name="presentableId" value="Default" />
       <updated>1682174986330</updated>
       <workItem from="1682174987839" duration="231000" />
-      <workItem from="1682255077550" duration="2246000" />
+      <workItem from="1682255077550" duration="2756000" />
+      <workItem from="1682257893824" duration="161000" />
+      <workItem from="1682258114964" duration="2956000" />
+      <workItem from="1682321043212" duration="1912000" />
     </task>
     <servers />
   </component>
