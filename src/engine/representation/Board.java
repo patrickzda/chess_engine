@@ -17,8 +17,59 @@ public class Board {
         pawns = 71776119061282560L;
     }
 
-    private String fillLeadingZeros(Long l){
+    public Board(String fen){
+        fen = fen.replace("/", "");
+        fen = fen.replace("8", "        ");
+        fen = fen.replace("7", "       ");
+        fen = fen.replace("6", "      ");
+        fen = fen.replace("5", "     ");
+        fen = fen.replace("4", "    ");
+        fen = fen.replace("3", "   ");
+        fen = fen.replace("2", "  ");
+        fen = fen.replace("1", " ");
+        for(int x = 0; x < 8; x++){
+            for(int y = 0; y < 8; y++){
+                int charIndex = x * 8 + y;
+                int i = (7 - x) * 8 + y;
+                if(fen.charAt(charIndex) != ' '){
+                    if(Character.toUpperCase(fen.charAt(charIndex)) == fen.charAt(charIndex)){
+                        whitePieces = setBit(whitePieces, i);
+                    }else{
+                        blackPieces = setBit(blackPieces, i);
+                    }
+                    switch(Character.toUpperCase(fen.charAt(charIndex))){
+                        case 'K':
+                            kings = setBit(kings, i);
+                            break;
+                        case 'Q':
+                            queens = setBit(queens, i);
+                            break;
+                        case 'R':
+                            rooks = setBit(rooks, i);
+                            break;
+                        case 'B':
+                            bishops = setBit(bishops, i);
+                            break;
+                        case 'N':
+                            knights = setBit(knights, i);
+                            break;
+                        case 'P':
+                            pawns = setBit(pawns, i);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    private String fillLeadingZeros(long l){
         return String.format("%064d", new BigInteger(Long.toBinaryString(l)));
+    }
+
+    private long setBit(long l, long index){
+        return l | (1L << index);
     }
 
     public String toFENString(){
