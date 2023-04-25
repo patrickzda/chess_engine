@@ -3,25 +3,18 @@ package engine.representation;
 import java.math.BigInteger;
 
 public class Board {
+    private final String[] pieceIdentifiers = new String[]{"K", "Q", "R", "B", "N", "P"};
     public long whitePieces, blackPieces, kings, queens, rooks, bishops, knights, pawns;
 
     public Board(){
-        //whitePieces = 65535L;
-        //blackPieces = -281474976710656L;
-        //kings = 1152921504606846992L;
-        //queens = 576460752303423496L;
-        //rooks = -9151314442816847743L;
-        //bishops = 2594073385365405732L;
-        //knights = 4755801206503243842L;
-        //pawns = 71776119061282560L;
-        whitePieces = 2175423933L;
-        blackPieces = -4803745956493262848L;
+        whitePieces = 65535L;
+        blackPieces = -281474976710656L;
         kings = 1152921504606846992L;
         queens = 576460752303423496L;
         rooks = -9151314442816847743L;
         bishops = 2594073385365405732L;
-        knights = 556215042048L;
-        pawns = 24112290008290560L;
+        knights = 4755801206503243842L;
+        pawns = 71776119061282560L;
     }
 
     private String fillLeadingZeros(Long l){
@@ -45,7 +38,6 @@ public class Board {
     @Override
     public String toString(){
         StringBuilder stringBuilder = new StringBuilder();
-        String[] pieceIdentifiers = new String[]{"K", "Q", "R", "B", "N", "P"};
         String[] whiteBitboardStrings = new String[]{fillLeadingZeros(whitePieces & kings), fillLeadingZeros(whitePieces & queens), fillLeadingZeros(whitePieces & rooks), fillLeadingZeros(whitePieces & bishops), fillLeadingZeros(whitePieces & knights), fillLeadingZeros(whitePieces & pawns)};
         String[] blackBitboardStrings = new String[]{fillLeadingZeros(blackPieces & kings), fillLeadingZeros(blackPieces & queens), fillLeadingZeros(blackPieces & rooks), fillLeadingZeros(blackPieces & bishops), fillLeadingZeros(blackPieces & knights), fillLeadingZeros(blackPieces & pawns)};
         for(int x = 0; x < 8; x++){
@@ -69,7 +61,6 @@ public class Board {
                 }
             }
         }
-
         return stringBuilder.toString();
     }
 }
