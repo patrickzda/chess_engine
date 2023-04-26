@@ -19,4 +19,19 @@ public class MoveMasks {
     Dabei ist das LSB unten links (A1) und das MSB oben rechts (H8).
     Die einzelnen Bitmasken werden als long abgespeichert und müssen in irgendeine schlaue Datenstruktur eingefügt werden, sodass man schnell auf sie zugreifen kann.
      */
+
+    public long[] mainDiagonals;
+    public long[] subDiagonals;
+    public long[] horizontals;
+    public long[] verticals;
+    public MoveMasks() {
+        // horizontalen und vertikalen errechnen
+        for (int i = 0; i < 8; i++) {
+            // für die Horizontalen 255 (0b11111111) um ein vierlfaches von 8 shiften
+            horizontals[i] = (255L << i * 8);
+
+            verticals[i] = (72340172838076673L << i * 8);
+
+        }
+    }
 }
