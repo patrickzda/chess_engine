@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="Board: Kann nun auch mit einem FEN-String initialisiert werden.">
+    <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="BoardTest: Tests für den FEN-Parser und den FEN-Generator">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/engine/representation/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/representation/Board.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,8 +16,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="JUnit5 Test Class" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -62,7 +63,7 @@
       <recent name="test" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.BoardTest.toFENString">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="chess_engine" />
@@ -88,8 +89,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.BoardTest.toFENString" />
         <item itemvalue="Application.Main" />
+        <item itemvalue="JUnit.BoardTest.toFENString" />
       </list>
     </recent_temporary>
   </component>
@@ -113,6 +114,9 @@
       <workItem from="1682444586130" duration="608000" />
       <workItem from="1682494321148" duration="697000" />
       <workItem from="1682495184361" duration="85000" />
+      <workItem from="1682495295728" duration="282000" />
+      <workItem from="1682496108990" duration="117000" />
+      <workItem from="1682511761142" duration="1459000" />
     </task>
     <task id="LOCAL-00001" summary="Board: Brett kann ausgegeben werden.">
       <created>1682438269949</created>
@@ -142,7 +146,14 @@
       <option name="project" value="LOCAL" />
       <updated>1682444501957</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="BoardTest: Tests für den FEN-Parser und den FEN-Generator">
+      <created>1682495422174</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1682495422174</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -164,6 +175,7 @@
     <MESSAGE value="Board: Brett kann jetzt visuell oder im FEN-Format ausgegeben werden." />
     <MESSAGE value="Board: Beim initialisieren wird nun die Standardschachstellung aufgebaut." />
     <MESSAGE value="Board: Kann nun auch mit einem FEN-String initialisiert werden." />
-    <option name="LAST_COMMIT_MESSAGE" value="Board: Kann nun auch mit einem FEN-String initialisiert werden." />
+    <MESSAGE value="BoardTest: Tests für den FEN-Parser und den FEN-Generator" />
+    <option name="LAST_COMMIT_MESSAGE" value="BoardTest: Tests für den FEN-Parser und den FEN-Generator" />
   </component>
 </project>

@@ -3,8 +3,14 @@ package engine.representation;
 import java.math.BigInteger;
 
 public class Board {
+    /*
+    Repräsentiert den aktuellen Spielzustand (Brett + welcher Spieler ist am Zug).
+    Enthält Methoden zum Ausgeben und zum Konvertieren zwischen FEN-String und Bitboard-Repräsentation.
+     */
+
     private final String[] pieceIdentifiers = new String[]{"K", "Q", "R", "B", "N", "P"};
     public long whitePieces, blackPieces, kings, queens, rooks, bishops, knights, pawns;
+    private boolean isWhitesTurn = true;
 
     public Board(){
         whitePieces = 65535L;
@@ -70,6 +76,14 @@ public class Board {
 
     private long setBit(long l, long index){
         return l | (1L << index);
+    }
+
+    public boolean isWhitesTurn(){
+        return isWhitesTurn;
+    }
+
+    public void changeTurn(){
+        isWhitesTurn = !isWhitesTurn;
     }
 
     public String toFENString(){
