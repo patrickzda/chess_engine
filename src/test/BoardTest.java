@@ -28,7 +28,7 @@ class BoardTest {
         };
 
         for(int i = 0; i < fenStrings.length; i++){
-            testBoard = new Board(fenStrings[i]);
+            testBoard = new Board(fenStrings[i], Color.WHITE);
             assertEquals(testBoard.toFENString(), fenStrings[i]);
         }
     }
@@ -51,13 +51,13 @@ class BoardTest {
 
     @Test
     void doMove() {
-        Board testBoard = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+        Board testBoard = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", Color.WHITE);
         testBoard.doMove(new Move(1, 18, PieceType.KNIGHT));
         assertEquals(testBoard.toFENString(), "rnbqkbnr/pppppppp/8/8/8/2N5/PPPPPPPP/R1BQKBNR");
         testBoard.doMove(new Move(62, 45, PieceType.KNIGHT));
         assertEquals(testBoard.toFENString(), "rnbqkb1r/pppppppp/5n2/8/8/2N5/PPPPPPPP/R1BQKBNR");
 
-        testBoard = new Board("4kbr1/r6R/b1n2n2/8/3q2Q1/B7/R7/1N2KBN1");
+        testBoard = new Board("4kbr1/r6R/b1n2n2/8/3q2Q1/B7/R7/1N2KBN1", Color.WHITE);
         testBoard.doMove(new Move(30, 27, PieceType.QUEEN));
         testBoard.doMove(new Move(42, 27, PieceType.KNIGHT));
         testBoard.doMove(new Move(55, 48, PieceType.ROOK));
@@ -66,6 +66,46 @@ class BoardTest {
         testBoard.doMove(new Move(61, 16, PieceType.BISHOP));
         assertEquals(testBoard.toFENString(), "3k2r1/2R5/b4n2/8/3n4/b7/R7/1N2KBN1");
 
+        testBoard = new Board("7r/8/8/8/8/8/8/3K1k2", Color.BLACK);
+        testBoard.doMove(new Move(63, 7, PieceType.ROOK));
+        assertEquals(testBoard.toFENString(), "8/8/8/8/8/8/8/3K1k1r");
+
+        testBoard = new Board("8/8/8/8/8/8/8/3K1k1r", Color.BLACK);
+        testBoard.doMove(new Move(7, 63, PieceType.ROOK));
+        assertEquals(testBoard.toFENString(), "7r/8/8/8/8/8/8/3K1k2");
+
+        testBoard = new Board("8/1P6/8/8/8/8/8/3K1k1r", Color.WHITE);
+        Move nextMove = new Move(49, 57, PieceType.PAWN);
+        nextMove.isPromotionToQueen = true;
+        testBoard.doMove(nextMove);
+        assertEquals(testBoard.toFENString(), "1Q6/8/8/8/8/8/8/3K1k1r");
+
+        testBoard = new Board("2r5/1P6/8/8/8/8/8/3K1k1r", Color.WHITE);
+        nextMove = new Move(49, 58, PieceType.PAWN);
+        nextMove.isPromotionToKnight = true;
+        testBoard.doMove(nextMove);
+        assertEquals(testBoard.toFENString(), "2N5/8/8/8/8/8/8/3K1k1r");
+
+        testBoard = new Board("2r5/1P6/8/8/8/8/8/3K1k1r", Color.WHITE);
+        nextMove = new Move(49, 58, PieceType.PAWN);
+        nextMove.isPromotionToBishop = true;
+        testBoard.doMove(nextMove);
+        assertEquals(testBoard.toFENString(), "2B5/8/8/8/8/8/8/3K1k1r");
+
+        testBoard = new Board("8/4P3/8/8/8/8/8/3K1k1r", Color.WHITE);
+        nextMove = new Move(52, 60, PieceType.PAWN);
+        nextMove.isPromotionToRook = true;
+        testBoard.doMove(nextMove);
+        assertEquals(testBoard.toFENString(), "4R3/8/8/8/8/8/8/3K1k1r");
     }
 
+    @Test
+    void undoLastMove() {
+
+    }
+
+    @Test
+    void testToString() {
+        assert(true);
+    }
 }

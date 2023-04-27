@@ -20,7 +20,7 @@ public class Board {
         pawns = 71776119061282560L;
     }
 
-    public Board(String fen){
+    public Board(String fen, Color turn){
         fen = fen.replace("/", "");
         fen = fen.replace("8", "        ");
         fen = fen.replace("7", "       ");
@@ -64,6 +64,9 @@ public class Board {
                     }
                 }
             }
+        }
+        if(turn == Color.BLACK){
+            moves.add(new Move(0, 0, PieceType.ROOK));
         }
     }
 
@@ -115,7 +118,18 @@ public class Board {
                 knights = knights | endPositionMask;
                 break;
             case PAWN:
-
+                pawns = pawns ^ startPositionMask;
+                if(move.isPromotionToQueen){
+                    queens = queens | endPositionMask;
+                }else if(move.isPromotionToRook){
+                    rooks = rooks | endPositionMask;
+                }else if(move.isPromotionToBishop){
+                    bishops = bishops | endPositionMask;
+                }else if(move.isPromotionToKnight){
+                    knights = knights | endPositionMask;
+                }else{
+                    pawns = pawns | endPositionMask;
+                }
                 break;
             default:
                 break;
@@ -131,6 +145,10 @@ public class Board {
             whitePieces = whitePieces & ~endPositionMask;
         }
         moves.add(move);
+    }
+
+    public void undoLastMove(){
+
     }
 
     public String toFENString(){
