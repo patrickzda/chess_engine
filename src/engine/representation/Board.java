@@ -1,16 +1,13 @@
 package engine.representation;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 
 public class Board {
-    /*
-    Repräsentiert den aktuellen Spielzustand (Brett + welcher Spieler ist am Zug).
-    Enthält Methoden zum Ausgeben und zum Konvertieren zwischen FEN-String und Bitboard-Repräsentation.
-     */
 
     private final String[] pieceIdentifiers = new String[]{"K", "Q", "R", "B", "N", "P"};
     public long whitePieces, blackPieces, kings, queens, rooks, bishops, knights, pawns;
-    private boolean isWhitesTurn = true;
+    private ArrayList<Move> moves = new ArrayList<Move>();
 
     public Board(){
         whitePieces = 65535L;
@@ -78,12 +75,62 @@ public class Board {
         return l | (1L << index);
     }
 
-    public boolean isWhitesTurn(){
-        return isWhitesTurn;
+    public Color getTurn(){
+        if(moves.size() % 2 == 0){
+            return Color.WHITE;
+        }else{
+            return Color.BLACK;
+        }
     }
 
-    public void changeTurn(){
-        isWhitesTurn = !isWhitesTurn;
+    public void doMove(Move move){
+        long startPositionMask = (1L << move.getStartFieldIndex());
+        long endPositionMask = (1L << move.getEndFieldIndex());
+
+        queens = queens & ~endPositionMask;
+        rooks = rooks & ~endPositionMask;
+        bishops = bishops & ~endPositionMask;
+        knights = knights & ~endPositionMask;
+        pawns = pawns & ~endPositionMask;
+
+        switch (move.getPieceType()){
+            case KING:
+                kings = kings ^ startPositionMask;
+                kings = kings | endPositionMask;
+                break;
+            case QUEEN:
+                queens = queens ^ startPositionMask;
+                queens = queens | endPositionMask;
+                break;
+            case ROOK:
+                rooks = rooks ^ startPositionMask;
+                rooks = rooks | endPositionMask;
+                break;
+            case BISHOP:
+                bishops = bishops ^ startPositionMask;
+                bishops = bishops | endPositionMask;
+                break;
+            case KNIGHT:
+                knights = knights ^ startPositionMask;
+                knights = knights | endPositionMask;
+                break;
+            case PAWN:
+
+                break;
+            default:
+                break;
+        }
+
+        if(getTurn() == Color.WHITE){
+            whitePieces = whitePieces ^ startPositionMask;
+            whitePieces = whitePieces | endPositionMask;
+            blackPieces = blackPieces & ~endPositionMask;
+        }else{
+            blackPieces = blackPieces ^ startPositionMask;
+            blackPieces = blackPieces | endPositionMask;
+            whitePieces = whitePieces & ~endPositionMask;
+        }
+        moves.add(move);
     }
 
     public String toFENString(){

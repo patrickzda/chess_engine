@@ -1,6 +1,9 @@
 package test;
 
 import engine.representation.Board;
+import engine.representation.Color;
+import engine.representation.Move;
+import engine.representation.PieceType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,4 +32,40 @@ class BoardTest {
             assertEquals(testBoard.toFENString(), fenStrings[i]);
         }
     }
+
+    @Test
+    void getTurn() {
+        Board testBoard = new Board();
+        assertEquals(testBoard.getTurn(), Color.WHITE);
+        for(int i = 0; i < 10; i++){
+            testBoard.doMove(new Move(1, 18, PieceType.KNIGHT));
+            assertEquals(testBoard.getTurn(), Color.BLACK);
+            testBoard.doMove(new Move(62, 45, PieceType.KNIGHT));
+            assertEquals(testBoard.getTurn(), Color.WHITE);
+            testBoard.doMove(new Move(18, 1, PieceType.KNIGHT));
+            assertEquals(testBoard.getTurn(), Color.BLACK);
+            testBoard.doMove(new Move(45, 62, PieceType.KNIGHT));
+            assertEquals(testBoard.getTurn(), Color.WHITE);
+        }
+    }
+
+    @Test
+    void doMove() {
+        Board testBoard = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+        testBoard.doMove(new Move(1, 18, PieceType.KNIGHT));
+        assertEquals(testBoard.toFENString(), "rnbqkbnr/pppppppp/8/8/8/2N5/PPPPPPPP/R1BQKBNR");
+        testBoard.doMove(new Move(62, 45, PieceType.KNIGHT));
+        assertEquals(testBoard.toFENString(), "rnbqkb1r/pppppppp/5n2/8/8/2N5/PPPPPPPP/R1BQKBNR");
+
+        testBoard = new Board("4kbr1/r6R/b1n2n2/8/3q2Q1/B7/R7/1N2KBN1");
+        testBoard.doMove(new Move(30, 27, PieceType.QUEEN));
+        testBoard.doMove(new Move(42, 27, PieceType.KNIGHT));
+        testBoard.doMove(new Move(55, 48, PieceType.ROOK));
+        testBoard.doMove(new Move(60, 59, PieceType.KING));
+        testBoard.doMove(new Move(48, 50, PieceType.ROOK));
+        testBoard.doMove(new Move(61, 16, PieceType.BISHOP));
+        assertEquals(testBoard.toFENString(), "3k2r1/2R5/b4n2/8/3n4/b7/R7/1N2KBN1");
+
+    }
+
 }
