@@ -7,7 +7,7 @@ public class Board {
 
     private final String[] pieceIdentifiers = new String[]{"K", "Q", "R", "B", "N", "P"};
     public long whitePieces, blackPieces, kings, queens, rooks, bishops, knights, pawns;
-    private ArrayList<Move> moves = new ArrayList<Move>();
+    private final ArrayList<Move> moves = new ArrayList<Move>();
 
     public Board(){
         whitePieces = 65535L;
@@ -20,7 +20,7 @@ public class Board {
         pawns = 71776119061282560L;
     }
 
-    public Board(String fen){
+    public Board(String fen, Color turn){
         fen = fen.replace("/", "");
         fen = fen.replace("8", "        ");
         fen = fen.replace("7", "       ");
@@ -65,6 +65,9 @@ public class Board {
                 }
             }
         }
+        if(turn == Color.BLACK){
+            moves.add(new Move(0, 0, PieceType.ROOK));
+        }
     }
 
     private String fillLeadingZeros(long l){
@@ -97,6 +100,29 @@ public class Board {
             case KING:
                 kings = kings ^ startPositionMask;
                 kings = kings | endPositionMask;
+                if(move.isCastling){
+                    if(getTurn() == Color.WHITE){
+                        if(move.getEndFieldIndex() == 6){
+                            long shortWhiteCastleMask = 160L;
+                            rooks = rooks ^ shortWhiteCastleMask;
+                            whitePieces = whitePieces ^ shortWhiteCastleMask;
+                        }else{
+                            long longWhiteCastleMask = 9L;
+                            rooks = rooks ^ longWhiteCastleMask;
+                            whitePieces = whitePieces ^ longWhiteCastleMask;
+                        }
+                    }else{
+                        if(move.getEndFieldIndex() == 62){
+                            long shortBlackCastleMask = -6917529027641081856L;
+                            rooks = rooks ^ shortBlackCastleMask;
+                            blackPieces = blackPieces ^ shortBlackCastleMask;
+                        }else{
+                            long longBlackCastleMask = 648518346341351424L;
+                            rooks = rooks ^ longBlackCastleMask;
+                            blackPieces = blackPieces ^ longBlackCastleMask;
+                        }
+                    }
+                }
                 break;
             case QUEEN:
                 queens = queens ^ startPositionMask;
@@ -115,7 +141,25 @@ public class Board {
                 knights = knights | endPositionMask;
                 break;
             case PAWN:
-
+                pawns = pawns ^ startPositionMask;
+                if(move.isPromotionToQueen){
+                    queens = queens | endPositionMask;
+                }else if(move.isPromotionToRook){
+                    rooks = rooks | endPositionMask;
+                }else if(move.isPromotionToBishop){
+                    bishops = bishops | endPositionMask;
+                }else if(move.isPromotionToKnight){
+                    knights = knights | endPositionMask;
+                }else{
+                    pawns = pawns | endPositionMask;
+                    if(move.isEnPassant){
+                        if(getTurn() == Color.WHITE){
+                            blackPieces = blackPieces & ~(endPositionMask >>> 8);
+                        }else{
+                            whitePieces = whitePieces & ~(endPositionMask << 8);
+                        }
+                    }
+                }
                 break;
             default:
                 break;
@@ -131,6 +175,10 @@ public class Board {
             whitePieces = whitePieces & ~endPositionMask;
         }
         moves.add(move);
+    }
+
+    public void undoLastMove(){
+
     }
 
     public String toFENString(){
