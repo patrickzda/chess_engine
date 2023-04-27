@@ -97,6 +97,54 @@ class BoardTest {
         nextMove.isPromotionToRook = true;
         testBoard.doMove(nextMove);
         assertEquals(testBoard.toFENString(), "4R3/8/8/8/8/8/8/3K1k1r");
+
+        testBoard = new Board("8/8/8/2Pp4/8/8/8/5K1k", Color.WHITE);
+        nextMove = new Move(34, 43, PieceType.PAWN);
+        nextMove.isEnPassant = true;
+        testBoard.doMove(nextMove);
+        assertEquals(testBoard.toFENString(), "8/8/3P4/8/8/8/8/5K1k");
+
+        testBoard = new Board("8/8/8/1N1pP3/6b1/rR2bN2/rR6/5K1k", Color.WHITE);
+        nextMove = new Move(36, 43, PieceType.PAWN);
+        nextMove.isEnPassant = true;
+        testBoard.doMove(nextMove);
+        assertEquals(testBoard.toFENString(), "8/8/3P4/1N6/6b1/rR2bN2/rR6/5K1k");
+
+        testBoard = new Board("1q4Q1/8/8/8/2pP4/8/8/5K1k", Color.BLACK);
+        nextMove = new Move(26, 19, PieceType.PAWN);
+        nextMove.isEnPassant = true;
+        testBoard.doMove(nextMove);
+        assertEquals(testBoard.toFENString(), "1q4Q1/8/8/8/8/3p4/8/5K1k");
+
+        testBoard = new Board("1q4Q1/8/8/8/3Pp3/8/8/5K1k", Color.BLACK);
+        nextMove = new Move(28, 19, PieceType.PAWN);
+        nextMove.isEnPassant = true;
+        testBoard.doMove(nextMove);
+        assertEquals(testBoard.toFENString(), "1q4Q1/8/8/8/8/3p4/8/5K1k");
+
+        testBoard = new Board("r3k2r/8/8/8/8/8/8/R3K2R", Color.WHITE);
+        nextMove = new Move(4, 6, PieceType.KING);
+        nextMove.isCastling = true;
+        testBoard.doMove(nextMove);
+        assertEquals(testBoard.toFENString(), "r3k2r/8/8/8/8/8/8/R4RK1");
+
+        testBoard = new Board("r3k2r/8/8/8/8/8/8/R3K2R", Color.WHITE);
+        nextMove = new Move(4, 2, PieceType.KING);
+        nextMove.isCastling = true;
+        testBoard.doMove(nextMove);
+        assertEquals(testBoard.toFENString(), "r3k2r/8/8/8/8/8/8/2KR3R");
+
+        testBoard = new Board("r3k2r/8/8/8/8/8/8/R3K2R", Color.BLACK);
+        nextMove = new Move(60, 62, PieceType.KING);
+        nextMove.isCastling = true;
+        testBoard.doMove(nextMove);
+        assertEquals(testBoard.toFENString(), "r4rk1/8/8/8/8/8/8/R3K2R");
+
+        testBoard = new Board("r3k2r/8/8/8/8/8/8/R3K2R", Color.BLACK);
+        nextMove = new Move(60, 58, PieceType.KING);
+        nextMove.isCastling = true;
+        testBoard.doMove(nextMove);
+        assertEquals(testBoard.toFENString(), "2kr3r/8/8/8/8/8/8/R3K2R");
     }
 
     @Test
