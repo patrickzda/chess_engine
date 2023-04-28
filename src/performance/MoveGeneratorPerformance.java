@@ -17,13 +17,14 @@ public class MoveGeneratorPerformance {
         }
     }
 
-    public void PerfomanceTime(){
+    public void PerfomanceTime(int passes){
         long startTime = System.currentTimeMillis();
         FunktionToTest();
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
-        System.out.println("Took: "+elapsedTime+" Milliseconds");
-        System.out.println("The Average is: " +AverageExecutionTime(150));
+        System.out.println("First Time took: "+elapsedTime+" Milliseconds");
+        if(passes > 0) System.out.println("The Average is: " +AverageExecutionTime(passes));
+
     }
 
     String AverageExecutionTime(int passes){
@@ -33,8 +34,7 @@ public class MoveGeneratorPerformance {
             FunktionToTest();
             long stopTime = System.currentTimeMillis();
             long elapsedTime = stopTime - startTime;
-            System.out.println("Took: "+elapsedTime+" Milliseconds");
-            times[i] = stopTime - startTime;
+            times[i] = elapsedTime;
         }
         long avg = findAverage(times);
         return ""+avg;
