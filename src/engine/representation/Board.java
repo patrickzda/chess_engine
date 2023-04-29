@@ -90,6 +90,15 @@ public class Board {
         long startPositionMask = (1L << move.getStartFieldIndex());
         long endPositionMask = (1L << move.getEndFieldIndex());
 
+        move.whitePieces = whitePieces;
+        move.blackPieces = blackPieces;
+        move.kings = kings;
+        move.queens = queens;
+        move.rooks = rooks;
+        move.bishops = bishops;
+        move.knights = knights;
+        move.pawns = pawns;
+
         queens = queens & ~endPositionMask;
         rooks = rooks & ~endPositionMask;
         bishops = bishops & ~endPositionMask;
@@ -174,11 +183,21 @@ public class Board {
             blackPieces = blackPieces | endPositionMask;
             whitePieces = whitePieces & ~endPositionMask;
         }
+
         moves.add(move);
     }
 
     public void undoLastMove(){
-
+        Move lastMove = moves.get(moves.size() - 1);
+        whitePieces = lastMove.whitePieces;
+        blackPieces = lastMove.blackPieces;
+        kings = lastMove.kings;
+        queens = lastMove.queens;
+        rooks = lastMove.rooks;
+        bishops = lastMove.bishops;
+        knights = lastMove.knights;
+        pawns = lastMove.pawns;
+        moves.remove(moves.size() - 1);
     }
 
     public String toFENString(){
