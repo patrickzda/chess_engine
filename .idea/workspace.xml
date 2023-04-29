@@ -24,8 +24,6 @@
   <component name="ChangeListManager">
     <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="MoveMasks: generierung für daigonale MoveMasks hinzugefügt&#10;MoveMasksTest: Tessts für alle implementierten Funktionen, bis jetzt nur mit Ausgabe auf der Konsole&#10;Direction: hinzugefügt">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/engine/move_generation/MoveMasks.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/move_generation/MoveMasks.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/MoveMasksTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/MoveMasksTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,12 +57,13 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/m00TT/Daten/UNI/PJ KI/chess_engine&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "last_opened_file_path": "C:/Users/m00TT/Daten/UNI/PJ KI/chess_engine"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.RecentsKey">
       <recent name="test" />
