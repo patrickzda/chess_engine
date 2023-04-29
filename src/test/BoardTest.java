@@ -6,6 +6,9 @@ import engine.representation.Move;
 import engine.representation.PieceType;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Stack;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BoardTest {
