@@ -24,19 +24,23 @@ public class MoveMasks {
     Die einzelnen Bitmasken werden als long abgespeichert und müssen in irgendeine schlaue Datenstruktur eingefügt werden, sodass man schnell auf sie zugreifen kann.
      */
 
+    // Arrays um alle Diagonalen abzuspeichern
     public long[] diagonals = new long[16];
     public long[] antiDiagonals = new long[16];
     public long[] horizontals = new long[8];
     public long[] verticals = new long[8];
 
+    // einige Magic-Numbers
     private long DIAGONAL = -9205322385119247871L;
     private long ANTI_DIAGONAL = 72624976668147840L;
     private long MSB_ONE = -9223372036854775808L;
     private long HORIZONTAL = 255L;
     private long VERTICAL = 72340172838076673L;
     private long ZEROS = 0L;
+
+    // generiert alle möglichen horizontalen, vertikalen , Diagonalen und Anti-Diagonalen einmalig, um so schnell
+    // die Rays zu berechnen
     public MoveMasks() {
-        // horizontalen und vertikalen errechnen
         for (int i = 0; i < 8; i++) {
             // für die Horizontalen 255 (0b11111111) um ein vierlfaches von 8 shiften
             horizontals[i] = (HORIZONTAL << i * 8);
@@ -44,7 +48,7 @@ public class MoveMasks {
             // für die vertikalen 72340172838076673L (einer vertikale reihe aus einsen) um 0-7 shiften
             verticals[i] = (VERTICAL << i);
 
-            // für die Diagonalen wird einfach die haupt- bzw. anti-Diagonale geshiftet
+            // für die Diagonalen wird einfach die haupt- bzw. Anti-Diagonale geshiftet
             diagonals[i] = (DIAGONAL << (8 * i));
             antiDiagonals[i] = (ANTI_DIAGONAL >>> (8 * i));
         }
@@ -61,9 +65,8 @@ public class MoveMasks {
         }
     }
 
-    private long maskNorth(int index) {
-        // Bitmaske, die nur in nördlicher Richtung von dem Ausgangsindex einsen hat
-
+    // Bitmaske, die nur in nördlicher Richtung von dem Ausgangsindex einsen hat
+    public long maskNorth(int index) {
         // ein Edge-Case muss abgefangen werden, wenn das Feld das MSB ist, sonst wird die Maske auf nur einsen
         // gesetzt und die Richtung wird nicht abgeschnitten.
         // TODO: evtl. bessere Lösung ohne if-Statement finden
@@ -74,9 +77,8 @@ public class MoveMasks {
         return MSB_ONE >> (62 - index);
     }
 
-    private long maskEast(int file) {
-        // Bitmaske, die nur in östlicher Richtung von dem Ausgangsindex einsen hat
-
+    // Bitmaske, die nur in östlicher Richtung von dem Ausgangsindex einsen hat
+    public long maskEast(int file) {
         // ein Edge-Case muss abgefangen werden, wenn das Feld am östlichen Rand liegt, sonst wird das
         // Feld auf dem der Spielstein steht auch als mögliches Zielfeld mit ausgegeben
         // TODO: evtl. bessere Lösung ohne if-Statement finden
@@ -90,19 +92,21 @@ public class MoveMasks {
         return mask | (mask >>> 32);
     }
 
-    private long maskSouth(int index) {
-        // Bitmaske, die nur in südlicher Richtung von dem Ausgangsindex einsen hat
+    // Bitmaske, die nur in südlicher Richtung von dem Ausgangsindex einsen hat
+    public long maskSouth(int index) {
         return ~(MSB_ONE >> (63 - index));
     }
 
-    private long maskWest(int file) {
-        // Bitmaske, die nur in westlicher Richtung von dem Ausgangsindex einsen hat
+    // Bitmaske, die nur in westlicher Richtung von dem Ausgangsindex einsen hat
+    public long maskWest(int file) {
         long mask = MSB_ONE >> (7 - file);
         mask = mask | (mask >>> 8);
         mask = mask | (mask >>> 16);
         return ~(mask | (mask >>> 32));
     }
 
+    // Berechnet von einem Feld auf dem Schachbrett eine Bitmaske, die nur einsen von diesem Feld aus in die
+    // angegebene Richtung hat, wobei auf dem übergebenen Feld selber eine Null steht
     public long rays(Direction dir, int index) {
         long mask, res;
         int rank, file;
@@ -190,6 +194,8 @@ public class MoveMasks {
         return res;
     }
 
+    // Berechnet für ein Feld auf dem Schachbrett Rays in alle Richtungen.
+    // Kann z.B. für die Zugmöglichkeiten der Dame benutzt werden
     public long allDirections(int index) {
         // verodert alle Richtungen von einem Index
         return rays(NORTH, index) |
@@ -202,8 +208,8 @@ public class MoveMasks {
                rays(NORTH_WEST, index);
     }
 
+    // für Debugging-Zwecke. Gibt das Bitboard in der Reihenfolge von einem Schachbrett aus
     public static void printBitBoard(long bitBoard) {
-        // für Debugging-Zwecke. Gibt das Bitboard in der Reihenfolge von einem Schachbrett aus
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
                 int i = (7 - x) * 8 + y;
@@ -214,7 +220,7 @@ public class MoveMasks {
                     System.out.print("1");
                 }
             }
-            System.out.println("");
+            System.out.println();
         }
     }
 }
