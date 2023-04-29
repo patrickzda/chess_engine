@@ -24,6 +24,8 @@
   <component name="ChangeListManager">
     <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="MoveMasks: generierung für daigonale MoveMasks hinzugefügt&#10;MoveMasksTest: Tessts für alle implementierten Funktionen, bis jetzt nur mit Ausgabe auf der Konsole&#10;Direction: hinzugefügt">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/performance/MoveGeneratorPerformance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/performance/MoveGeneratorPerformance.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +63,8 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "dart.analysis.tool.window.visible": "false",
-    "last_opened_file_path": "C:/Users/m00TT/Daten/UNI/PJ KI/chess_engine"
+    "last_opened_file_path": "C:/Users/m00TT/Daten/UNI/PJ KI/chess_engine",
+    "settings.editor.selected.configurable": "tasks.servers"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -73,7 +76,7 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.MoveMasksTest.MoveMasks">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="chess_engine" />
@@ -145,11 +148,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Main" />
         <item itemvalue="JUnit.MoveMasksTest.MoveMasks" />
         <item itemvalue="JUnit.MoveMasksTest.rays" />
         <item itemvalue="JUnit.MoveMasksTest" />
         <item itemvalue="JUnit.BoardTest" />
-        <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
   </component>
@@ -255,5 +258,9 @@
     <MESSAGE value="MoveMasks: generierung für horizontale und vertikale MoveMasks hinzugefügt&#10;MoveMasksTest: hinzugefügt" />
     <MESSAGE value="MoveMasks: generierung für daigonale MoveMasks hinzugefügt&#10;MoveMasksTest: Tessts für alle implementierten Funktionen, bis jetzt nur mit Ausgabe auf der Konsole&#10;Direction: hinzugefügt" />
     <option name="LAST_COMMIT_MESSAGE" value="MoveMasks: generierung für daigonale MoveMasks hinzugefügt&#10;MoveMasksTest: Tessts für alle implementierten Funktionen, bis jetzt nur mit Ausgabe auf der Konsole&#10;Direction: hinzugefügt" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
