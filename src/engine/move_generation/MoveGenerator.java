@@ -32,6 +32,7 @@ public class MoveGenerator {
     }
 
     public static Move[] generateRookMoves(Board current, MoveMasks moveMasks){
+        ArrayList<Move> rookMoves = new ArrayList<Move>();
         long currentTeam, blockers = current.whitePieces | current.blackPieces;;
 
         if(current.getTurn() == Color.WHITE){
@@ -41,22 +42,39 @@ public class MoveGenerator {
         }
         long rooks = current.rooks & currentTeam;
 
-        if(rooks == 0){
+        if(rooks == 0L){
             return new Move[0];
         }
 
+        //Bis zur If-Bedingung werden alle Züge für den ersten Turm generiert, für den zweiten Turm das Gleiche machen, statt firstRookIndex -> lastRookIndex
         int firstRookIndex = 63 - Long.numberOfLeadingZeros(rooks), lastRookIndex = Long.numberOfTrailingZeros(rooks);
+
         int maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH, firstRookIndex));
         long result = (moveMasks.rays(Direction.NORTH, firstRookIndex) & ~moveMasks.rays(Direction.NORTH, maskedBlockerIndex)) & ~currentTeam;
 
-        MoveMasks.printBitBoard(result);
+        maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.EAST, firstRookIndex));
+        result = result | (moveMasks.rays(Direction.EAST, firstRookIndex) & ~moveMasks.rays(Direction.EAST, maskedBlockerIndex)) & ~currentTeam;
+
+        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH, firstRookIndex));
+        result = result | (moveMasks.rays(Direction.SOUTH, firstRookIndex) & ~moveMasks.rays(Direction.SOUTH, maskedBlockerIndex)) & ~currentTeam;
+
+        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.WEST, firstRookIndex));
+        result = result | (moveMasks.rays(Direction.WEST, firstRookIndex) & ~moveMasks.rays(Direction.WEST, maskedBlockerIndex)) & ~currentTeam;
+
+        //MoveMasks.printBitBoard(result);
+
+        for(int i = 0; i < 64; i++){
+            if((result & (1L << i)) != 0L){
+                rookMoves.add(new Move(firstRookIndex, i, PieceType.ROOK));
+            }
+        }
 
         if(firstRookIndex != lastRookIndex){
             //Es gibt noch einen zweiten Turm
 
         }
 
-        return new Move[0];
+        return rookMoves.toArray(new Move[0]);
     }
 
     public static Move[] generateBishopMoves(Board current){
