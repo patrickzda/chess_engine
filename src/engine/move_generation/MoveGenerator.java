@@ -61,8 +61,6 @@ public class MoveGenerator {
         maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.WEST, firstRookIndex));
         result = result | (moveMasks.rays(Direction.WEST, firstRookIndex) & ~moveMasks.rays(Direction.WEST, maskedBlockerIndex)) & ~currentTeam;
 
-        //MoveMasks.printBitBoard(result);
-
         for(int i = 0; i < 64; i++){
             if((result & (1L << i)) != 0L){
                 rookMoves.add(new Move(firstRookIndex, i, PieceType.ROOK));
@@ -71,14 +69,88 @@ public class MoveGenerator {
 
         if(firstRookIndex != lastRookIndex){
             //Es gibt noch einen zweiten Turm
+            maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH, lastRookIndex));
+            result = (moveMasks.rays(Direction.NORTH, lastRookIndex) & ~moveMasks.rays(Direction.NORTH, maskedBlockerIndex)) & ~currentTeam;
+
+            maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.EAST, lastRookIndex));
+            result = result | (moveMasks.rays(Direction.EAST, lastRookIndex) & ~moveMasks.rays(Direction.EAST, maskedBlockerIndex)) & ~currentTeam;
+
+            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH, lastRookIndex));
+            result = result | (moveMasks.rays(Direction.SOUTH, lastRookIndex) & ~moveMasks.rays(Direction.SOUTH, maskedBlockerIndex)) & ~currentTeam;
+
+            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.WEST, lastRookIndex));
+            result = result | (moveMasks.rays(Direction.WEST, lastRookIndex) & ~moveMasks.rays(Direction.WEST, maskedBlockerIndex)) & ~currentTeam;
+
+            for(int i = 0; i < 64; i++){
+                if((result & (1L << i)) != 0L){
+                    rookMoves.add(new Move(lastRookIndex, i, PieceType.ROOK));
+                }
+            }
 
         }
 
         return rookMoves.toArray(new Move[0]);
     }
 
-    public static Move[] generateBishopMoves(Board current){
-        return new Move[0];
+    public static Move[] generateBishopMoves(Board current, MoveMasks moveMasks){
+        ArrayList<Move> bishopMoves = new ArrayList<Move>();
+        long currentTeam, blockers = current.whitePieces | current.blackPieces;;
+
+        if(current.getTurn() == Color.WHITE){
+            currentTeam = current.whitePieces;
+        }else{
+            currentTeam = current.blackPieces;
+        }
+        long bishops = current.bishops & currentTeam;
+
+        if(bishops == 0L){
+            return new Move[0];
+        }
+
+        //Bis zur If-Bedingung werden alle Züge für den ersten Läufer generiert, für den zweiten Läufer das Gleiche machen, statt firstBishopIndex -> lastBishopIndex
+        int firstBishopIndex = 63 - Long.numberOfLeadingZeros(bishops), lastBishopIndex = Long.numberOfTrailingZeros(bishops);
+
+        int maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_EAST, firstBishopIndex));
+        long result = (moveMasks.rays(Direction.NORTH_EAST, firstBishopIndex) & ~moveMasks.rays(Direction.NORTH_EAST, maskedBlockerIndex)) & ~currentTeam;
+
+        maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_WEST, firstBishopIndex));
+        result = result | (moveMasks.rays(Direction.NORTH_WEST, firstBishopIndex) & ~moveMasks.rays(Direction.NORTH_WEST, maskedBlockerIndex)) & ~currentTeam;
+
+        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_EAST, firstBishopIndex));
+        result = result | (moveMasks.rays(Direction.SOUTH_EAST, firstBishopIndex) & ~moveMasks.rays(Direction.SOUTH_EAST, maskedBlockerIndex)) & ~currentTeam;
+
+        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_WEST, firstBishopIndex));
+        result = result | (moveMasks.rays(Direction.SOUTH_WEST, firstBishopIndex) & ~moveMasks.rays(Direction.SOUTH_WEST, maskedBlockerIndex)) & ~currentTeam;
+
+        for(int i = 0; i < 64; i++){
+            if((result & (1L << i)) != 0L){
+                bishopMoves.add(new Move(firstBishopIndex, i, PieceType.BISHOP));
+            }
+        }
+
+        if(firstBishopIndex != lastBishopIndex){
+            //Es gibt noch einen zweiten Läufer
+            maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_EAST, lastBishopIndex));
+            result = (moveMasks.rays(Direction.NORTH_EAST, lastBishopIndex) & ~moveMasks.rays(Direction.NORTH_EAST, maskedBlockerIndex)) & ~currentTeam;
+
+            maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_WEST, lastBishopIndex));
+            result = result | (moveMasks.rays(Direction.NORTH_WEST, lastBishopIndex) & ~moveMasks.rays(Direction.NORTH_WEST, maskedBlockerIndex)) & ~currentTeam;
+
+            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_EAST, lastBishopIndex));
+            result = result | (moveMasks.rays(Direction.SOUTH_EAST, lastBishopIndex) & ~moveMasks.rays(Direction.SOUTH_EAST, maskedBlockerIndex)) & ~currentTeam;
+
+            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_WEST, lastBishopIndex));
+            result = result | (moveMasks.rays(Direction.SOUTH_WEST, lastBishopIndex) & ~moveMasks.rays(Direction.SOUTH_WEST, maskedBlockerIndex)) & ~currentTeam;
+
+            for(int i = 0; i < 64; i++){
+                if((result & (1L << i)) != 0L){
+                    bishopMoves.add(new Move(lastBishopIndex, i, PieceType.BISHOP));
+                }
+            }
+
+        }
+
+        return bishopMoves.toArray(new Move[0]);
     }
 
     public static Move[] generateKnightMoves(Board current){
@@ -201,6 +273,44 @@ public class MoveGenerator {
         }
         
         return pawnMoves.toArray(new Move[0]);
+    }
+
+    // generiert ein Array von Move für Testzwecke ACHTUNG! alle 3 Argumente müssen die gleiche Anzahl an Elementen enthalten!
+    // params:  bitMasks: Bitmasken für alle Felder, auf die gezogen werden soll
+    //          indizes: indizes von denen jeder Move starten soll
+    //          pieces: die Spielfiguren, die diese Züge machen sollen
+    public static Move[] generateTestMoves(long[] bitMasks, int[] indizes, PieceType[] pieces) {
+        ArrayList<Move> testMoves = new ArrayList<Move>();
+
+        for (int i = 0; i < bitMasks.length; i++) {
+            for (int j = 0; j < 64; j++) {
+                long bit = (1L << j);
+                if ((bitMasks[i] & bit) != 0) {
+                    testMoves.add(new Move(indizes[i], Long.numberOfTrailingZeros(bitMasks[i] & bit), pieces[i]));
+                }
+            }
+        }
+
+        return testMoves.toArray(new Move[0]);
+    }
+
+    // Testet, ob in zwei Move-Arrays die gleichen Moves enthalten sind unabhängig von der Reihenfolge
+    // ACHTUNG! Es wird nicht überprüft, ob auch alle Flags gleich gesetzt sind! Es wird nur nach start und Endfeld und PieceType getestet
+    public static boolean hasSameMoves(Move[] moves1, Move[] moves2) {
+        boolean found;
+        for (Move move1: moves1) {
+            found = false;
+            for (Move move2: moves2) {
+                if ((move1.getStartFieldIndex() == move2.getStartFieldIndex()) && (move1.getEndFieldIndex() == move2.getEndFieldIndex()) && (move1.getPieceType() == move2.getPieceType())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
