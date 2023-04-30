@@ -108,6 +108,10 @@ public class MoveMasks {
     // Berechnet von einem Feld auf dem Schachbrett eine Bitmaske, die nur einsen von diesem Feld aus in die
     // angegebene Richtung hat, wobei auf dem übergebenen Feld selber eine Null steht
     public long rays(Direction dir, int index) {
+        if(index == 64){
+            return 0;
+        }
+
         long mask, res;
         int rank, file;
         switch(dir) {

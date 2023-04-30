@@ -1,9 +1,6 @@
 package engine.move_generation;
 
-import engine.representation.Board;
-import engine.representation.Color;
-import engine.representation.Move;
-import engine.representation.PieceType;
+import engine.representation.*;
 
 import java.util.ArrayList;
 
@@ -34,7 +31,31 @@ public class MoveGenerator {
         return new Move[0];
     }
 
-    public static Move[] generateRookMoves(Board current){
+    public static Move[] generateRookMoves(Board current, MoveMasks moveMasks){
+        long currentTeam, blockers = current.whitePieces | current.blackPieces;;
+
+        if(current.getTurn() == Color.WHITE){
+            currentTeam = current.whitePieces;
+        }else{
+            currentTeam = current.blackPieces;
+        }
+        long rooks = current.rooks & currentTeam;
+
+        if(rooks == 0){
+            return new Move[0];
+        }
+
+        int firstRookIndex = 63 - Long.numberOfLeadingZeros(rooks), lastRookIndex = Long.numberOfTrailingZeros(rooks);
+        int maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH, firstRookIndex));
+        long result = (moveMasks.rays(Direction.NORTH, firstRookIndex) & ~moveMasks.rays(Direction.NORTH, maskedBlockerIndex)) & ~currentTeam;
+
+        MoveMasks.printBitBoard(result);
+
+        if(firstRookIndex != lastRookIndex){
+            //Es gibt noch einen zweiten Turm
+
+        }
+
         return new Move[0];
     }
 
