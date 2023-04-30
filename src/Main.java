@@ -9,10 +9,10 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
-        Board b = new Board("8/1p5p/2P3p1/8/4B3/8/2p3P1/1p5p", Color.WHITE);
+        Board b = new Board("8/8/8/8/3Q4/8/8/8", Color.WHITE);
         MoveMasks moveMasks = new MoveMasks();
         System.out.println();
-        System.out.println(MoveGenerator.generateBishopMoves(b, moveMasks).length);
+        System.out.println(MoveGenerator.generateQueenMoves(b, moveMasks).length);
 
     }
 }

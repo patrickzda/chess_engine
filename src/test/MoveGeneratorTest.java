@@ -78,4 +78,41 @@ public class MoveGeneratorTest {
         }
     }
 
+    @Test
+    public void generateQueenMoves() {
+        MoveMasks m = new MoveMasks();
+
+        Board[] boards = {
+                new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", WHITE),
+                new Board("8/8/8/4q3/2Q5/8/8/8", WHITE),
+                new Board("8/8/8/4q3/2Q5/8/8/8", BLACK),
+                new Board("8/8/8/P1p1p3/8/P1Q1P3/8/p1p1P3", WHITE),
+                new Board("8/8/8/P1p1p3/8/P1q1P3/8/p1p1P3", BLACK),
+                new Board("rn1qkbnr/pp3ppp/3p4/8/8/8/PP3PPP/RN1QKBNR", WHITE),
+                new Board("rn1qkbnr/pp3ppp/3p4/8/8/8/PP3PPP/RN1QKBNR", BLACK),
+                new Board("rnbqkbnr/pppppppp/8/8/8/8/PP3PPP/RN2KBNR", WHITE),
+                new Board("rn2kbnr/pp3ppp/8/8/8/8/PPPPPPPP/RNBQKBNR", BLACK),
+        };
+
+        Move[][] results = {
+                MoveGenerator.generateTestMoves(new long[] {0L}, new int[] {3}, new PieceType[]{PieceType.QUEEN}),
+                MoveGenerator.generateTestMoves(new long[] {4910072647826412836L}, new int[] {26}, new PieceType[]{PieceType.QUEEN}),
+                MoveGenerator.generateTestMoves(new long[] {-7902628846034972143L}, new int[] {36}, new PieceType[]{PieceType.QUEEN}),
+                MoveGenerator.generateTestMoves(new long[] {86134885893L}, new int[] {18}, new PieceType[]{PieceType.QUEEN}),
+                MoveGenerator.generateTestMoves(new long[] {4531621392L}, new int[] {18}, new PieceType[]{PieceType.QUEEN}),
+                MoveGenerator.generateTestMoves(new long[] {9381436070916L}, new int[] {3}, new PieceType[]{PieceType.QUEEN}),
+                MoveGenerator.generateTestMoves(new long[] {296149340215312384L}, new int[] {59}, new PieceType[]{PieceType.QUEEN}),
+                MoveGenerator.generateTestMoves(new long[] {0L}, new int[] {0}, new PieceType[]{PieceType.QUEEN}),
+                MoveGenerator.generateTestMoves(new long[] {0L}, new int[] {0}, new PieceType[]{PieceType.QUEEN}),
+        };
+
+        for (int i = 0; i < results.length; i++) {
+            boolean res = MoveGenerator.hasSameMoves(results[i], MoveGenerator.generateQueenMoves(boards[i], m));
+            if (!res) {
+                System.out.println("FEHLER! Index: " + i);
+            }
+            assertTrue(res);
+        }
+    }
+
 }

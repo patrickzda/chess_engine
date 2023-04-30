@@ -23,12 +23,58 @@ public class MoveGenerator {
         moves.add(promotionToKnight);
     }
 
-    public static Move[] generateKingMoves(Board current){
+    public static Move[] generateKingMoves(Board current, MoveMasks moveMasks){
         return new Move[0];
     }
 
-    public static Move[] generateQueenMoves(Board current){
-        return new Move[0];
+    public static Move[] generateQueenMoves(Board current, MoveMasks moveMasks){
+        ArrayList<Move> queenMoves = new ArrayList<Move>();
+        long currentTeam, blockers = current.whitePieces | current.blackPieces;;
+
+        if(current.getTurn() == Color.WHITE){
+            currentTeam = current.whitePieces;
+        }else{
+            currentTeam = current.blackPieces;
+        }
+        long queen = current.queens & currentTeam;
+
+        if(queen == 0L){
+            return new Move[0];
+        }
+
+        int queenIndex = Long.numberOfTrailingZeros(queen);
+
+        int maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH, queenIndex));
+        long result = (moveMasks.rays(Direction.NORTH, queenIndex) & ~moveMasks.rays(Direction.NORTH, maskedBlockerIndex)) & ~currentTeam;
+
+        maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_EAST, queenIndex));
+        result = result | (moveMasks.rays(Direction.NORTH_EAST, queenIndex) & ~moveMasks.rays(Direction.NORTH_EAST, maskedBlockerIndex)) & ~currentTeam;
+
+        maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.EAST, queenIndex));
+        result = result | (moveMasks.rays(Direction.EAST, queenIndex) & ~moveMasks.rays(Direction.EAST, maskedBlockerIndex)) & ~currentTeam;
+
+        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_EAST, queenIndex));
+        result = result | (moveMasks.rays(Direction.SOUTH_EAST, queenIndex) & ~moveMasks.rays(Direction.SOUTH_EAST, maskedBlockerIndex)) & ~currentTeam;
+
+        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH, queenIndex));
+        result = result | (moveMasks.rays(Direction.SOUTH, queenIndex) & ~moveMasks.rays(Direction.SOUTH, maskedBlockerIndex)) & ~currentTeam;
+
+        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_WEST, queenIndex));
+        result = result | (moveMasks.rays(Direction.SOUTH_WEST, queenIndex) & ~moveMasks.rays(Direction.SOUTH_WEST, maskedBlockerIndex)) & ~currentTeam;
+
+        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.WEST, queenIndex));
+        result = result | (moveMasks.rays(Direction.WEST, queenIndex) & ~moveMasks.rays(Direction.WEST, maskedBlockerIndex)) & ~currentTeam;
+
+        maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_WEST, queenIndex));
+        result = result | (moveMasks.rays(Direction.NORTH_WEST, queenIndex) & ~moveMasks.rays(Direction.NORTH_WEST, maskedBlockerIndex)) & ~currentTeam;
+
+        for(int i = 0; i < 64; i++){
+            if((result & (1L << i)) != 0L){
+                queenMoves.add(new Move(queenIndex, i, PieceType.QUEEN));
+            }
+        }
+
+        return queenMoves.toArray(new Move[0]);
     }
 
     public static Move[] generateRookMoves(Board current, MoveMasks moveMasks){
