@@ -25,7 +25,9 @@
     <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="MoveMasks: generierung für daigonale MoveMasks hinzugefügt&#10;MoveMasksTest: Tessts für alle implementierten Funktionen, bis jetzt nur mit Ausgabe auf der Konsole&#10;Direction: hinzugefügt">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/performance/MoveGeneratorPerformance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/performance/MoveGeneratorPerformance.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/engine/move_generation/MoveGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/move_generation/MoveGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/engine/representation/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/representation/Board.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/engine/representation/Move.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/representation/Move.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +65,12 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "main",
     "last_opened_file_path": "C:/Users/m00TT/Daten/UNI/PJ KI/chess_engine",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "settings.editor.selected.configurable": "tasks.servers"
   }
 }]]></component>

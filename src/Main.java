@@ -1,4 +1,6 @@
+import engine.move_generation.MoveGenerator;
 import engine.representation.Board;
+import engine.representation.Color;
 import engine.representation.Move;
 import engine.representation.PieceType;
 

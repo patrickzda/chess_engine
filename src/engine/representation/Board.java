@@ -9,6 +9,8 @@ public class Board {
     public long whitePieces, blackPieces, kings, queens, rooks, bishops, knights, pawns;
     private final ArrayList<Move> moves = new ArrayList<Move>();
 
+    private Color turn = Color.WHITE;
+
     public Board(){
         whitePieces = 65535L;
         blackPieces = -281474976710656L;
@@ -65,9 +67,7 @@ public class Board {
                 }
             }
         }
-        if(turn == Color.BLACK){
-            moves.add(new Move(0, 0, PieceType.ROOK));
-        }
+        this.turn = turn;
     }
 
     private String fillLeadingZeros(long l){
@@ -79,11 +79,7 @@ public class Board {
     }
 
     public Color getTurn(){
-        if(moves.size() % 2 == 0){
-            return Color.WHITE;
-        }else{
-            return Color.BLACK;
-        }
+        return turn;
     }
 
     public void doMove(Move move){
@@ -178,10 +174,12 @@ public class Board {
             whitePieces = whitePieces ^ startPositionMask;
             whitePieces = whitePieces | endPositionMask;
             blackPieces = blackPieces & ~endPositionMask;
+            turn = Color.BLACK;
         }else{
             blackPieces = blackPieces ^ startPositionMask;
             blackPieces = blackPieces | endPositionMask;
             whitePieces = whitePieces & ~endPositionMask;
+            turn = Color.WHITE;
         }
 
         moves.add(move);
@@ -197,7 +195,19 @@ public class Board {
         bishops = lastMove.bishops;
         knights = lastMove.knights;
         pawns = lastMove.pawns;
+        if(turn == Color.WHITE){
+            turn = Color.BLACK;
+        }else{
+            turn = Color.WHITE;
+        }
         moves.remove(moves.size() - 1);
+    }
+
+    public int lastMoveEnPassantPushIndex(){
+        if(moves.size() > 0 && moves.get(moves.size() - 1).isPawnTwoForward){
+            return moves.get(moves.size() - 1).getEndFieldIndex();
+        }
+        return -1;
     }
 
     public String toFENString(){

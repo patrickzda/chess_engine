@@ -24,4 +24,8 @@ public class Move {
         return pieceType;
     }
 
+    @Override
+    public String toString() {
+        return startFieldIndex + " -> " + endFieldIndex;
+    }
 }
