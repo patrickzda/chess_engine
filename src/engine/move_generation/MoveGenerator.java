@@ -26,6 +26,26 @@ public class MoveGenerator {
         moves.add(promotionToKnight);
     }
 
+    public static Move[] generateKingMoves(Board current){
+        return new Move[0];
+    }
+
+    public static Move[] generateQueenMoves(Board current){
+        return new Move[0];
+    }
+
+    public static Move[] generateRookMoves(Board current){
+        return new Move[0];
+    }
+
+    public static Move[] generateBishopMoves(Board current){
+        return new Move[0];
+    }
+
+    public static Move[] generateKnightMoves(Board current){
+        return new Move[0];
+    }
+
     public static Move[] generatePawnMoves(Board current){
         ArrayList<Move> pawnMoves = new ArrayList<Move>();
         long allPieces = current.whitePieces | current.blackPieces;
