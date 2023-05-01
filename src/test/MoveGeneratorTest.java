@@ -8,6 +8,8 @@ import engine.representation.Move;
 import engine.representation.PieceType;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 import static engine.representation.Color.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,19 +31,19 @@ public class MoveGeneratorTest {
         };
 
         Move[][] results = {
-                MoveGenerator.generateTestMoves(new long[] {0L, 0L}, new int[] {0, 7}, new PieceType[]{PieceType.ROOK, PieceType.ROOK}),
-                MoveGenerator.generateTestMoves(new long[] {578722409201797128L}, new int[] {35}, new PieceType[]{PieceType.ROOK}),
-                MoveGenerator.generateTestMoves(new long[] {1157687956502220816L}, new int[] {44}, new PieceType[]{PieceType.ROOK}),
-                MoveGenerator.generateTestMoves(new long[] {578737875244285952L, 18588887945232L}, new int[] {43, 36}, new PieceType[]{PieceType.ROOK, PieceType.ROOK}),
-                MoveGenerator.generateTestMoves(new long[] {8895012014088L, 1157680259651338240L}, new int[] {35, 44}, new PieceType[]{PieceType.ROOK, PieceType.ROOK}),
-                MoveGenerator.generateTestMoves(new long[] {1157684657697849344L, 72679952400L}, new int[] {44, 28}, new PieceType[]{PieceType.ROOK, PieceType.ROOK}),
-                MoveGenerator.generateTestMoves(new long[] {289385980052373504L, 17633117188L}, new int[] {42, 26}, new PieceType[]{PieceType.ROOK, PieceType.ROOK}),
-                MoveGenerator.generateTestMoves(new long[] {0L, 0L}, new int[] {0, 0}, new PieceType[]{PieceType.ROOK, PieceType.ROOK}),
-                MoveGenerator.generateTestMoves(new long[] {0L, 0L}, new int[] {0, 0}, new PieceType[]{PieceType.ROOK, PieceType.ROOK}),
+                generateTestMoves(new long[] {0L, 0L}, new int[] {0, 7}, new PieceType[]{PieceType.ROOK, PieceType.ROOK}),
+                generateTestMoves(new long[] {578722409201797128L}, new int[] {35}, new PieceType[]{PieceType.ROOK}),
+                generateTestMoves(new long[] {1157687956502220816L}, new int[] {44}, new PieceType[]{PieceType.ROOK}),
+                generateTestMoves(new long[] {578737875244285952L, 18588887945232L}, new int[] {43, 36}, new PieceType[]{PieceType.ROOK, PieceType.ROOK}),
+                generateTestMoves(new long[] {8895012014088L, 1157680259651338240L}, new int[] {35, 44}, new PieceType[]{PieceType.ROOK, PieceType.ROOK}),
+                generateTestMoves(new long[] {1157684657697849344L, 72679952400L}, new int[] {44, 28}, new PieceType[]{PieceType.ROOK, PieceType.ROOK}),
+                generateTestMoves(new long[] {289385980052373504L, 17633117188L}, new int[] {42, 26}, new PieceType[]{PieceType.ROOK, PieceType.ROOK}),
+                generateTestMoves(new long[] {0L, 0L}, new int[] {0, 0}, new PieceType[]{PieceType.ROOK, PieceType.ROOK}),
+                generateTestMoves(new long[] {0L, 0L}, new int[] {0, 0}, new PieceType[]{PieceType.ROOK, PieceType.ROOK}),
         };
 
         for (int i = 0; i < results.length; i++) {
-            assertTrue(MoveGenerator.hasSameMoves(results[i], MoveGenerator.generateRookMoves(boards[i], m)));
+            assertTrue(hasSameMoves(results[i], MoveGenerator.generateRookMoves(boards[i], m)));
         }
     }
 
@@ -62,19 +64,19 @@ public class MoveGeneratorTest {
         };
 
         Move[][] results = {
-                MoveGenerator.generateTestMoves(new long[] {0L, 0L}, new int[] {2, 5}, new PieceType[]{PieceType.BISHOP, PieceType.BISHOP}),
-                MoveGenerator.generateTestMoves(new long[] {-9205038694072573375L}, new int[] {27}, new PieceType[]{PieceType.BISHOP}),
-                MoveGenerator.generateTestMoves(new long[] {2455587783297826816L}, new int[] {43}, new PieceType[]{PieceType.BISHOP}),
-                MoveGenerator.generateTestMoves(new long[] {318944272720449L, 18279391301640L}, new int[] {27, 30}, new PieceType[]{PieceType.BISHOP, PieceType.BISHOP}),
-                MoveGenerator.generateTestMoves(new long[] {-8624392940535414784L, 4911175566587199744L}, new int[] {45, 44}, new PieceType[]{PieceType.BISHOP, PieceType.BISHOP}),
-                MoveGenerator.generateTestMoves(new long[] {70540545491968L}, new int[] {28}, new PieceType[]{PieceType.BISHOP}),
-                MoveGenerator.generateTestMoves(new long[] {4569847840768L}, new int[] {28}, new PieceType[]{PieceType.BISHOP}),
-                MoveGenerator.generateTestMoves(new long[] {0L, 0L}, new int[] {0, 0}, new PieceType[]{PieceType.BISHOP, PieceType.BISHOP}),
-                MoveGenerator.generateTestMoves(new long[] {0L, 0L}, new int[] {0, 0}, new PieceType[]{PieceType.BISHOP, PieceType.BISHOP}),
+                generateTestMoves(new long[] {0L, 0L}, new int[] {2, 5}, new PieceType[]{PieceType.BISHOP, PieceType.BISHOP}),
+                generateTestMoves(new long[] {-9205038694072573375L}, new int[] {27}, new PieceType[]{PieceType.BISHOP}),
+                generateTestMoves(new long[] {2455587783297826816L}, new int[] {43}, new PieceType[]{PieceType.BISHOP}),
+                generateTestMoves(new long[] {318944272720449L, 18279391301640L}, new int[] {27, 30}, new PieceType[]{PieceType.BISHOP, PieceType.BISHOP}),
+                generateTestMoves(new long[] {-8624392940535414784L, 4911175566587199744L}, new int[] {45, 44}, new PieceType[]{PieceType.BISHOP, PieceType.BISHOP}),
+                generateTestMoves(new long[] {70540545491968L}, new int[] {28}, new PieceType[]{PieceType.BISHOP}),
+                generateTestMoves(new long[] {4569847840768L}, new int[] {28}, new PieceType[]{PieceType.BISHOP}),
+                generateTestMoves(new long[] {0L, 0L}, new int[] {0, 0}, new PieceType[]{PieceType.BISHOP, PieceType.BISHOP}),
+                generateTestMoves(new long[] {0L, 0L}, new int[] {0, 0}, new PieceType[]{PieceType.BISHOP, PieceType.BISHOP}),
         };
 
         for (int i = 0; i < results.length; i++) {
-            assertTrue(MoveGenerator.hasSameMoves(results[i], MoveGenerator.generateBishopMoves(boards[i], m)));
+            assertTrue(hasSameMoves(results[i], MoveGenerator.generateBishopMoves(boards[i], m)));
         }
     }
 
@@ -95,24 +97,62 @@ public class MoveGeneratorTest {
         };
 
         Move[][] results = {
-                MoveGenerator.generateTestMoves(new long[] {0L}, new int[] {3}, new PieceType[]{PieceType.QUEEN}),
-                MoveGenerator.generateTestMoves(new long[] {4910072647826412836L}, new int[] {26}, new PieceType[]{PieceType.QUEEN}),
-                MoveGenerator.generateTestMoves(new long[] {-7902628846034972143L}, new int[] {36}, new PieceType[]{PieceType.QUEEN}),
-                MoveGenerator.generateTestMoves(new long[] {86134885893L}, new int[] {18}, new PieceType[]{PieceType.QUEEN}),
-                MoveGenerator.generateTestMoves(new long[] {4531621392L}, new int[] {18}, new PieceType[]{PieceType.QUEEN}),
-                MoveGenerator.generateTestMoves(new long[] {9381436070916L}, new int[] {3}, new PieceType[]{PieceType.QUEEN}),
-                MoveGenerator.generateTestMoves(new long[] {296149340215312384L}, new int[] {59}, new PieceType[]{PieceType.QUEEN}),
-                MoveGenerator.generateTestMoves(new long[] {0L}, new int[] {0}, new PieceType[]{PieceType.QUEEN}),
-                MoveGenerator.generateTestMoves(new long[] {0L}, new int[] {0}, new PieceType[]{PieceType.QUEEN}),
+                generateTestMoves(new long[] {0L}, new int[] {3}, new PieceType[]{PieceType.QUEEN}),
+                generateTestMoves(new long[] {4910072647826412836L}, new int[] {26}, new PieceType[]{PieceType.QUEEN}),
+                generateTestMoves(new long[] {-7902628846034972143L}, new int[] {36}, new PieceType[]{PieceType.QUEEN}),
+                generateTestMoves(new long[] {86134885893L}, new int[] {18}, new PieceType[]{PieceType.QUEEN}),
+                generateTestMoves(new long[] {4531621392L}, new int[] {18}, new PieceType[]{PieceType.QUEEN}),
+                generateTestMoves(new long[] {9381436070916L}, new int[] {3}, new PieceType[]{PieceType.QUEEN}),
+                generateTestMoves(new long[] {296149340215312384L}, new int[] {59}, new PieceType[]{PieceType.QUEEN}),
+                generateTestMoves(new long[] {0L}, new int[] {0}, new PieceType[]{PieceType.QUEEN}),
+                generateTestMoves(new long[] {0L}, new int[] {0}, new PieceType[]{PieceType.QUEEN}),
         };
 
         for (int i = 0; i < results.length; i++) {
-            boolean res = MoveGenerator.hasSameMoves(results[i], MoveGenerator.generateQueenMoves(boards[i], m));
+            boolean res = hasSameMoves(results[i], MoveGenerator.generateQueenMoves(boards[i], m));
             if (!res) {
                 System.out.println("FEHLER! Index: " + i);
             }
             assertTrue(res);
         }
+    }
+
+    // generiert ein Array von Move für Testzwecke ACHTUNG! alle 3 Argumente müssen die gleiche Anzahl an Elementen enthalten!
+    // params:  bitMasks: Bitmasken für alle Felder, auf die gezogen werden soll
+    //          indizes: indizes von denen jeder Move starten soll
+    //          pieces: die Spielfiguren, die diese Züge machen sollen
+    public static Move[] generateTestMoves(long[] bitMasks, int[] indizes, PieceType[] pieces) {
+        ArrayList<Move> testMoves = new ArrayList<Move>();
+
+        for (int i = 0; i < bitMasks.length; i++) {
+            for (int j = 0; j < 64; j++) {
+                long bit = (1L << j);
+                if ((bitMasks[i] & bit) != 0) {
+                    testMoves.add(new Move(indizes[i], Long.numberOfTrailingZeros(bitMasks[i] & bit), pieces[i]));
+                }
+            }
+        }
+
+        return testMoves.toArray(new Move[0]);
+    }
+
+    // Testet, ob in zwei Move-Arrays die gleichen Moves enthalten sind unabhängig von der Reihenfolge
+    // ACHTUNG! Es wird nicht überprüft, ob auch alle Flags gleich gesetzt sind! Es wird nur nach start und Endfeld und PieceType getestet
+    public static boolean hasSameMoves(Move[] moves1, Move[] moves2) {
+        boolean found;
+        for (Move move1: moves1) {
+            found = false;
+            for (Move move2: moves2) {
+                if ((move1.getStartFieldIndex() == move2.getStartFieldIndex()) && (move1.getEndFieldIndex() == move2.getEndFieldIndex()) && (move1.getPieceType() == move2.getPieceType())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

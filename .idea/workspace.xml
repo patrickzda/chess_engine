@@ -22,9 +22,13 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="MoveMasks: generierung für daigonale MoveMasks hinzugefügt&#10;MoveMasksTest: Tessts für alle implementierten Funktionen, bis jetzt nur mit Ausgabe auf der Konsole&#10;Direction: hinzugefügt">
+    <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="MoveMasks: Kleinen Index-Fehler gefixt.&#10;Movegenerator: generateRookMoves() fortgeführt">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/engine/move_generation/MoveGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/move_generation/MoveGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/engine/move_generation/MoveMasks.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/move_generation/MoveMasks.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/engine/representation/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/representation/Board.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/MoveGeneratorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/MoveGeneratorTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,19 +62,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/m00TT/Daten/UNI/PJ KI/chess_engine",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "settings.editor.selected.configurable": "tasks.servers"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/m00TT/Daten/UNI/PJ KI/chess_engine&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;tasks.servers&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.RecentsKey">
       <recent name="test" />
@@ -80,7 +86,7 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.MoveMasksTest">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="chess_engine" />
@@ -88,7 +94,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="BoardTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="MoveGeneratorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="chess_engine" />
       <extension name="coverage">
         <pattern>
@@ -97,7 +103,7 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="test" />
-      <option name="MAIN_CLASS_NAME" value="test.BoardTest" />
+      <option name="MAIN_CLASS_NAME" value="test.MoveGeneratorTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -152,11 +158,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.MoveMasksTest" />
         <item itemvalue="Application.Main" />
+        <item itemvalue="JUnit.MoveGeneratorTest" />
+        <item itemvalue="JUnit.MoveMasksTest" />
         <item itemvalue="JUnit.MoveMasksTest.MoveMasks" />
         <item itemvalue="JUnit.MoveMasksTest.rays" />
-        <item itemvalue="JUnit.BoardTest" />
       </list>
     </recent_temporary>
   </component>
@@ -186,6 +192,9 @@
       <workItem from="1682495295728" duration="282000" />
       <workItem from="1682496108990" duration="117000" />
       <workItem from="1682511761142" duration="1459000" />
+      <workItem from="1682845675748" duration="5854000" />
+      <workItem from="1682870865058" duration="257000" />
+      <workItem from="1682943870647" duration="4363000" />
     </task>
     <task id="LOCAL-00001" summary="Board: Brett kann ausgegeben werden.">
       <created>1682438269949</created>
@@ -236,7 +245,21 @@
       <option name="project" value="LOCAL" />
       <updated>1682603022811</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="MoveMasks: Kleinen Index-Fehler gefixt.&#10;Movegenerator: generateRookMoves() angefangen">
+      <created>1682848357100</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1682848357100</updated>
+    </task>
+    <task id="LOCAL-00009" summary="MoveMasks: Kleinen Index-Fehler gefixt.&#10;Movegenerator: generateRookMoves() fortgeführt">
+      <created>1682859607467</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1682859607467</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -261,7 +284,9 @@
     <MESSAGE value="BoardTest: Tests für den FEN-Parser und den FEN-Generator" />
     <MESSAGE value="MoveMasks: generierung für horizontale und vertikale MoveMasks hinzugefügt&#10;MoveMasksTest: hinzugefügt" />
     <MESSAGE value="MoveMasks: generierung für daigonale MoveMasks hinzugefügt&#10;MoveMasksTest: Tessts für alle implementierten Funktionen, bis jetzt nur mit Ausgabe auf der Konsole&#10;Direction: hinzugefügt" />
-    <option name="LAST_COMMIT_MESSAGE" value="MoveMasks: generierung für daigonale MoveMasks hinzugefügt&#10;MoveMasksTest: Tessts für alle implementierten Funktionen, bis jetzt nur mit Ausgabe auf der Konsole&#10;Direction: hinzugefügt" />
+    <MESSAGE value="MoveMasks: Kleinen Index-Fehler gefixt.&#10;Movegenerator: generateRookMoves() angefangen" />
+    <MESSAGE value="MoveMasks: Kleinen Index-Fehler gefixt.&#10;Movegenerator: generateRookMoves() fortgeführt" />
+    <option name="LAST_COMMIT_MESSAGE" value="MoveMasks: Kleinen Index-Fehler gefixt.&#10;Movegenerator: generateRookMoves() fortgeführt" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public class MoveGenerator {
 
     static final long notAFile = -72340172838076674L, notHFile = 9187201950435737471L, onlySecondRank = 65280L, onlySeventhRank = 71776119061217280L;
+    static final long whiteShortCastling = 96L, whiteLongCastling = 14L, blackShortCastling = 6917529027641081856L, blackLongCastling = 1008806316530991104L;
 
     private static void addPawnPromotions(int startIndex, int endIndex, ArrayList<Move> moves){
         Move promotionToQueen = new Move(startIndex, endIndex, PieceType.PAWN);
@@ -23,8 +24,89 @@ public class MoveGenerator {
         moves.add(promotionToKnight);
     }
 
-    public static Move[] generateKingMoves(Board current, MoveMasks moveMasks){
-        return new Move[0];
+    public static Move[] generateKingMoves(Board current){
+        ArrayList<Move> kingMoves = new ArrayList<Move>();
+        boolean hasKingMoved, hasShortRookMoved, hasLongRookMoved;
+        long currentTeam;
+        long shortCastlingMask, longCastlingMask;
+        Move shortCastle, longCastle;
+
+        if(current.getTurn() == Color.WHITE){
+            currentTeam = current.whitePieces;
+            hasKingMoved = current.getHasWhiteKingMoved();
+            hasShortRookMoved = current.getHasWhiteShortRookMoved();
+            hasLongRookMoved = current.getHasWhiteLongRookMoved();
+
+            shortCastlingMask = whiteShortCastling;
+            longCastlingMask = whiteLongCastling;
+            shortCastle = new Move(4, 6, PieceType.KING);
+            longCastle = new Move(4, 2, PieceType.KING);
+
+        }else{
+            currentTeam = current.blackPieces;
+            hasKingMoved = current.getHasBlackKingMoved();
+            hasShortRookMoved = current.getHasBlackShortRookMoved();
+            hasLongRookMoved = current.gettHasBlackLongRookMoved();
+
+            shortCastlingMask = blackShortCastling;
+            longCastlingMask = blackLongCastling;
+            shortCastle = new Move(60, 62, PieceType.KING);
+            longCastle = new Move(60, 58, PieceType.KING);
+        }
+        shortCastle.isCastling = true;
+        longCastle.isCastling = true;
+
+        long king = current.kings & currentTeam;
+        long possibleKingMoves = (king << 1 & notAFile) | (king << 7 & notHFile) | king << 8 | (king << 9 & notAFile) | (king >>> 1 & notHFile) | (king >>> 7 & notAFile) | king >>> 8 | (king >>> 9 & notHFile);
+        possibleKingMoves = possibleKingMoves & ~currentTeam;
+
+        MoveMasks.printBitBoard(possibleKingMoves);
+
+        int kingPosition = Long.numberOfTrailingZeros(king);
+
+        if((possibleKingMoves & (king << 1)) != 0){
+            kingMoves.add(new Move(kingPosition, kingPosition + 1, PieceType.KING));
+        }
+
+        if((possibleKingMoves & (king << 7)) != 0){
+            kingMoves.add(new Move(kingPosition, kingPosition + 7, PieceType.KING));
+        }
+
+        if((possibleKingMoves & (king << 8)) != 0){
+            kingMoves.add(new Move(kingPosition, kingPosition + 8, PieceType.KING));
+        }
+
+        if((possibleKingMoves & (king << 9)) != 0){
+            kingMoves.add(new Move(kingPosition, kingPosition + 9, PieceType.KING));
+        }
+
+        if((possibleKingMoves & (king >>> 1)) != 0){
+            kingMoves.add(new Move(kingPosition, kingPosition - 1, PieceType.KING));
+        }
+
+        if((possibleKingMoves & (king >>> 7)) != 0){
+            kingMoves.add(new Move(kingPosition, kingPosition - 7, PieceType.KING));
+        }
+
+        if((possibleKingMoves & (king >>> 8)) != 0){
+            kingMoves.add(new Move(kingPosition, kingPosition - 8, PieceType.KING));
+        }
+
+        if((possibleKingMoves & (king >>> 9)) != 0){
+            kingMoves.add(new Move(kingPosition, kingPosition - 9, PieceType.KING));
+        }
+
+        if(!hasKingMoved){
+            if(!hasShortRookMoved && ((current.whitePieces | current.blackPieces) & shortCastlingMask) == 0){
+                kingMoves.add(shortCastle);
+            }
+
+            if(!hasLongRookMoved && ((current.whitePieces | current.blackPieces) & longCastlingMask) == 0){
+                kingMoves.add(longCastle);
+            }
+        }
+
+        return kingMoves.toArray(new Move[0]);
     }
 
     public static Move[] generateQueenMoves(Board current, MoveMasks moveMasks){
@@ -319,44 +401,6 @@ public class MoveGenerator {
         }
         
         return pawnMoves.toArray(new Move[0]);
-    }
-
-    // generiert ein Array von Move für Testzwecke ACHTUNG! alle 3 Argumente müssen die gleiche Anzahl an Elementen enthalten!
-    // params:  bitMasks: Bitmasken für alle Felder, auf die gezogen werden soll
-    //          indizes: indizes von denen jeder Move starten soll
-    //          pieces: die Spielfiguren, die diese Züge machen sollen
-    public static Move[] generateTestMoves(long[] bitMasks, int[] indizes, PieceType[] pieces) {
-        ArrayList<Move> testMoves = new ArrayList<Move>();
-
-        for (int i = 0; i < bitMasks.length; i++) {
-            for (int j = 0; j < 64; j++) {
-                long bit = (1L << j);
-                if ((bitMasks[i] & bit) != 0) {
-                    testMoves.add(new Move(indizes[i], Long.numberOfTrailingZeros(bitMasks[i] & bit), pieces[i]));
-                }
-            }
-        }
-
-        return testMoves.toArray(new Move[0]);
-    }
-
-    // Testet, ob in zwei Move-Arrays die gleichen Moves enthalten sind unabhängig von der Reihenfolge
-    // ACHTUNG! Es wird nicht überprüft, ob auch alle Flags gleich gesetzt sind! Es wird nur nach start und Endfeld und PieceType getestet
-    public static boolean hasSameMoves(Move[] moves1, Move[] moves2) {
-        boolean found;
-        for (Move move1: moves1) {
-            found = false;
-            for (Move move2: moves2) {
-                if ((move1.getStartFieldIndex() == move2.getStartFieldIndex()) && (move1.getEndFieldIndex() == move2.getEndFieldIndex()) && (move1.getPieceType() == move2.getPieceType())) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                return false;
-            }
-        }
-        return true;
     }
 
 }

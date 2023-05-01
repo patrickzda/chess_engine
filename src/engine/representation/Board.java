@@ -8,8 +8,9 @@ public class Board {
     private final String[] pieceIdentifiers = new String[]{"K", "Q", "R", "B", "N", "P"};
     public long whitePieces, blackPieces, kings, queens, rooks, bishops, knights, pawns;
     private final ArrayList<Move> moves = new ArrayList<Move>();
-
     private Color turn = Color.WHITE;
+
+    private boolean hasWhiteKingMoved = false, hasBlackKingMoved = false, hasWhiteLongRookMoved = false, hasWhiteShortRookMoved = false, hasBlackLongRookMoved = false, hasBlackShortRookMoved = false;
 
     public Board(){
         whitePieces = 65535L;
@@ -82,6 +83,30 @@ public class Board {
         return turn;
     }
 
+    public boolean getHasWhiteKingMoved() {
+        return hasWhiteKingMoved;
+    }
+
+    public boolean getHasBlackKingMoved() {
+        return hasBlackKingMoved;
+    }
+
+    public boolean getHasWhiteLongRookMoved() {
+        return hasWhiteLongRookMoved;
+    }
+
+    public boolean getHasWhiteShortRookMoved() {
+        return hasWhiteShortRookMoved;
+    }
+
+    public boolean gettHasBlackLongRookMoved() {
+        return hasBlackLongRookMoved;
+    }
+
+    public boolean getHasBlackShortRookMoved() {
+        return hasBlackShortRookMoved;
+    }
+
     public void doMove(Move move){
         long startPositionMask = (1L << move.getStartFieldIndex());
         long endPositionMask = (1L << move.getEndFieldIndex());
@@ -105,6 +130,13 @@ public class Board {
             case KING:
                 kings = kings ^ startPositionMask;
                 kings = kings | endPositionMask;
+
+                if(turn == Color.WHITE){
+                    hasWhiteKingMoved = true;
+                }else{
+                    hasBlackKingMoved = true;
+                }
+
                 if(move.isCastling){
                     if(getTurn() == Color.WHITE){
                         if(move.getEndFieldIndex() == 6){
@@ -136,6 +168,21 @@ public class Board {
             case ROOK:
                 rooks = rooks ^ startPositionMask;
                 rooks = rooks | endPositionMask;
+
+                if(turn == Color.WHITE){
+                    if(move.getStartFieldIndex() == 0){
+                        hasWhiteLongRookMoved = true;
+                    }else if(move.getStartFieldIndex() == 7){
+                        hasWhiteShortRookMoved = true;
+                    }
+                }else{
+                    if(move.getStartFieldIndex() == 56){
+                        hasBlackLongRookMoved = true;
+                    }else if(move.getStartFieldIndex() == 63){
+                        hasBlackShortRookMoved = true;
+                    }
+                }
+
                 break;
             case BISHOP:
                 bishops = bishops ^ startPositionMask;
