@@ -26,9 +26,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/engine/move_generation/MoveGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/move_generation/MoveGenerator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/engine/move_generation/MoveMasks.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/move_generation/MoveMasks.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/engine/representation/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/representation/Board.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/MoveGeneratorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/MoveGeneratorTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -124,45 +121,11 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MoveMasksTest.MoveMasks" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="chess_engine" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="test.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="test" />
-      <option name="MAIN_CLASS_NAME" value="test.MoveMasksTest" />
-      <option name="METHOD_NAME" value="MoveMasks" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="MoveMasksTest.rays" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="chess_engine" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="test.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="test" />
-      <option name="MAIN_CLASS_NAME" value="test.MoveMasksTest" />
-      <option name="METHOD_NAME" value="rays" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.Main" />
         <item itemvalue="JUnit.MoveGeneratorTest" />
         <item itemvalue="JUnit.MoveMasksTest" />
-        <item itemvalue="JUnit.MoveMasksTest.MoveMasks" />
-        <item itemvalue="JUnit.MoveMasksTest.rays" />
       </list>
     </recent_temporary>
   </component>
@@ -194,7 +157,8 @@
       <workItem from="1682511761142" duration="1459000" />
       <workItem from="1682845675748" duration="5854000" />
       <workItem from="1682870865058" duration="257000" />
-      <workItem from="1682943870647" duration="4363000" />
+      <workItem from="1682943870647" duration="5232000" />
+      <workItem from="1683028102371" duration="11204000" />
     </task>
     <task id="LOCAL-00001" summary="Board: Brett kann ausgegeben werden.">
       <created>1682438269949</created>
