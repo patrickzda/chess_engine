@@ -22,11 +22,8 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="Movegenerator: Zugberechnung für das Rochieren angepasst, Zugberechnung für den Springer ist fertig, isAttacked() prüft, ob ein gegebenes Feld von einer gegebenen Farbe angegriffen wird (wichtig für Rochage + Legale Züge)&#10;Main: Random Code">
+    <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="Board: FEN-Strings besitzen nun die Farbe und die Rochade-Rechte&#10;Test-Dateien: Tests für das neue FEN-Format angepasst">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/engine/representation/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/representation/Board.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/BoardTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/BoardTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/MoveGeneratorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/MoveGeneratorTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -85,7 +82,7 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.BoardTest">
+  <component name="RunManager" selected="JUnit.MoveGeneratorTest.isAttacked">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="chess_engine" />
@@ -123,6 +120,22 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="MoveGeneratorTest.isAttacked" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="chess_engine" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="test" />
+      <option name="MAIN_CLASS_NAME" value="test.MoveGeneratorTest" />
+      <option name="METHOD_NAME" value="isAttacked" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="MoveMasksTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="chess_engine" />
       <extension name="coverage">
@@ -140,6 +153,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.MoveGeneratorTest.isAttacked" />
         <item itemvalue="JUnit.BoardTest" />
         <item itemvalue="JUnit.MoveGeneratorTest" />
         <item itemvalue="Application.Main" />
@@ -177,7 +191,7 @@
       <workItem from="1682870865058" duration="257000" />
       <workItem from="1682943870647" duration="5232000" />
       <workItem from="1683028102371" duration="11460000" />
-      <workItem from="1683103429657" duration="2306000" />
+      <workItem from="1683103429657" duration="3254000" />
     </task>
     <task id="LOCAL-00001" summary="Board: Brett kann ausgegeben werden.">
       <created>1682438269949</created>
@@ -249,7 +263,14 @@
       <option name="project" value="LOCAL" />
       <updated>1683043483636</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Board: FEN-Strings besitzen nun die Farbe und die Rochade-Rechte&#10;Test-Dateien: Tests für das neue FEN-Format angepasst">
+      <created>1683106072851</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1683106072851</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -277,7 +298,8 @@
     <MESSAGE value="MoveMasks: Kleinen Index-Fehler gefixt.&#10;Movegenerator: generateRookMoves() angefangen" />
     <MESSAGE value="MoveMasks: Kleinen Index-Fehler gefixt.&#10;Movegenerator: generateRookMoves() fortgeführt" />
     <MESSAGE value="Movegenerator: Zugberechnung für das Rochieren angepasst, Zugberechnung für den Springer ist fertig, isAttacked() prüft, ob ein gegebenes Feld von einer gegebenen Farbe angegriffen wird (wichtig für Rochage + Legale Züge)&#10;Main: Random Code" />
-    <option name="LAST_COMMIT_MESSAGE" value="Movegenerator: Zugberechnung für das Rochieren angepasst, Zugberechnung für den Springer ist fertig, isAttacked() prüft, ob ein gegebenes Feld von einer gegebenen Farbe angegriffen wird (wichtig für Rochage + Legale Züge)&#10;Main: Random Code" />
+    <MESSAGE value="Board: FEN-Strings besitzen nun die Farbe und die Rochade-Rechte&#10;Test-Dateien: Tests für das neue FEN-Format angepasst" />
+    <option name="LAST_COMMIT_MESSAGE" value="Board: FEN-Strings besitzen nun die Farbe und die Rochade-Rechte&#10;Test-Dateien: Tests für das neue FEN-Format angepasst" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
