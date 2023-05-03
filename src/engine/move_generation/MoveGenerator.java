@@ -12,8 +12,26 @@ public class MoveGenerator {
     private static final long whiteShortCastling = 96L, whiteLongCastling = 14L, blackShortCastling = 6917529027641081856L, blackLongCastling = 1008806316530991104L;
 
     public static Move[] generateLegalMoves(Board current, MoveMasks moveMasks){
-        //Pseudo-legale Züge generieren und anschließend prüfen, ob der eigene König nach dem Zug jeweils im Schach stehen würde
-        return new Move[0];
+        Move[] moves = generatePseudoLegalMoves(current, moveMasks);
+        ArrayList<Move> legalMoves = new ArrayList<Move>(moves.length);
+
+        for(int i = 0; i < moves.length; i++){
+            current.doMove(moves[i]);
+            if(current.getTurn() == Color.WHITE){
+                int blackKingIndex = Long.numberOfTrailingZeros(current.blackPieces & current.kings);
+                if(!isAttacked(current, moveMasks, blackKingIndex, Color.WHITE)){
+                    legalMoves.add(moves[i]);
+                }
+            }else{
+                int whiteKingIndex = Long.numberOfTrailingZeros(current.whitePieces & current.kings);
+                if(!isAttacked(current, moveMasks, whiteKingIndex, Color.BLACK)){
+                    legalMoves.add(moves[i]);
+                }
+            }
+            current.undoLastMove();
+        }
+
+        return legalMoves.toArray(new Move[0]);
     }
 
     public static Move[] generatePseudoLegalMoves(Board current, MoveMasks moveMasks){

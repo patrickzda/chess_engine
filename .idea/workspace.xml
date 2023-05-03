@@ -22,9 +22,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="Board: FEN-Strings besitzen nun die Farbe und die Rochade-Rechte&#10;Test-Dateien: Tests für das neue FEN-Format angepasst">
+    <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="MoveGeneratorTest: Test für isAttacked()">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/MoveGeneratorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/MoveGeneratorTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/engine/move_generation/MoveGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/move_generation/MoveGenerator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,7 +83,7 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.MoveGeneratorTest.isAttacked">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="chess_engine" />
@@ -153,10 +154,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Main" />
         <item itemvalue="JUnit.MoveGeneratorTest.isAttacked" />
         <item itemvalue="JUnit.BoardTest" />
         <item itemvalue="JUnit.MoveGeneratorTest" />
-        <item itemvalue="Application.Main" />
         <item itemvalue="JUnit.MoveMasksTest" />
       </list>
     </recent_temporary>
@@ -191,7 +192,7 @@
       <workItem from="1682870865058" duration="257000" />
       <workItem from="1682943870647" duration="5232000" />
       <workItem from="1683028102371" duration="11460000" />
-      <workItem from="1683103429657" duration="3254000" />
+      <workItem from="1683103429657" duration="7771000" />
     </task>
     <task id="LOCAL-00001" summary="Board: Brett kann ausgegeben werden.">
       <created>1682438269949</created>
@@ -270,7 +271,14 @@
       <option name="project" value="LOCAL" />
       <updated>1683106072851</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="MoveGeneratorTest: Test für isAttacked()">
+      <created>1683106759143</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1683106759143</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -299,7 +307,8 @@
     <MESSAGE value="MoveMasks: Kleinen Index-Fehler gefixt.&#10;Movegenerator: generateRookMoves() fortgeführt" />
     <MESSAGE value="Movegenerator: Zugberechnung für das Rochieren angepasst, Zugberechnung für den Springer ist fertig, isAttacked() prüft, ob ein gegebenes Feld von einer gegebenen Farbe angegriffen wird (wichtig für Rochage + Legale Züge)&#10;Main: Random Code" />
     <MESSAGE value="Board: FEN-Strings besitzen nun die Farbe und die Rochade-Rechte&#10;Test-Dateien: Tests für das neue FEN-Format angepasst" />
-    <option name="LAST_COMMIT_MESSAGE" value="Board: FEN-Strings besitzen nun die Farbe und die Rochade-Rechte&#10;Test-Dateien: Tests für das neue FEN-Format angepasst" />
+    <MESSAGE value="MoveGeneratorTest: Test für isAttacked()" />
+    <option name="LAST_COMMIT_MESSAGE" value="MoveGeneratorTest: Test für isAttacked()" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
