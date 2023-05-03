@@ -139,7 +139,13 @@ public class MoveGeneratorTest {
     // Testet, ob in zwei Move-Arrays die gleichen Moves enthalten sind unabhängig von der Reihenfolge
     // ACHTUNG! Es wird nicht überprüft, ob auch alle Flags gleich gesetzt sind! Es wird nur nach start und Endfeld und PieceType getestet
     public static boolean hasSameMoves(Move[] moves1, Move[] moves2) {
+
+        if (moves1.length != moves2.length) {
+            System.out.println("FEHLER! nicht die gleiche Anzahl an Moves!");
+            return false;
+        }
         boolean found;
+        boolean res = true;
         for (Move move1: moves1) {
             found = false;
             for (Move move2: moves2) {
@@ -149,10 +155,11 @@ public class MoveGeneratorTest {
                 }
             }
             if (!found) {
-                return false;
+                System.out.println("no match found for move: " + move1.toString());
+                res = false;
             }
         }
-        return true;
+        return res;
     }
 
     @Test
@@ -226,5 +233,37 @@ public class MoveGeneratorTest {
 
     @Test
     void generatePawnMoves() {
+        Board[] boards = {
+                new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"),
+                new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1"),
+                new Board("8/6P1/5P2/4P3/3P4/2P5/1P6/8 w - - 0 1"),
+                new Board("8/8/8/pppppppp/PPPPPPPP/8/8/8 w - - 0 1"),
+                new Board("8/8/8/pppppppp/PPPPPPPP/8/8/8 b - - 0 1"),
+                new Board("8/pppppppp/1P1P1P1P/P1P1P1P1/8/8/8/8 b - - 0 1"),
+                new Board("8/8/8/1p1p1p1p/p1p1p1p1/8/PPPPPPPP/8 w - - 0 1"),
+                new Board("rnbq1rk1/pp1pppbp/5np1/6B1/2Pp4/2N1PN2/PP3PPP/R2QKB1R w KQ - 0 7"),
+//                new Board(""),
+        };
+
+        Move[][] results = {
+                generateTestMoves(new long[] {16842752L, 33685504L, 67371008L, 134742016L, 269484032L, 538968064L, 1077936128L, 2155872256L}, new int[] {8, 9, 10, 11, 12, 13, 14, 15}, new PieceType[]{PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN}),
+                generateTestMoves(new long[] {1103806595072L, 2207613190144L, 4415226380288L, 8830452760576L, 17660905521152L, 35321811042304L, 70643622084608L, 141287244169216L}, new int[] {48, 49, 50, 51, 52, 53, 54, 55}, new PieceType[]{PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN}),
+                generateTestMoves(new long[] {33685504L, 67108864L, 34359738368L, 17592186044416L, 9007199254740992L, 4611686018427387904L, 4611686018427387904L, 4611686018427387904L, 4611686018427387904L}, new int[] {9, 18, 27, 36, 45, 54, 54, 54, 54}, new PieceType[]{PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN}),
+                generateTestMoves(new long[] {8589934592L, 21474836480L, 42949672960L, 85899345920L, 171798691840L, 343597383680L, 687194767360L, 274877906944L}, new int[] {24, 25, 26, 27, 28, 29, 30, 31}, new PieceType[]{PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN}),
+                generateTestMoves(new long[] {33554432L, 83886080L, 167772160L, 335544320L, 671088640L, 1342177280L, 2684354560L, 1073741824L}, new int[] {32, 33, 34, 35, 36, 37, 38, 39}, new PieceType[]{PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN}),
+                generateTestMoves(new long[] {3298534883328L, 0L, 15393162788864L, 0L, 61572651155456L, 0L, 246290604621824L, 0L}, new int[] {48, 49, 50, 51, 52, 53, 54, 55}, new PieceType[]{PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN}),
+                generateTestMoves(new long[] {65536L, 33685504L, 262144L, 134742016L, 1048576L, 538968064L, 4194304L, 2155872256L}, new int[] {8, 9, 10, 11, 12, 13, 14, 15}, new PieceType[]{PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN}),
+                generateTestMoves(new long[] {16842752L, 33685504L, 17179869184L, 402653184L, 1077936128L, 2155872256L}, new int[] {8, 9, 26, 20, 14, 15}, new PieceType[]{PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN}),
+//                generateTestMoves(new long[] {0L}, new int[] {0}, new PieceType[]{PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN, PieceType.PAWN}),
+        };
+
+        for (int i = 0; i < results.length; i++) {
+            boolean res = hasSameMoves(results[i], MoveGenerator.generatePawnMoves(boards[i]));
+            if (!res) {
+                System.out.println("FEHLER! Index: " + i);
+
+            }
+            assertTrue(res);
+        }
     }
 }
