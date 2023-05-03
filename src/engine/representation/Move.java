@@ -26,6 +26,6 @@ public class Move {
 
     @Override
     public String toString() {
-        return startFieldIndex + " -> " + endFieldIndex;
+        return pieceType + ": " + Board.indexToChessField(startFieldIndex) + "->" + Board.indexToChessField(endFieldIndex);
     }
 }

@@ -1,8 +1,12 @@
 package engine.representation;
 
+import engine.move_generation.MoveGenerator;
+import engine.move_generation.MoveMasks;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 
 public class Board {
 
@@ -12,6 +16,8 @@ public class Board {
     private Color turn = Color.WHITE;
 
     private boolean hasWhiteKingMoved = false, hasBlackKingMoved = false, hasWhiteLongRookMoved = false, hasWhiteShortRookMoved = false, hasBlackLongRookMoved = false, hasBlackShortRookMoved = false;
+
+    private long HILL_TOP = 103481868288L;
 
     public Board(){
         whitePieces = 65535L;
@@ -320,6 +326,47 @@ public class Board {
         }
 
         return result;
+    }
+
+    public boolean isKingOfTheHill() {
+        return ((kings & HILL_TOP) != 0);
+    }
+    public boolean isGameWon(MoveMasks moveMasks) {
+        boolean checkMate = false;
+        Color currentColor = getTurn();
+
+        Color otherColor;
+        if (currentColor == Color.WHITE) {
+            otherColor = Color.BLACK;
+        }
+        else {
+            otherColor = Color.WHITE;
+        }
+
+
+        Move[] moves = MoveGenerator.generateLegalMoves(this, moveMasks);
+        if (moves.length == 0) {
+            checkMate = true;
+        }
+
+        turn = otherColor;
+        moves = MoveGenerator.generateLegalMoves(this, moveMasks);
+        if (moves.length == 0) {
+            checkMate = true;
+        }
+
+        turn = currentColor;
+
+        return isKingOfTheHill() | checkMate;
+    }
+
+    public static String indexToChessField(int index) {
+        int rank = index % 8;
+        int file = index / 8;
+        String[] rows = {"1", "2", "3", "4", "5", "6", "7", "8"};
+        String[] cols = {"a", "b", "c", "d", "e", "f", "g", "h"};
+
+        return cols[rank] + rows[file];
     }
 
     @Override

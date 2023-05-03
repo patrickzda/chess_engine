@@ -191,6 +191,37 @@ public class MoveGeneratorTest {
 
     @Test
     void generateKnightMoves() {
+        Board[] boards = {
+                new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"),
+                new Board("8/8/2n2N2/8/8/2N2n2/8/8 w - - 0 1"),
+                new Board("8/8/2n2N2/8/8/2N2n2/8/8 b - - 0 1"),
+                new Board("1p1PP1p1/P2pp2P/2n2N2/pp1PP1pp/PP1pp1PP/2N2n2/p2PP2p/1P1pp1P1 w - - 0 1"),
+                new Board("1p1PP1p1/P2pp2P/2n2N2/pp1PP1pp/PP1pp1PP/2N2n2/p2PP2p/1P1pp1P1 b - - 0 1"),
+                new Board("8/8/1rrrrr2/1rRRRr2/1rRNRr2/1rRRRr2/1rrrrr2/8 w - - 0 1"),
+                new Board("8/8/1RRRRR2/1RrrrR2/1RrnrR2/1RrrrR2/1RRRRR2/8 b - - 0 1"),
+                new Board("6bQ/PP1NbpP1/Pp2kpRK/2P3rB/R2PpB1p/p1P3nP/r1pn1q1p/1N6 w - - 0 1"),
+                new Board("3BB2K/N1PpbpP1/pPp5/1Pq1Pbp1/3nPPrP/1RN1pnRQ/p2r3p/k7 b - - 0 1"),
+        };
+
+        Move[][] results = {
+                generateTestMoves(new long[] {327680L, 10485760L}, new int[] {1, 6}, new PieceType[] {PieceType.KNIGHT, PieceType.KNIGHT}),
+                generateTestMoves(new long[] {43234889994L, 5802888705324613632L}, new int[] {18, 45}, new PieceType[] {PieceType.KNIGHT, PieceType.KNIGHT}),
+                generateTestMoves(new long[] {725361088165576704L, 345879119952L}, new int[] {42, 21}, new PieceType[] {PieceType.KNIGHT, PieceType.KNIGHT}),
+                generateTestMoves(new long[] {8858370312L, 4613938368265322496L}, new int[] {18, 45}, new PieceType[] {PieceType.KNIGHT, PieceType.KNIGHT}),
+                generateTestMoves(new long[] {576742296033165312L, 70866962496L}, new int[] {42, 21}, new PieceType[] {PieceType.KNIGHT, PieceType.KNIGHT}),
+                generateTestMoves(new long[] {22136263676928L}, new int[] {27}, new PieceType[] {PieceType.KNIGHT}),
+                generateTestMoves(new long[] {22136263676928L}, new int[] {27}, new PieceType[] {PieceType.KNIGHT}),
+                generateTestMoves(new long[] {67584L, 2449995649404370944L}, new int[] {1, 51}, new PieceType[] {PieceType.KNIGHT, PieceType.KNIGHT}),
+                generateTestMoves(new long[] {17600776115200L, 70866960464L}, new int[] {27, 21}, new PieceType[] {PieceType.KNIGHT, PieceType.KNIGHT})
+        };
+
+        for (int i = 0; i < results.length; i++) {
+            boolean res = hasSameMoves(results[i], MoveGenerator.generateKnightMoves(boards[i]));
+            if (!res) {
+                System.out.println("FEHLER! Index: " + i);
+            }
+            assertTrue(res);
+        }
     }
 
     @Test
