@@ -22,10 +22,12 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="MoveMasks: Kleinen Index-Fehler gefixt.&#10;Movegenerator: generateRookMoves() fortgeführt">
+    <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="Movegenerator: Zugberechnung für das Rochieren angepasst, Zugberechnung für den Springer ist fertig, isAttacked() prüft, ob ein gegebenes Feld von einer gegebenen Farbe angegriffen wird (wichtig für Rochage + Legale Züge)&#10;Main: Random Code">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/engine/move_generation/MoveGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/move_generation/MoveGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/engine/representation/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/representation/Board.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/BoardTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/BoardTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/MoveGeneratorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/MoveGeneratorTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,10 +85,25 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="JUnit.BoardTest">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="chess_engine" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BoardTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="chess_engine" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="test" />
+      <option name="MAIN_CLASS_NAME" value="test.BoardTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -123,8 +140,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Main" />
+        <item itemvalue="JUnit.BoardTest" />
         <item itemvalue="JUnit.MoveGeneratorTest" />
+        <item itemvalue="Application.Main" />
         <item itemvalue="JUnit.MoveMasksTest" />
       </list>
     </recent_temporary>
@@ -158,7 +176,8 @@
       <workItem from="1682845675748" duration="5854000" />
       <workItem from="1682870865058" duration="257000" />
       <workItem from="1682943870647" duration="5232000" />
-      <workItem from="1683028102371" duration="11204000" />
+      <workItem from="1683028102371" duration="11460000" />
+      <workItem from="1683103429657" duration="2306000" />
     </task>
     <task id="LOCAL-00001" summary="Board: Brett kann ausgegeben werden.">
       <created>1682438269949</created>
@@ -223,7 +242,14 @@
       <option name="project" value="LOCAL" />
       <updated>1682859607467</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Movegenerator: Zugberechnung für das Rochieren angepasst, Zugberechnung für den Springer ist fertig, isAttacked() prüft, ob ein gegebenes Feld von einer gegebenen Farbe angegriffen wird (wichtig für Rochage + Legale Züge)&#10;Main: Random Code">
+      <created>1683043483636</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1683043483636</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -250,7 +276,8 @@
     <MESSAGE value="MoveMasks: generierung für daigonale MoveMasks hinzugefügt&#10;MoveMasksTest: Tessts für alle implementierten Funktionen, bis jetzt nur mit Ausgabe auf der Konsole&#10;Direction: hinzugefügt" />
     <MESSAGE value="MoveMasks: Kleinen Index-Fehler gefixt.&#10;Movegenerator: generateRookMoves() angefangen" />
     <MESSAGE value="MoveMasks: Kleinen Index-Fehler gefixt.&#10;Movegenerator: generateRookMoves() fortgeführt" />
-    <option name="LAST_COMMIT_MESSAGE" value="MoveMasks: Kleinen Index-Fehler gefixt.&#10;Movegenerator: generateRookMoves() fortgeführt" />
+    <MESSAGE value="Movegenerator: Zugberechnung für das Rochieren angepasst, Zugberechnung für den Springer ist fertig, isAttacked() prüft, ob ein gegebenes Feld von einer gegebenen Farbe angegriffen wird (wichtig für Rochage + Legale Züge)&#10;Main: Random Code" />
+    <option name="LAST_COMMIT_MESSAGE" value="Movegenerator: Zugberechnung für das Rochieren angepasst, Zugberechnung für den Springer ist fertig, isAttacked() prüft, ob ein gegebenes Feld von einer gegebenen Farbe angegriffen wird (wichtig für Rochage + Legale Züge)&#10;Main: Random Code" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -19,15 +19,15 @@ public class MoveGeneratorTest {
         MoveMasks m = new MoveMasks();
 
         Board[] boards = {
-                new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", WHITE),
-                new Board("8/8/4r3/3R4/8/8/8/8", WHITE),
-                new Board("8/8/4r3/3R4/8/8/8/8", BLACK),
-                new Board("8/8/3Rr3/3rR3/8/8/8/8", WHITE),
-                new Board("8/8/3Rr3/3rR3/8/8/8/8", BLACK),
-                new Board("8/8/2r1R3/8/2r1R3/8/8/8", WHITE),
-                new Board("8/8/2r1R3/8/2r1R3/8/8/8", BLACK),
-                new Board("rnbqkbnr/1pppppp1/8/8/8/8/1PPPPPP1/1NBQKBN1", WHITE),
-                new Board("1nbqkbn1/1pppppp1/8/8/8/8/1PPPPPP1/RNBQKBNR", BLACK),
+                new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w -"),
+                new Board("8/8/4r3/3R4/8/8/8/8 w -"),
+                new Board("8/8/4r3/3R4/8/8/8/8 b -"),
+                new Board("8/8/3Rr3/3rR3/8/8/8/8 w -"),
+                new Board("8/8/3Rr3/3rR3/8/8/8/8 b -"),
+                new Board("8/8/2r1R3/8/2r1R3/8/8/8 w -"),
+                new Board("8/8/2r1R3/8/2r1R3/8/8/8 b -"),
+                new Board("rnbqkbnr/1pppppp1/8/8/8/8/1PPPPPP1/1NBQKBN1 w -"),
+                new Board("1nbqkbn1/1pppppp1/8/8/8/8/1PPPPPP1/RNBQKBNR b -"),
         };
 
         Move[][] results = {
@@ -52,15 +52,15 @@ public class MoveGeneratorTest {
         MoveMasks m = new MoveMasks();
 
         Board[] boards = {
-                new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", WHITE),
-                new Board("8/8/3b4/8/3B4/8/8/8", WHITE),
-                new Board("8/8/3b4/8/3B4/8/8/8", BLACK),
-                new Board("8/8/4bb2/8/3B2B1/8/8/8", WHITE),
-                new Board("8/8/4bb2/8/3B2B1/8/8/8", BLACK),
-                new Board("8/1p5p/2P3p1/8/4B3/8/2p3P1/1p5p", WHITE),
-                new Board("8/1p5p/2P3p1/8/4b3/8/2p3P1/1p5p", BLACK),
-                new Board("rnbqkbnr/pppppppp/8/8/8/8/P1P2P1P/RN1QK1NR", WHITE),
-                new Board("rn1qk1nr/p1p2p1p/8/8/8/8/PPPPPPPP/RNBQKBNR", BLACK),
+                new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w -"),
+                new Board("8/8/3b4/8/3B4/8/8/8 w -"),
+                new Board("8/8/3b4/8/3B4/8/8/8 b -"),
+                new Board("8/8/4bb2/8/3B2B1/8/8/8 w -"),
+                new Board("8/8/4bb2/8/3B2B1/8/8/8 b -"),
+                new Board("8/1p5p/2P3p1/8/4B3/8/2p3P1/1p5p w -"),
+                new Board("8/1p5p/2P3p1/8/4b3/8/2p3P1/1p5p b -"),
+                new Board("rnbqkbnr/pppppppp/8/8/8/8/P1P2P1P/RN1QK1NR w -"),
+                new Board("rn1qk1nr/p1p2p1p/8/8/8/8/PPPPPPPP/RNBQKBNR b -"),
         };
 
         Move[][] results = {
@@ -85,15 +85,15 @@ public class MoveGeneratorTest {
         MoveMasks m = new MoveMasks();
 
         Board[] boards = {
-                new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", WHITE),
-                new Board("8/8/8/4q3/2Q5/8/8/8", WHITE),
-                new Board("8/8/8/4q3/2Q5/8/8/8", BLACK),
-                new Board("8/8/8/P1p1p3/8/P1Q1P3/8/p1p1P3", WHITE),
-                new Board("8/8/8/P1p1p3/8/P1q1P3/8/p1p1P3", BLACK),
-                new Board("rn1qkbnr/pp3ppp/3p4/8/8/8/PP3PPP/RN1QKBNR", WHITE),
-                new Board("rn1qkbnr/pp3ppp/3p4/8/8/8/PP3PPP/RN1QKBNR", BLACK),
-                new Board("rnbqkbnr/pppppppp/8/8/8/8/PP3PPP/RN2KBNR", WHITE),
-                new Board("rn2kbnr/pp3ppp/8/8/8/8/PPPPPPPP/RNBQKBNR", BLACK),
+                new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w -"),
+                new Board("8/8/8/4q3/2Q5/8/8/8 w -"),
+                new Board("8/8/8/4q3/2Q5/8/8/8 b -"),
+                new Board("8/8/8/P1p1p3/8/P1Q1P3/8/p1p1P3 w -"),
+                new Board("8/8/8/P1p1p3/8/P1q1P3/8/p1p1P3 b -"),
+                new Board("rn1qkbnr/pp3ppp/3p4/8/8/8/PP3PPP/RN1QKBNR w -"),
+                new Board("rn1qkbnr/pp3ppp/3p4/8/8/8/PP3PPP/RN1QKBNR b -"),
+                new Board("rnbqkbnr/pppppppp/8/8/8/8/PP3PPP/RN2KBNR w -"),
+                new Board("rn2kbnr/pp3ppp/8/8/8/8/PPPPPPPP/RNBQKBNR b -"),
         };
 
         Move[][] results = {

@@ -2,6 +2,7 @@ package engine.representation;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Board {
 
@@ -23,7 +24,9 @@ public class Board {
         pawns = 71776119061282560L;
     }
 
-    public Board(String fen, Color turn){
+    public Board(String fen){
+        String[] sections = fen.split(" ");
+
         fen = fen.replace("/", "");
         fen = fen.replace("8", "        ");
         fen = fen.replace("7", "       ");
@@ -68,7 +71,30 @@ public class Board {
                 }
             }
         }
-        this.turn = turn;
+
+        if(sections[1].equals("w")){
+            turn = Color.WHITE;
+        }else{
+            turn = Color.BLACK;
+        }
+
+        String castlingRights = sections[2];
+        if(!castlingRights.contains("K")){
+            hasWhiteShortRookMoved = true;
+        }
+        if(!castlingRights.contains("Q")){
+            hasWhiteLongRookMoved = true;
+        }
+        if(!castlingRights.contains("k")){
+            hasBlackShortRookMoved = true;
+        }
+        if(!castlingRights.contains("q")){
+            hasBlackLongRookMoved = true;
+        }
+        if(castlingRights.equals("-")){
+            hasWhiteKingMoved = true;
+            hasBlackKingMoved = true;
+        }
     }
 
     private String fillLeadingZeros(long l){
@@ -268,7 +294,32 @@ public class Board {
         result = result.replace("   ", "3");
         result = result.replace("  ", "2");
         result = result.replace(" ", "1");
-        return result.substring(0, result.length() - 1);
+        result = result.substring(0, result.length() - 1);
+
+        if(turn == Color.WHITE){
+            result = result + " w ";
+        }else{
+            result = result + " b ";
+        }
+
+        if(hasWhiteKingMoved && hasBlackKingMoved){
+            result = result + "-";
+        }else{
+            if(!hasWhiteKingMoved && !hasWhiteShortRookMoved){
+                result = result + "K";
+            }
+            if(!hasWhiteKingMoved && !hasWhiteLongRookMoved){
+                result = result + "Q";
+            }
+            if(!hasBlackKingMoved && !hasBlackShortRookMoved){
+                result = result + "k";
+            }
+            if(!hasBlackKingMoved && !hasBlackLongRookMoved){
+                result = result + "q";
+            }
+        }
+
+        return result;
     }
 
     @Override
