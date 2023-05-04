@@ -24,15 +24,18 @@ public class MoveGeneratorPerformance {
         long nanoElapsed = 0L;
         for (String fen : fens) {
             MoveMasks moveMasks = new MoveMasks();
+            Board board = new Board(fen);
+            String warmup = averageExecutionTime(board,moveMasks,passes/2);
+            System.out.println("Warmup: "+warmup);
             startMilliTime = System.currentTimeMillis();
             nanoStart = System.nanoTime();
-            perfomanceMoveGenerator(new Board(fen), moveMasks);
+            perfomanceMoveGenerator(board, moveMasks);
             nanoEnd = System.nanoTime();
             stopTime = System.currentTimeMillis();
             nanoElapsed = nanoEnd - nanoStart;
             elapsedTime = stopTime - startMilliTime;
             String averageTime = averageExecutionTime(new Board(fen), moveMasks, passes);
-            System.out.println("First execution with Board: "+fen+" took: " + elapsedTime+ " Nano Time: "+nanoElapsed);
+            System.out.println("First execution with Board: "+fen+" took: " + elapsedTime+ " Milli sec Nano Time: "+nanoElapsed);
             if (passes > 0) System.out.println("The Average of the Movegenerator with "+passes+" Executions with this Board is: " + averageTime);
         }
     }
@@ -56,6 +59,9 @@ public class MoveGeneratorPerformance {
     String averageExecutionTime(Board board,MoveMasks moveMasks, int passes){
         long[] times = new long[passes];
         long[] nanotimes = new long[passes];
+        for (int i = 0; i < passes; i++){
+            perfomanceMoveGenerator(board,moveMasks);
+        }
         for (int i = 0; i < passes; i++){
             long nanoStart = System.nanoTime();
             long startTime = System.currentTimeMillis();
