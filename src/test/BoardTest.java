@@ -152,7 +152,12 @@ class BoardTest {
 
     @Test
     void undoLastMove() {
-
+        Board testBoard = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w -");
+        Move nextMove = new Move(8, 16, PieceType.PAWN);
+        testBoard.doMove(nextMove);
+        assertEquals(testBoard.toFENString(), "rnbqkbnr/pppppppp/8/8/8/P7/1PPPPPPP/RNBQKBNR b -");
+        testBoard.undoLastMove();
+        assertEquals(testBoard.toFENString(), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w -");
     }
 
     @Test

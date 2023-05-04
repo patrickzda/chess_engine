@@ -25,7 +25,8 @@
     <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="MoveGeneratorTest: Test für isAttacked()">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/engine/move_generation/MoveGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/move_generation/MoveGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/performance/MoveGeneratorPerformance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/performance/MoveGeneratorPerformance.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/BoardTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/BoardTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +107,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MoveGeneratorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="BoardTest.getTurn" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="chess_engine" />
       <extension name="coverage">
         <pattern>
@@ -115,8 +116,25 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="test" />
-      <option name="MAIN_CLASS_NAME" value="test.MoveGeneratorTest" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="MAIN_CLASS_NAME" value="test.BoardTest" />
+      <option name="METHOD_NAME" value="getTurn" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BoardTest.undoLastMove" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="chess_engine" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="test" />
+      <option name="MAIN_CLASS_NAME" value="test.BoardTest" />
+      <option name="METHOD_NAME" value="undoLastMove" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -137,28 +155,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MoveMasksTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="chess_engine" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="test.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="test" />
-      <option name="MAIN_CLASS_NAME" value="test.MoveMasksTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.Main" />
+        <item itemvalue="JUnit.BoardTest.undoLastMove" />
+        <item itemvalue="JUnit.BoardTest.getTurn" />
         <item itemvalue="JUnit.MoveGeneratorTest.isAttacked" />
         <item itemvalue="JUnit.BoardTest" />
-        <item itemvalue="JUnit.MoveGeneratorTest" />
-        <item itemvalue="JUnit.MoveMasksTest" />
       </list>
     </recent_temporary>
   </component>
