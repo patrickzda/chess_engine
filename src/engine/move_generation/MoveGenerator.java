@@ -53,6 +53,16 @@ public class MoveGenerator {
         return moves.toArray(new Move[0]);
     }
 
+    public static ArrayList<Integer> getSetBitIndices(long l){
+        ArrayList<Integer> result = new ArrayList<Integer>(10);
+        for(int i = 0; i < 64; i++){
+            if((l & (1L << i)) != 0){
+                result.add(i);
+            }
+        }
+        return result;
+    }
+
     private static void addPawnPromotions(int startIndex, int endIndex, ArrayList<Move> moves){
         Move promotionToQueen = new Move(startIndex, endIndex, PieceType.PAWN);
         promotionToQueen.isPromotionToQueen = true;
@@ -229,35 +239,39 @@ public class MoveGenerator {
             return new Move[0];
         }
 
-        int queenIndex = Long.numberOfTrailingZeros(queen);
+        ArrayList<Integer> queenIndices = getSetBitIndices(queen);
 
-        int maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH, queenIndex));
-        long result = (moveMasks.rays(Direction.NORTH, queenIndex) & ~moveMasks.rays(Direction.NORTH, maskedBlockerIndex)) & ~currentTeam;
+        for(int i = 0; i < queenIndices.size(); i++){
+            int queenIndex = queenIndices.get(i);
 
-        maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_EAST, queenIndex));
-        result = result | (moveMasks.rays(Direction.NORTH_EAST, queenIndex) & ~moveMasks.rays(Direction.NORTH_EAST, maskedBlockerIndex)) & ~currentTeam;
+            int maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH, queenIndex));
+            long result = (moveMasks.rays(Direction.NORTH, queenIndex) & ~moveMasks.rays(Direction.NORTH, maskedBlockerIndex)) & ~currentTeam;
 
-        maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.EAST, queenIndex));
-        result = result | (moveMasks.rays(Direction.EAST, queenIndex) & ~moveMasks.rays(Direction.EAST, maskedBlockerIndex)) & ~currentTeam;
+            maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_EAST, queenIndex));
+            result = result | (moveMasks.rays(Direction.NORTH_EAST, queenIndex) & ~moveMasks.rays(Direction.NORTH_EAST, maskedBlockerIndex)) & ~currentTeam;
 
-        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_EAST, queenIndex));
-        result = result | (moveMasks.rays(Direction.SOUTH_EAST, queenIndex) & ~moveMasks.rays(Direction.SOUTH_EAST, maskedBlockerIndex)) & ~currentTeam;
+            maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.EAST, queenIndex));
+            result = result | (moveMasks.rays(Direction.EAST, queenIndex) & ~moveMasks.rays(Direction.EAST, maskedBlockerIndex)) & ~currentTeam;
 
-        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH, queenIndex));
-        result = result | (moveMasks.rays(Direction.SOUTH, queenIndex) & ~moveMasks.rays(Direction.SOUTH, maskedBlockerIndex)) & ~currentTeam;
+            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_EAST, queenIndex));
+            result = result | (moveMasks.rays(Direction.SOUTH_EAST, queenIndex) & ~moveMasks.rays(Direction.SOUTH_EAST, maskedBlockerIndex)) & ~currentTeam;
 
-        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_WEST, queenIndex));
-        result = result | (moveMasks.rays(Direction.SOUTH_WEST, queenIndex) & ~moveMasks.rays(Direction.SOUTH_WEST, maskedBlockerIndex)) & ~currentTeam;
+            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH, queenIndex));
+            result = result | (moveMasks.rays(Direction.SOUTH, queenIndex) & ~moveMasks.rays(Direction.SOUTH, maskedBlockerIndex)) & ~currentTeam;
 
-        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.WEST, queenIndex));
-        result = result | (moveMasks.rays(Direction.WEST, queenIndex) & ~moveMasks.rays(Direction.WEST, maskedBlockerIndex)) & ~currentTeam;
+            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_WEST, queenIndex));
+            result = result | (moveMasks.rays(Direction.SOUTH_WEST, queenIndex) & ~moveMasks.rays(Direction.SOUTH_WEST, maskedBlockerIndex)) & ~currentTeam;
 
-        maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_WEST, queenIndex));
-        result = result | (moveMasks.rays(Direction.NORTH_WEST, queenIndex) & ~moveMasks.rays(Direction.NORTH_WEST, maskedBlockerIndex)) & ~currentTeam;
+            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.WEST, queenIndex));
+            result = result | (moveMasks.rays(Direction.WEST, queenIndex) & ~moveMasks.rays(Direction.WEST, maskedBlockerIndex)) & ~currentTeam;
 
-        for(int i = 0; i < 64; i++){
-            if((result & (1L << i)) != 0L){
-                queenMoves.add(new Move(queenIndex, i, PieceType.QUEEN));
+            maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_WEST, queenIndex));
+            result = result | (moveMasks.rays(Direction.NORTH_WEST, queenIndex) & ~moveMasks.rays(Direction.NORTH_WEST, maskedBlockerIndex)) & ~currentTeam;
+
+            for(int j = 0; j < 64; j++){
+                if((result & (1L << j)) != 0L){
+                    queenMoves.add(new Move(queenIndex, j, PieceType.QUEEN));
+                }
             }
         }
 
@@ -279,46 +293,27 @@ public class MoveGenerator {
             return new Move[0];
         }
 
-        int firstRookIndex = 63 - Long.numberOfLeadingZeros(rooks), lastRookIndex = Long.numberOfTrailingZeros(rooks);
+        ArrayList<Integer> rookIndices = getSetBitIndices(rooks);
 
-        int maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH, firstRookIndex));
-        long result = (moveMasks.rays(Direction.NORTH, firstRookIndex) & ~moveMasks.rays(Direction.NORTH, maskedBlockerIndex)) & ~currentTeam;
+        for(int index = 0; index < rookIndices.size(); index++){
+            int currentRookIndex = rookIndices.get(index);
+            int maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH, currentRookIndex));
+            long result = (moveMasks.rays(Direction.NORTH, currentRookIndex) & ~moveMasks.rays(Direction.NORTH, maskedBlockerIndex)) & ~currentTeam;
 
-        maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.EAST, firstRookIndex));
-        result = result | (moveMasks.rays(Direction.EAST, firstRookIndex) & ~moveMasks.rays(Direction.EAST, maskedBlockerIndex)) & ~currentTeam;
+            maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.EAST, currentRookIndex));
+            result = result | (moveMasks.rays(Direction.EAST, currentRookIndex) & ~moveMasks.rays(Direction.EAST, maskedBlockerIndex)) & ~currentTeam;
 
-        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH, firstRookIndex));
-        result = result | (moveMasks.rays(Direction.SOUTH, firstRookIndex) & ~moveMasks.rays(Direction.SOUTH, maskedBlockerIndex)) & ~currentTeam;
+            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH, currentRookIndex));
+            result = result | (moveMasks.rays(Direction.SOUTH, currentRookIndex) & ~moveMasks.rays(Direction.SOUTH, maskedBlockerIndex)) & ~currentTeam;
 
-        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.WEST, firstRookIndex));
-        result = result | (moveMasks.rays(Direction.WEST, firstRookIndex) & ~moveMasks.rays(Direction.WEST, maskedBlockerIndex)) & ~currentTeam;
-
-        for(int i = 0; i < 64; i++){
-            if((result & (1L << i)) != 0L){
-                rookMoves.add(new Move(firstRookIndex, i, PieceType.ROOK));
-            }
-        }
-
-        if(firstRookIndex != lastRookIndex){
-            //Es gibt noch einen zweiten Turm
-            maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH, lastRookIndex));
-            result = (moveMasks.rays(Direction.NORTH, lastRookIndex) & ~moveMasks.rays(Direction.NORTH, maskedBlockerIndex)) & ~currentTeam;
-
-            maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.EAST, lastRookIndex));
-            result = result | (moveMasks.rays(Direction.EAST, lastRookIndex) & ~moveMasks.rays(Direction.EAST, maskedBlockerIndex)) & ~currentTeam;
-
-            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH, lastRookIndex));
-            result = result | (moveMasks.rays(Direction.SOUTH, lastRookIndex) & ~moveMasks.rays(Direction.SOUTH, maskedBlockerIndex)) & ~currentTeam;
-
-            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.WEST, lastRookIndex));
-            result = result | (moveMasks.rays(Direction.WEST, lastRookIndex) & ~moveMasks.rays(Direction.WEST, maskedBlockerIndex)) & ~currentTeam;
+            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.WEST, currentRookIndex));
+            result = result | (moveMasks.rays(Direction.WEST, currentRookIndex) & ~moveMasks.rays(Direction.WEST, maskedBlockerIndex)) & ~currentTeam;
 
             for(int i = 0; i < 64; i++){
                 if((result & (1L << i)) != 0L){
-                    rookMoves.add(new Move(lastRookIndex, i, PieceType.ROOK));
+                    rookMoves.add(new Move(currentRookIndex, i, PieceType.ROOK));
                 }
             }
-
         }
 
         return rookMoves.toArray(new Move[0]);
@@ -339,47 +334,28 @@ public class MoveGenerator {
             return new Move[0];
         }
 
-        //Bis zur If-Bedingung werden alle Züge für den ersten Läufer generiert, für den zweiten Läufer das Gleiche machen, statt firstBishopIndex -> lastBishopIndex
-        int firstBishopIndex = 63 - Long.numberOfLeadingZeros(bishops), lastBishopIndex = Long.numberOfTrailingZeros(bishops);
+        ArrayList<Integer> bishopIndices = getSetBitIndices(bishops);
 
-        int maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_EAST, firstBishopIndex));
-        long result = (moveMasks.rays(Direction.NORTH_EAST, firstBishopIndex) & ~moveMasks.rays(Direction.NORTH_EAST, maskedBlockerIndex)) & ~currentTeam;
+        for(int index = 0; index < bishopIndices.size(); index++){
+            int currentBishopIndex = bishopIndices.get(index);
 
-        maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_WEST, firstBishopIndex));
-        result = result | (moveMasks.rays(Direction.NORTH_WEST, firstBishopIndex) & ~moveMasks.rays(Direction.NORTH_WEST, maskedBlockerIndex)) & ~currentTeam;
+            int maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_EAST, currentBishopIndex));
+            long result = (moveMasks.rays(Direction.NORTH_EAST, currentBishopIndex) & ~moveMasks.rays(Direction.NORTH_EAST, maskedBlockerIndex)) & ~currentTeam;
 
-        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_EAST, firstBishopIndex));
-        result = result | (moveMasks.rays(Direction.SOUTH_EAST, firstBishopIndex) & ~moveMasks.rays(Direction.SOUTH_EAST, maskedBlockerIndex)) & ~currentTeam;
+            maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_WEST, currentBishopIndex));
+            result = result | (moveMasks.rays(Direction.NORTH_WEST, currentBishopIndex) & ~moveMasks.rays(Direction.NORTH_WEST, maskedBlockerIndex)) & ~currentTeam;
 
-        maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_WEST, firstBishopIndex));
-        result = result | (moveMasks.rays(Direction.SOUTH_WEST, firstBishopIndex) & ~moveMasks.rays(Direction.SOUTH_WEST, maskedBlockerIndex)) & ~currentTeam;
+            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_EAST, currentBishopIndex));
+            result = result | (moveMasks.rays(Direction.SOUTH_EAST, currentBishopIndex) & ~moveMasks.rays(Direction.SOUTH_EAST, maskedBlockerIndex)) & ~currentTeam;
 
-        for(int i = 0; i < 64; i++){
-            if((result & (1L << i)) != 0L){
-                bishopMoves.add(new Move(firstBishopIndex, i, PieceType.BISHOP));
-            }
-        }
-
-        if(firstBishopIndex != lastBishopIndex){
-            //Es gibt noch einen zweiten Läufer
-            maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_EAST, lastBishopIndex));
-            result = (moveMasks.rays(Direction.NORTH_EAST, lastBishopIndex) & ~moveMasks.rays(Direction.NORTH_EAST, maskedBlockerIndex)) & ~currentTeam;
-
-            maskedBlockerIndex = Long.numberOfTrailingZeros(blockers & moveMasks.rays(Direction.NORTH_WEST, lastBishopIndex));
-            result = result | (moveMasks.rays(Direction.NORTH_WEST, lastBishopIndex) & ~moveMasks.rays(Direction.NORTH_WEST, maskedBlockerIndex)) & ~currentTeam;
-
-            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_EAST, lastBishopIndex));
-            result = result | (moveMasks.rays(Direction.SOUTH_EAST, lastBishopIndex) & ~moveMasks.rays(Direction.SOUTH_EAST, maskedBlockerIndex)) & ~currentTeam;
-
-            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_WEST, lastBishopIndex));
-            result = result | (moveMasks.rays(Direction.SOUTH_WEST, lastBishopIndex) & ~moveMasks.rays(Direction.SOUTH_WEST, maskedBlockerIndex)) & ~currentTeam;
+            maskedBlockerIndex = 63 - Long.numberOfLeadingZeros(blockers & moveMasks.rays(Direction.SOUTH_WEST, currentBishopIndex));
+            result = result | (moveMasks.rays(Direction.SOUTH_WEST, currentBishopIndex) & ~moveMasks.rays(Direction.SOUTH_WEST, maskedBlockerIndex)) & ~currentTeam;
 
             for(int i = 0; i < 64; i++){
                 if((result & (1L << i)) != 0L){
-                    bishopMoves.add(new Move(lastBishopIndex, i, PieceType.BISHOP));
+                    bishopMoves.add(new Move(currentBishopIndex, i, PieceType.BISHOP));
                 }
             }
-
         }
 
         return bishopMoves.toArray(new Move[0]);
@@ -399,78 +375,45 @@ public class MoveGenerator {
             return new Move[0];
         }
 
-        int firstKnightIndex = 63 - Long.numberOfLeadingZeros(knights), lastKnightIndex = Long.numberOfTrailingZeros(knights);
-        long firstKnight = 1L << firstKnightIndex, lastKnight = 1L << lastKnightIndex;
+        ArrayList<Integer> knightIndices = getSetBitIndices(knights);
 
-        long possibleKnightMoves = ((firstKnight << 6) & notGHFile) | ((firstKnight << 10) & notABFile) | ((firstKnight << 15) & notHFile) | ((firstKnight << 17) & notAFile) | ((firstKnight >>> 6) & notABFile) | ((firstKnight >>> 10) & notGHFile) | ((firstKnight >>> 15) & notAFile) | ((firstKnight >>> 17) & notHFile);
-        possibleKnightMoves = possibleKnightMoves & ~currentTeam;
+        for(int index = 0; index < knightIndices.size(); index++){
+            int currentKnightIndex = knightIndices.get(index);
+            long currentKnight = 1L << currentKnightIndex;
 
-        if((possibleKnightMoves & (firstKnight << 6)) != 0){
-            knightMoves.add(new Move(firstKnightIndex, firstKnightIndex + 6, PieceType.KNIGHT));
-        }
-
-        if((possibleKnightMoves & (firstKnight << 10)) != 0){
-            knightMoves.add(new Move(firstKnightIndex, firstKnightIndex + 10, PieceType.KNIGHT));
-        }
-
-        if((possibleKnightMoves & (firstKnight << 15)) != 0){
-            knightMoves.add(new Move(firstKnightIndex, firstKnightIndex + 15, PieceType.KNIGHT));
-        }
-
-        if((possibleKnightMoves & (firstKnight << 17)) != 0){
-            knightMoves.add(new Move(firstKnightIndex, firstKnightIndex + 17, PieceType.KNIGHT));
-        }
-
-        if((possibleKnightMoves & (firstKnight >>> 6)) != 0){
-            knightMoves.add(new Move(firstKnightIndex, firstKnightIndex - 6, PieceType.KNIGHT));
-        }
-
-        if((possibleKnightMoves & (firstKnight >>> 10)) != 0){
-            knightMoves.add(new Move(firstKnightIndex, firstKnightIndex - 10, PieceType.KNIGHT));
-        }
-
-        if((possibleKnightMoves & (firstKnight >>> 15)) != 0){
-            knightMoves.add(new Move(firstKnightIndex, firstKnightIndex - 15, PieceType.KNIGHT));
-        }
-
-        if((possibleKnightMoves & (firstKnight >>> 17)) != 0){
-            knightMoves.add(new Move(firstKnightIndex, firstKnightIndex - 17, PieceType.KNIGHT));
-        }
-
-        if(firstKnightIndex != lastKnightIndex){
-            possibleKnightMoves = ((lastKnight << 6) & notGHFile) | ((lastKnight << 10) & notABFile) | ((lastKnight << 15) & notHFile) | ((lastKnight << 17) & notAFile) | ((lastKnight >>> 6) & notABFile) | ((lastKnight >>> 10) & notGHFile) | ((lastKnight >>> 15) & notAFile) | ((lastKnight >>> 17) & notHFile);
+            long possibleKnightMoves = ((currentKnight << 6) & notGHFile) | ((currentKnight << 10) & notABFile) | ((currentKnight << 15) & notHFile) | ((currentKnight << 17) & notAFile) | ((currentKnight >>> 6) & notABFile) | ((currentKnight >>> 10) & notGHFile) | ((currentKnight >>> 15) & notAFile) | ((currentKnight >>> 17) & notHFile);
             possibleKnightMoves = possibleKnightMoves & ~currentTeam;
 
-            if((possibleKnightMoves & (lastKnight << 6)) != 0){
-                knightMoves.add(new Move(lastKnightIndex, lastKnightIndex + 6, PieceType.KNIGHT));
+            if((possibleKnightMoves & (currentKnight << 6)) != 0){
+                knightMoves.add(new Move(currentKnightIndex, currentKnightIndex + 6, PieceType.KNIGHT));
             }
 
-            if((possibleKnightMoves & (lastKnight << 10)) != 0){
-                knightMoves.add(new Move(lastKnightIndex, lastKnightIndex + 10, PieceType.KNIGHT));
+            if((possibleKnightMoves & (currentKnight << 10)) != 0){
+                knightMoves.add(new Move(currentKnightIndex, currentKnightIndex + 10, PieceType.KNIGHT));
             }
 
-            if((possibleKnightMoves & (lastKnight << 15)) != 0){
-                knightMoves.add(new Move(lastKnightIndex, lastKnightIndex + 15, PieceType.KNIGHT));
+            if((possibleKnightMoves & (currentKnight << 15)) != 0){
+                knightMoves.add(new Move(currentKnightIndex, currentKnightIndex + 15, PieceType.KNIGHT));
             }
 
-            if((possibleKnightMoves & (lastKnight << 17)) != 0){
-                knightMoves.add(new Move(lastKnightIndex, lastKnightIndex + 17, PieceType.KNIGHT));
+            if((possibleKnightMoves & (currentKnight << 17)) != 0){
+                knightMoves.add(new Move(currentKnightIndex, currentKnightIndex + 17, PieceType.KNIGHT));
             }
 
-            if((possibleKnightMoves & (lastKnight >>> 6)) != 0){
-                knightMoves.add(new Move(lastKnightIndex, lastKnightIndex - 6, PieceType.KNIGHT));
+            if((possibleKnightMoves & (currentKnight >>> 6)) != 0){
+                knightMoves.add(new Move(currentKnightIndex, currentKnightIndex - 6, PieceType.KNIGHT));
             }
 
-            if((possibleKnightMoves & (lastKnight >>> 10)) != 0){
-                knightMoves.add(new Move(lastKnightIndex, lastKnightIndex - 10, PieceType.KNIGHT));
+            if((possibleKnightMoves & (currentKnight >>> 10)) != 0){
+                knightMoves.add(new Move(currentKnightIndex, currentKnightIndex - 10, PieceType.KNIGHT));
             }
 
-            if((possibleKnightMoves & (lastKnight >>> 15)) != 0){
-                knightMoves.add(new Move(lastKnightIndex, lastKnightIndex - 15, PieceType.KNIGHT));
+            if((possibleKnightMoves & (currentKnight >>> 15)) != 0){
+                knightMoves.add(new Move(currentKnightIndex, currentKnightIndex - 15, PieceType.KNIGHT));
             }
 
-            if((possibleKnightMoves & (lastKnight >>> 17)) != 0){
-                knightMoves.add(new Move(lastKnightIndex, lastKnightIndex - 17, PieceType.KNIGHT));
+            if((possibleKnightMoves & (currentKnight >>> 17)) != 0){
+                knightMoves.add(new Move(currentKnightIndex, currentKnightIndex - 17, PieceType.KNIGHT));
             }
         }
 

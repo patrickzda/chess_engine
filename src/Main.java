@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
-        Board b = new Board("6R1/p2r4/1b1ppp1p/p4q1P/3n1k2/2K5/7P/5n2 b - - 0 1");
+        Board b = new Board("7k/7q/5pqp/6p1/NP3P1P/1KP3P1/2B5/8 b - - 0 1");
 
         Move[] moves = MoveGenerator.generateLegalMoves(b, new MoveMasks());
 
