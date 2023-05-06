@@ -345,28 +345,33 @@ public class Board {
     public boolean isGameWon(MoveMasks moveMasks) {
         boolean checkMate = false;
         Color currentColor = getTurn();
+        long currentTeam, otherTeam;
 
         Color otherColor;
         if (currentColor == Color.WHITE) {
             otherColor = Color.BLACK;
+            currentTeam = whitePieces;
+            otherTeam = blackPieces;
         }
         else {
             otherColor = Color.WHITE;
+            currentTeam = blackPieces;
+            otherTeam = whitePieces;
         }
 
 
         Move[] moves = MoveGenerator.generateLegalMoves(this, moveMasks);
-        if (moves.length == 0) {
+        if (moves.length == 0 && MoveGenerator.isAttacked(this, moveMasks, Long.numberOfTrailingZeros(kings & currentTeam), otherColor)) {
             checkMate = true;
         }
 
-        turn = otherColor;
-        moves = MoveGenerator.generateLegalMoves(this, moveMasks);
-        if (moves.length == 0) {
-            checkMate = true;
-        }
-
-        turn = currentColor;
+//        turn = otherColor;
+//        moves = MoveGenerator.generateLegalMoves(this, moveMasks);
+//        if (moves.length == 0 && MoveGenerator.isAttacked(this, moveMasks, Long.numberOfTrailingZeros(kings & enemyTeam), currentColor)) {
+//            checkMate = true;
+//        }
+//
+//        turn = currentColor;
 
         return isKingOfTheHill() | checkMate;
     }

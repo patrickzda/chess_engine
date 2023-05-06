@@ -1,5 +1,6 @@
 package test;
 
+import engine.move_generation.MoveMasks;
 import engine.representation.Board;
 import engine.representation.Color;
 import engine.representation.Move;
@@ -163,5 +164,26 @@ class BoardTest {
     @Test
     void testToString() {
         assert(true);
+    }
+
+    @Test
+    void isGameWon() {
+        MoveMasks m = new MoveMasks();
+        Board[] boards = {
+                new Board("3R3k/5p2/4NN2/2P5/6p1/8/P4PPP/R5K1 b - - 1 39"),
+                new Board("7k/5p2/4NN2/2P5/6p1/8/P2R1PPP/R5K1 w - - 0 39"),
+                new Board("8/k6p/8/7K/8/8/7r/6q1 w - - 8 56"),
+                new Board("8/k6p/8/7K/8/8/5r2/6q1 b - - 7 55"),
+                new Board("2r1nr2/R5pp/k1N5/2q5/2P3P1/1P1P4/P4PQP/6K1 b - - 0 29"),
+                new Board("7k/8/8/4p3/4P3/1r6/1r6/K7 w - - 0 1")
+        };
+
+        boolean[] results = {
+                true, false, true, false, false, false
+        };
+
+        for(int i = 0; i < results.length; i++){
+            assertEquals(results[i], boards[i].isGameWon(m));
+        }
     }
 }

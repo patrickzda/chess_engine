@@ -1,3 +1,4 @@
+import engine.ai.Evaluation;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.Board;
@@ -15,17 +16,56 @@ public class Main {
         //MoveGeneratorPerformance moveGeneratorPerformance = new MoveGeneratorPerformance();
         //moveGeneratorPerformance.performanceMovegenratorOnBoards(fens,100000);
 
+        int MAX_MOVES = 1000;
+
         Board board = new Board();
         MoveMasks masks = new MoveMasks();
-        Random random = new Random();
+        int bestScore = Integer.MIN_VALUE;
         int counter = 0;
+        int evaluation;
+        Random random = new Random();
+
+        ArrayList<Move> bestMoves = new ArrayList<>();
 
         Move[] legalMoves = MoveGenerator.generateLegalMoves(board, masks);
-        while(legalMoves.length > 0 && !board.isKingOfTheHill() && counter < 40){
-            board.doMove(legalMoves[random.nextInt(legalMoves.length)]);
+        while(legalMoves.length > 0 && !board.isGameWon(masks) && counter < MAX_MOVES){
+
+            for (int i = 0; i < legalMoves.length; i++) {
+                board.doMove(legalMoves[i]);
+                evaluation = -Evaluation.evaluate(board);
+                if (evaluation > bestScore) {
+                    bestMoves = new ArrayList<>();
+                    bestMoves.add(legalMoves[i]);
+                    bestScore = evaluation;
+                }
+                else if (evaluation == bestScore) {
+                    bestMoves.add(legalMoves[i]);
+                }
+                board.undoLastMove();
+            }
+            board.doMove(bestMoves.get(random.nextInt(bestMoves.size())));
+
             System.out.println(board.toFENString());
+
             legalMoves = MoveGenerator.generateLegalMoves(board, masks);
             counter++;
+            bestScore = Integer.MIN_VALUE;
+        }
+        if (board.isGameWon(masks)) {
+            if (board.getTurn() ==Color.WHITE) {
+                System.out.print("BLACK ");
+            }
+            else System.out.print("WHITE ");
+
+            System.out.println("hat nach " + counter + " Zügen gewonnen!");
+        }
+        else {
+            if (counter >= MAX_MOVES) {
+                System.out.println("Das dauert mir hier alles zu lange...");
+            }
+            else {
+                System.out.println("Unentschieden nach " + counter + " Zügen");
+            }
         }
     }
 }
