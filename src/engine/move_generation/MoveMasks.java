@@ -20,7 +20,7 @@ public class MoveMasks {
     private long VERTICAL = 72340172838076673L;
     private long ZEROS = 0L;
 
-    // generiert alle möglichen horizontalen, vertikalen , Diagonalen und Anti-Diagonalen einmalig, um so schnell
+    // generiert alle möglichen horizontalen, vertikalen, Diagonalen und Anti-Diagonalen einmalig, um so schnell
     // die Rays zu berechnen
     public MoveMasks() {
         for (int i = 0; i < 8; i++) {

@@ -19,22 +19,22 @@ public class Evaluation {
 
     // Bewertet primitiv eine gegebene Schachstellung. Alle Figuren, die am Zug sind, werden mit ihren Wertigkeiten
     // multipliziert und die Ergebnisse aufsummiert. Davon wird dann die Wertigkeit des gegnerischen Teams abgezogen.
-    public static int evaluate(Board b) {
+    public static int evaluate(Board board) {
         long ownBoard, enemyBoard;
-        if (b.getTurn() == WHITE) {
-            ownBoard = b.whitePieces;
-            enemyBoard = b.blackPieces;
+        if (board.getTurn() == WHITE) {
+            ownBoard = board.whitePieces;
+            enemyBoard = board.blackPieces;
         }
         else {
-            ownBoard = b.blackPieces;
-            enemyBoard = b.whitePieces;
+            ownBoard = board.blackPieces;
+            enemyBoard = board.whitePieces;
         }
 
-        int value = (getSetBits(ownBoard & b.pawns) - getSetBits(enemyBoard & b.pawns)) * PAWN_VALUE;
-        value = value + (getSetBits(ownBoard & b.knights) - getSetBits(enemyBoard & b.knights)) * KNIGHT_VALUE;
-        value = value + (getSetBits(ownBoard & b.bishops) - getSetBits(enemyBoard & b.bishops)) * BISHOP_VALUE;
-        value = value + (getSetBits(ownBoard & b.rooks) - getSetBits(enemyBoard & b.rooks)) * ROOK_VALUE;
-        value = value + (getSetBits(ownBoard & b.queens) - getSetBits(enemyBoard & b.queens)) * QUEEN_VALUE;
+        int value = (getSetBits(ownBoard & board.pawns) - getSetBits(enemyBoard & board.pawns)) * PAWN_VALUE;
+        value = value + (getSetBits(ownBoard & board.knights) - getSetBits(enemyBoard & board.knights)) * KNIGHT_VALUE;
+        value = value + (getSetBits(ownBoard & board.bishops) - getSetBits(enemyBoard & board.bishops)) * BISHOP_VALUE;
+        value = value + (getSetBits(ownBoard & board.rooks) - getSetBits(enemyBoard & board.rooks)) * ROOK_VALUE;
+        value = value + (getSetBits(ownBoard & board.queens) - getSetBits(enemyBoard & board.queens)) * QUEEN_VALUE;
 
         return value;
     }

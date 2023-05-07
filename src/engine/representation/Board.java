@@ -339,7 +339,7 @@ public class Board {
         return result;
     }
 
-    public boolean isKingOfTheHill() {
+    private boolean isKingOfTheHill() {
         return ((kings & HILL_TOP) != 0);
     }
     public boolean isGameWon(MoveMasks moveMasks) {
