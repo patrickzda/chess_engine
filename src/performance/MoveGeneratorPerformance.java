@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public class MoveGeneratorPerformance {
 
-    public void FunktionToTest(){
+    public void funktionToTest(){
         fillArray();
     }
 
