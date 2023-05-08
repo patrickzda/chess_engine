@@ -9,15 +9,12 @@ import java.util.Arrays;
 
 
 public class Board {
-
     private final String[] pieceIdentifiers = new String[]{"K", "Q", "R", "B", "N", "P"};
     public long whitePieces, blackPieces, kings, queens, rooks, bishops, knights, pawns;
     private final ArrayList<Move> moves = new ArrayList<Move>();
     private Color turn = Color.WHITE;
-
     private boolean hasWhiteKingMoved = false, hasBlackKingMoved = false, hasWhiteLongRookMoved = false, hasWhiteShortRookMoved = false, hasBlackLongRookMoved = false, hasBlackShortRookMoved = false;
-
-    private long HILL_TOP = 103481868288L;
+    private final long HILL_TOP = 103481868288L;
 
     public Board(){
         whitePieces = 65535L;
@@ -152,6 +149,14 @@ public class Board {
         move.knights = knights;
         move.pawns = pawns;
 
+        move.hasWhiteKingMoved = hasWhiteKingMoved;
+        move.hasWhiteLongRookMoved = hasWhiteLongRookMoved;
+        move.hasWhiteShortRookMoved = hasWhiteShortRookMoved;
+
+        move.hasBlackKingMoved = hasBlackKingMoved;
+        move.hasBlackLongRookMoved = hasBlackLongRookMoved;
+        move.hasBlackShortRookMoved = hasBlackShortRookMoved;
+
         queens = queens & ~endPositionMask;
         rooks = rooks & ~endPositionMask;
         bishops = bishops & ~endPositionMask;
@@ -274,6 +279,12 @@ public class Board {
         bishops = lastMove.bishops;
         knights = lastMove.knights;
         pawns = lastMove.pawns;
+        hasWhiteKingMoved = lastMove.hasWhiteKingMoved;
+        hasWhiteLongRookMoved = lastMove.hasWhiteLongRookMoved;
+        hasWhiteShortRookMoved = lastMove.hasWhiteShortRookMoved;
+        hasBlackKingMoved = lastMove.hasBlackKingMoved;
+        hasBlackLongRookMoved = lastMove.hasBlackLongRookMoved;
+        hasBlackShortRookMoved = lastMove.hasBlackShortRookMoved;
         if(turn == Color.WHITE){
             turn = Color.BLACK;
         }else{
@@ -328,34 +339,39 @@ public class Board {
         return result;
     }
 
-    public boolean isKingOfTheHill() {
+    private boolean isKingOfTheHill() {
         return ((kings & HILL_TOP) != 0);
     }
     public boolean isGameWon(MoveMasks moveMasks) {
         boolean checkMate = false;
         Color currentColor = getTurn();
+        long currentTeam, otherTeam;
 
         Color otherColor;
         if (currentColor == Color.WHITE) {
             otherColor = Color.BLACK;
+            currentTeam = whitePieces;
+            otherTeam = blackPieces;
         }
         else {
             otherColor = Color.WHITE;
+            currentTeam = blackPieces;
+            otherTeam = whitePieces;
         }
 
 
         Move[] moves = MoveGenerator.generateLegalMoves(this, moveMasks);
-        if (moves.length == 0) {
+        if (moves.length == 0 && MoveGenerator.isAttacked(this, moveMasks, Long.numberOfTrailingZeros(kings & currentTeam), otherColor)) {
             checkMate = true;
         }
 
-        turn = otherColor;
-        moves = MoveGenerator.generateLegalMoves(this, moveMasks);
-        if (moves.length == 0) {
-            checkMate = true;
-        }
-
-        turn = currentColor;
+//        turn = otherColor;
+//        moves = MoveGenerator.generateLegalMoves(this, moveMasks);
+//        if (moves.length == 0 && MoveGenerator.isAttacked(this, moveMasks, Long.numberOfTrailingZeros(kings & enemyTeam), currentColor)) {
+//            checkMate = true;
+//        }
+//
+//        turn = currentColor;
 
         return isKingOfTheHill() | checkMate;
     }
