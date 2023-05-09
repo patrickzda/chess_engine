@@ -4,18 +4,12 @@ package performance;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.Board;
-import engine.representation.Move;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MoveGeneratorPerformance {
 
-    public void funktionToTest(){
-        fillArray();
-    }
-
-    public void performanceMovegenratorOnBoards(String[] fens,int passes){
+    public void measureAveragePerformanceOnBoards(String[] fens, int passes){
         long startMilliTime = 0L;
         long stopTime = 0L;
         long elapsedTime = 0L;
@@ -29,7 +23,7 @@ public class MoveGeneratorPerformance {
             System.out.println("Warmup: "+warmup);
             startMilliTime = System.currentTimeMillis();
             nanoStart = System.nanoTime();
-            perfomanceMoveGenerator(board, moveMasks);
+            MoveGenerator.generateLegalMoves(board, moveMasks);
             nanoEnd = System.nanoTime();
             stopTime = System.currentTimeMillis();
             nanoElapsed = nanoEnd - nanoStart;
@@ -39,57 +33,39 @@ public class MoveGeneratorPerformance {
             if (passes > 0) System.out.println("The Average of the Movegenerator with "+passes+" Executions with this Board is: " + averageTime);
         }
     }
-    public void perfomanceMoveGenerator(Board board, MoveMasks movemask){
-        MoveGenerator.generateLegalMoves(board, movemask);
-    }
 
-    public void fillArray(){
-        String arr[] = new String[100000000];
-        for (int i = 0; i < arr.length; i++){
-            arr[i] = "hello_"+i ;
-        }
-    }
-    public void fillArrayList(){
-        ArrayList<String> arr = new ArrayList<String>();
-        for (int i = 0; i < 100000000; i++){
-            arr.add("hello_"+i);
-        }
-    }
-
-    String averageExecutionTime(Board board,MoveMasks moveMasks, int passes){
+    private String averageExecutionTime(Board board,MoveMasks moveMasks, int passes){
         long[] times = new long[passes];
-        long[] nanotimes = new long[passes];
+        long[] nanoTimes = new long[passes];
         for (int i = 0; i < passes; i++){
-            perfomanceMoveGenerator(board,moveMasks);
+            MoveGenerator.generateLegalMoves(board,moveMasks);
         }
         for (int i = 0; i < passes; i++){
             long nanoStart = System.nanoTime();
             long startTime = System.currentTimeMillis();
-            perfomanceMoveGenerator(board,moveMasks);
+            MoveGenerator.generateLegalMoves(board,moveMasks);
             long nanoEnd = System.nanoTime();
             long stopTime = System.currentTimeMillis();
             long elapsedTime = stopTime - startTime;
             long nanoElapsed = nanoEnd -nanoStart;
             times[i] = elapsedTime;
-            nanotimes[i] = nanoElapsed;
+            nanoTimes[i] = nanoElapsed;
         }
-        long nanoAvg = findAverage(nanotimes);
+        long nanoAvg = findAverage(nanoTimes);
         long avg = findAverage(times);
-        return ""+avg+" milli sec nanosecAvg: "+nanoAvg;
+        return avg+" milli sec nanosecAvg: "+nanoAvg;
     }
-    public static long findAverage(long[] array){
-        long sum = findSumWithoutUsingStream(array);
+    private static long findAverage(long[] array){
+        long sum = findSum(array);
         long res = sum / array.length;
         return res;
     }
-    public static long findSumWithoutUsingStream(long[] array) {
+    private static long findSum(long[] array) {
         long sum = 0;
         for (long value : array) {
             sum += value;
         }
         return sum;
     }
-
-
 
 }

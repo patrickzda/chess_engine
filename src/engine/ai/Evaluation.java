@@ -6,10 +6,6 @@ import engine.representation.Board;
 import static engine.representation.Color.*;
 
 public class Evaluation {
-    /*
-    Enthält unterschiedliche Methoden, um eine übergebene Stellung zu analysieren.
-    Für den Anfang sollte eine Methode, die einfach nur den Materialunterschied zwischen den Spielenden berechnet, ausreichen?
-     */
 
     static int PAWN_VALUE = 1;
     static int KNIGHT_VALUE = 3;
@@ -21,7 +17,7 @@ public class Evaluation {
     // multipliziert und die Ergebnisse aufsummiert. Davon wird dann die Wertigkeit des gegnerischen Teams abgezogen.
     public static int evaluate(Board board) {
         long ownBoard, enemyBoard;
-        if (board.getTurn() == WHITE) {
+        if (board.getTurn() == BLACK) {
             ownBoard = board.whitePieces;
             enemyBoard = board.blackPieces;
         }

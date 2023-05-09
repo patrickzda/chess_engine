@@ -24,7 +24,12 @@
   <component name="ChangeListManager">
     <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="MoveGeneratorTest: Test für isAttacked()">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PJ_KI_MST1.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/PJ_KI_MST1.pptx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/engine/ai/Evaluation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/ai/Evaluation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/engine/representation/Move.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/representation/Move.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/performance/MoveGeneratorPerformance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/performance/MoveGeneratorPerformance.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/EvaluationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/EvaluationTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,25 +87,10 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="JUnit.EvaluationTest">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="chess_engine" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="BoardTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="chess_engine" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="test.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="test" />
-      <option name="MAIN_CLASS_NAME" value="test.BoardTest" />
-      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -137,6 +127,21 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="EvaluationTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="chess_engine" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="test" />
+      <option name="MAIN_CLASS_NAME" value="test.EvaluationTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="MoveGeneratorTest.isAttacked" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="chess_engine" />
       <extension name="coverage">
@@ -155,11 +160,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.EvaluationTest" />
         <item itemvalue="Application.Main" />
         <item itemvalue="JUnit.BoardTest.undoLastMove" />
         <item itemvalue="JUnit.BoardTest.getTurn" />
         <item itemvalue="JUnit.MoveGeneratorTest.isAttacked" />
-        <item itemvalue="JUnit.BoardTest" />
       </list>
     </recent_temporary>
   </component>
@@ -194,6 +199,7 @@
       <workItem from="1682943870647" duration="5232000" />
       <workItem from="1683028102371" duration="11460000" />
       <workItem from="1683103429657" duration="7771000" />
+      <workItem from="1683634980839" duration="4411000" />
     </task>
     <task id="LOCAL-00001" summary="Board: Brett kann ausgegeben werden.">
       <created>1682438269949</created>

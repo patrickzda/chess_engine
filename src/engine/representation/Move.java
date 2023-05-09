@@ -28,6 +28,6 @@ public class Move {
 
     @Override
     public String toString() {
-        return pieceType + ": isPromotiomn" + Board.indexToChessField(startFieldIndex) + "->" + Board.indexToChessField(endFieldIndex);
+        return Board.indexToChessField(startFieldIndex) + "->" + Board.indexToChessField(endFieldIndex);
     }
 }
