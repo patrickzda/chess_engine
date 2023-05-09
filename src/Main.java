@@ -20,6 +20,8 @@ public class Main {
 
     static void playAgainstItself(){
         Board board = new Board();
+
+      /*  Board board = new Board();
         MoveMasks masks = new MoveMasks();
         int counter = 0;
 
@@ -33,5 +35,7 @@ public class Main {
             }
             counter++;
         }
+
+       */
     }
 }
