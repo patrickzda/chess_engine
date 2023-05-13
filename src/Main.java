@@ -13,9 +13,12 @@ import java.util.Random;
 
 public class Main {
     public static void main(String[] args) {
-        String fens[] = new String[]{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq","4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w KQkq","8/6k1/5bP1/4p2p/3pP2P/1b1qBK2/p1r5/6R1 b KQkq"};
-        MoveGeneratorPerformance moveGeneratorPerformance = new MoveGeneratorPerformance();
-        moveGeneratorPerformance.measureAveragePerformanceOnBoards(fens,1000);
+        //String fens[] = new String[]{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq","4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w KQkq","8/6k1/5bP1/4p2p/3pP2P/1b1qBK2/p1r5/6R1 b KQkq"};
+        //MoveGeneratorPerformance moveGeneratorPerformance = new MoveGeneratorPerformance();
+        //moveGeneratorPerformance.measureAveragePerformanceOnBoards(fens,1000);
+
+        Board b = new Board("4k3/Pp5P/1p1p1r2/2pp1P1P/3N1PpP/4P1K1/1p1P2P1/1Q6 w - - 0 1");
+        System.out.println(Evaluation.getBlockedPawnCount(b, Color.WHITE));
     }
 
     static void playAgainstItself(){
