@@ -3,10 +3,7 @@ import engine.ai.DummyAi;
 import engine.ai.Evaluation;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
-import engine.representation.Board;
-import engine.representation.Color;
-import engine.representation.Move;
-import engine.representation.PieceType;
+import engine.representation.*;
 import performance.MoveGeneratorPerformance;
 
 import java.util.ArrayList;
@@ -30,9 +27,15 @@ public class Main {
         MoveMasks masks = new MoveMasks();
         int counter = 0;
 
-        while(!board.isGameWon(masks) && counter < 400){
+        GameState gameState;
+
+        while(counter < 400){
             Move m = AlphaBeta.getBestMove(board, 4, masks);
             board.doMove(m);
+
+            gameState = board.gameState(masks);
+            System.out.println("Zug " + (counter + 1) + ": " + gameState);
+
             if(board.getTurn() == Color.WHITE){
                 System.out.println("Black played: " + m + ": " + board.toFENString());
             }else{
@@ -41,13 +44,9 @@ public class Main {
             System.out.println(board);
 
             counter++;
-            if (board.isGameWon(masks)){
-                if (board.getTurn() == Color.WHITE) {
-                    System.out.println("BLACK hat nach " + counter + " Zügen gewonnen!");
-                }
-                else {
-                    System.out.println("WHITE hat nach " + counter + " Zügen gewonnen!");
-                }
+
+            if (gameState == GameState.DRAW || gameState == GameState.BLACK_WON || gameState == GameState.WHITE_WON) {
+                break;
             }
         }
     }

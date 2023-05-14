@@ -1,5 +1,6 @@
 package engine.representation;
 
+import engine.ai.Evaluation;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 
@@ -337,6 +338,50 @@ public class Board {
         }
 
         return result;
+    }
+
+    public GameState gameState(MoveMasks moveMasks) {
+        if (isGameWon(moveMasks)) {
+            if (getTurn() == Color.WHITE) {
+                return GameState.BLACK_WON;
+            }
+            return GameState.WHITE_WON;
+        }
+
+        int gameStateoccurance = 1;
+
+        for (int i = 0; i < moves.size(); i++) {
+            if (moves.get(i).pawns == pawns &&
+                moves.get(i).rooks == rooks &&
+                moves.get(i).bishops == bishops &&
+                moves.get(i).knights == knights &&
+                moves.get(i).queens == queens &&
+                moves.get(i).kings == kings &&
+                moves.get(i).whitePieces == whitePieces &&
+                moves.get(i).blackPieces == blackPieces
+               ) {
+                gameStateoccurance++;
+            }
+            if (gameStateoccurance == 3) {
+                return GameState.DRAW;
+            }
+        }
+
+        // ACHTUNG: dieser Teil ist nur richtig, wenn das SPiel mit der STartsituation begonnen wurde, also wenn alle Züge in der Historie sind
+        // TODO: ändern, wenn im FEN-String auch die Anzahl der Züge mitgezählt wird
+        if (moves.size() < 15) {
+            return GameState.START_GAME;
+        }
+
+        if (countPieces() > 10) {
+            return GameState.MID_GAME;
+        }
+
+        return GameState.END_GAME;
+    }
+
+    private int countPieces() {
+        return Evaluation.getSetBits(blackPieces | whitePieces);
     }
 
     private boolean isKingOfTheHill() {

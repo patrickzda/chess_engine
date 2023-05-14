@@ -110,7 +110,7 @@ public class Evaluation {
         return isolatedPawns;
     }
 
-    private static int getSetBits(long l){
+    public static int getSetBits(long l){
         int result = 0;
         for(int i = 0; i < 64; i++){
             if((l & (1L << i)) != 0){
