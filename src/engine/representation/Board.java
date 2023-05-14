@@ -303,14 +303,14 @@ public class Board {
     public String toFENString(){
         String result = toString();
         result = result.replace("\n", "/");
-        result = result.replace("        ", "8");
-        result = result.replace("       ", "7");
-        result = result.replace("      ", "6");
-        result = result.replace("     ", "5");
-        result = result.replace("    ", "4");
-        result = result.replace("   ", "3");
-        result = result.replace("  ", "2");
-        result = result.replace(" ", "1");
+        result = result.replace("········", "8");
+        result = result.replace("·······", "7");
+        result = result.replace("······", "6");
+        result = result.replace("·····", "5");
+        result = result.replace("····", "4");
+        result = result.replace("···", "3");
+        result = result.replace("··", "2");
+        result = result.replace("·", "1");
         result = result.substring(0, result.length() - 1);
 
         if(turn == Color.WHITE){
@@ -404,7 +404,7 @@ public class Board {
                     }
                 }
                 if(!appended){
-                    stringBuilder.append(" ");
+                    stringBuilder.append("·");
                 }
                 if((7 - y) == 0){
                     stringBuilder.append("\n");
