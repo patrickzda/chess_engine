@@ -4,6 +4,9 @@ import engine.ai.Evaluation;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
+import performance.AlphaBetaPerfomance;
+import performance.EvaluationPeformance;
+import performance.MiniMaxPerformance;
 import performance.MoveGeneratorPerformance;
 
 import java.util.ArrayList;
@@ -12,7 +15,19 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
-        playAgainstItself();
+        String fens[] = new String[]{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1","4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1","8/6k1/5bP1/4p2p/2qpP2P/1b2BK2/p1r5/6R1 w - - 1 2"};
+        MoveGeneratorPerformance moveGeneratorPerformance = new MoveGeneratorPerformance();
+        moveGeneratorPerformance.measureAveragePerformanceOnBoards(fens,10000);
+        EvaluationPeformance evaluationPeformance = new EvaluationPeformance();
+        evaluationPeformance.measureAveragePerformanceOfEvaluation(fens,10000);
+        AlphaBetaPerfomance.measureAveragePerformanceOfMiniMax(fens,2);
+        MiniMaxPerformance.measureAveragePerformanceOfMiniMax(fens,2);
+
+
+//        Board b = new Board("4k3/Pp5P/1p1p1r2/2pp1P1P/3N1PpP/4P1K1/1p1P2P1/1Q6 w - - 0 1");
+//        System.out.println(Evaluation.getBlockedPawnCount(b, Color.WHITE));
+
+        //playAgainstItself();
     }
 
     static void playAgainstItself(){

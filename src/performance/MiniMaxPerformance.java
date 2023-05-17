@@ -8,49 +8,44 @@ import engine.representation.Color;
 import engine.representation.Move;
 
 public class MiniMaxPerformance {
+    public static int counterboards = 0;
+    public static int couterMoves = 0;
+    public static void measureAveragePerformanceOfMiniMax(String[] fens, int passes){
+        System.out.println("MiniMax performance");
 
-    public void measureAveragePerformanceOfAlphaBeta(String[] fens, int passes){
-        System.out.println("Movegenerator performance");
-        long startMilliTime = 0L;
-        long stopTime = 0L;
         double elapsedTime = 0d;
         long nanoStart = 0L;
         long nanoEnd = 0L;
         long nanoElapsed = 0L;
-        System.out.println("Board , t in \u03BCs , t in ns , avg in \u03BCs , avg in ns");
+        System.out.println("Board , t in ms , t in ns , avg in ms , avg in ns");
         for (String fen : fens) {
             MoveMasks moveMasks = new MoveMasks();
             Board board = new Board(fen);
-            String warmup = averageExecutionTime(board,moveMasks,passes/2);
+            //String warmup = averageExecutionTime(board,moveMasks,passes/2);
             nanoStart = System.nanoTime();
-            MoveGenerator.generateLegalMoves(board, moveMasks);
+            getBestMove(board,3,moveMasks);
             nanoEnd = System.nanoTime();
             nanoElapsed = nanoEnd - nanoStart;
-            elapsedTime = nanoElapsed/1000d;
+            elapsedTime = nanoElapsed/1000000d;
             String averageTime = averageExecutionTime(new Board(fen), moveMasks, passes);
 
             if (passes > 0) System.out.println(fen + " , " + elapsedTime + " , "+nanoElapsed+" , "+averageTime);
         }
     }
-    private String averageExecutionTime(Board board,MoveMasks moveMasks, int passes){
-        long[] times = new long[passes];
+    private static String averageExecutionTime(Board board,MoveMasks moveMasks, int passes){
         long[] nanoTimes = new long[passes];
-        for (int i = 0; i < passes; i++){
-            MoveGenerator.generateLegalMoves(board,moveMasks);
-        }
+       /* for (int i = 0; i < passes; i++){
+            getBestMove(board,3,moveMasks);
+        }*/
         for (int i = 0; i < passes; i++){
             long nanoStart = System.nanoTime();
-            long startTime = System.currentTimeMillis();
-            MoveGenerator.generateLegalMoves(board,moveMasks);
+            getBestMove(board,5,moveMasks);
             long nanoEnd = System.nanoTime();
-            long stopTime = System.currentTimeMillis();
-            long elapsedTime = stopTime - startTime;
             long nanoElapsed = nanoEnd -nanoStart;
-            times[i] = elapsedTime;
             nanoTimes[i] = nanoElapsed;
         }
         long nanoAvg = findAverage(nanoTimes);
-        double avg = nanoAvg/1000d;
+        double avg = nanoAvg/1000000d;
         return avg+" , "+nanoAvg;
     }
     private static long findAverage(long[] array){
@@ -77,6 +72,7 @@ public class MiniMaxPerformance {
 
         for (int i = 0; i < moves.length; i++) {
             board.doMove(moves[i]);
+
             score = alphaBetaMin(board, alpha, beta, depth - 1, moveMasks);
             board.undoLastMove();
 
