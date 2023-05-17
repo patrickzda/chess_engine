@@ -11,6 +11,56 @@ public class AlphaBetaPerfomance {
         /*
     Hier kommt, wie in der Vorlesung beschrieben, die Alpha-Beta KI rein.
      */
+        public static void measureAveragePerformanceOfMiniMax(String[] fens, int passes){
+            System.out.println("Alpha-Beta performance");
+
+            double elapsedTime = 0d;
+            long nanoStart = 0L;
+            long nanoEnd = 0L;
+            long nanoElapsed = 0L;
+            System.out.println("Board , t in ms , t in ns , avg in ms , avg in ns");
+            for (String fen : fens) {
+                MoveMasks moveMasks = new MoveMasks();
+                Board board = new Board(fen);
+                //String warmup = averageExecutionTime(board,moveMasks,passes/2);
+                nanoStart = System.nanoTime();
+                getBestMove(board,3,moveMasks);
+                nanoEnd = System.nanoTime();
+                nanoElapsed = nanoEnd - nanoStart;
+                elapsedTime = nanoElapsed/1000000d;
+                String averageTime = averageExecutionTime(new Board(fen), moveMasks, passes);
+
+                if (passes > 0) System.out.println(fen + " , " + elapsedTime + " , "+nanoElapsed+" , "+averageTime);
+            }
+        }
+    private static String averageExecutionTime(Board board,MoveMasks moveMasks, int passes){
+        long[] nanoTimes = new long[passes];
+       /* for (int i = 0; i < passes; i++){
+            getBestMove(board,3,moveMasks);
+        }*/
+        for (int i = 0; i < passes; i++){
+            long nanoStart = System.nanoTime();
+            getBestMove(board,3,moveMasks);
+            long nanoEnd = System.nanoTime();
+            long nanoElapsed = nanoEnd -nanoStart;
+            nanoTimes[i] = nanoElapsed;
+        }
+        long nanoAvg = findAverage(nanoTimes);
+        double avg = nanoAvg/1000000d;
+        return avg+" , "+nanoAvg;
+    }
+    private static long findAverage(long[] array){
+        long sum = findSum(array);
+        long res = sum / array.length;
+        return res;
+    }
+    private static long findSum(long[] array) {
+        long sum = 0;
+        for (long value : array) {
+            sum += value;
+        }
+        return sum;
+    }
 
 
     private static int alphaBetaMax(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
