@@ -380,7 +380,15 @@ public class Board {
             return GameState.WHITE_WON;
         }
 
-        int gameStateoccurance = 1;
+        if (movesSinceLastPawnMoveOrCapture >= 50) {
+            return GameState.DRAW;
+        }
+
+        if (MoveGenerator.generateLegalMoves(this, moveMasks).length == 0) {
+            return GameState.DRAW;
+        }
+
+        int gameStateOccurance = 1;
 
         for (int i = 0; i < moves.size(); i++) {
             if (moves.get(i).pawns == pawns &&
@@ -392,20 +400,18 @@ public class Board {
                 moves.get(i).whitePieces == whitePieces &&
                 moves.get(i).blackPieces == blackPieces
                ) {
-                gameStateoccurance++;
+                gameStateOccurance++;
             }
-            if (gameStateoccurance == 3) {
+            if (gameStateOccurance == 3) {
                 return GameState.DRAW;
             }
         }
 
-        // ACHTUNG: dieser Teil ist nur richtig, wenn das SPiel mit der STartsituation begonnen wurde, also wenn alle Züge in der Historie sind
-        // TODO: ändern, wenn im FEN-String auch die Anzahl der Züge mitgezählt wird
-        if (moves.size() < 15) {
+        if (totalMoves < 15) {
             return GameState.START_GAME;
         }
 
-        if (countPieces() > 10) {
+        if (countPieces() >= 8) {
             return GameState.MID_GAME;
         }
 
