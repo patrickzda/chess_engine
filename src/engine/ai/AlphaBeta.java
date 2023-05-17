@@ -7,10 +7,6 @@ import engine.representation.*;
 import static java.lang.Math.max;
 
 public class AlphaBeta {
-    /*
-    Hier kommt, wie in der Vorlesung beschrieben, die Alpha-Beta KI rein.
-     */
-
 
     private static int alphaBetaMax(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);

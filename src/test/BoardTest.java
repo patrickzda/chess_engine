@@ -195,15 +195,16 @@ class BoardTest {
             new Board("8/k6p/8/7K/8/8/7r/6q1 w - - 8 56"),
             new Board("8/k6p/8/7K/8/8/5r2/6q1 b - - 7 55"),
             new Board("2r1nr2/R5pp/k1N5/2q5/2P3P1/1P1P4/P4PQP/6K1 b - - 0 29"),
-            new Board("7k/8/8/4p3/4P3/1r6/1r6/K7 w - - 0 1")
+            new Board("7k/8/8/4p3/4P3/1r6/1r6/K7 w - - 0 1"),
+            new Board("8/7b/7b/p7/Pp2k3/1P6/KP5p/3q4 w - - 0 2")
         };
 
         GameState[] results = {
-            GameState.START_GAME, GameState.START_GAME, GameState.START_GAME, GameState.START_GAME, GameState.START_GAME, GameState.START_GAME,
+            GameState.START_GAME, GameState.START_GAME, GameState.START_GAME, GameState.START_GAME, GameState.START_GAME, GameState.START_GAME, GameState.DRAW
         };
 
         for(int i = 0; i < results.length; i++){
-            assertEquals(results[i], boards[i].gameState(m));
+            assertEquals(results[i], boards[i].getGameState(m));
         }
     }
 }

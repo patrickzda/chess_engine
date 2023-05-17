@@ -372,7 +372,7 @@ public class Board {
         return result;
     }
 
-    public GameState gameState(MoveMasks moveMasks) {
+    public GameState getGameState(MoveMasks moveMasks) {
         if (isGameWon(moveMasks)) {
             if (getTurn() == Color.WHITE) {
                 return GameState.BLACK_WON;
