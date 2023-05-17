@@ -36,8 +36,7 @@ public class Evaluation {
             ownBlockedPawns = getBlockedPawnCount(board, WHITE);
             enemyBlockedPawns = getBlockedPawnCount(board, BLACK);
             pstBonus = calculatePSTBonus(board, WHITE);
-        }
-        else {
+        }else {
             ownBoard = board.blackPieces;
             enemyBoard = board.whitePieces;
             ownIsolatedPawns = getIsolatedPawnCount(board, BLACK);
