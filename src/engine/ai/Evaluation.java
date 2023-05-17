@@ -12,6 +12,12 @@ import static engine.representation.Color.*;
 public class Evaluation {
     private static final int PAWN_VALUE = 100, KNIGHT_VALUE = 320, BISHOP_VALUE = 330, ROOK_VALUE = 500, QUEEN_VALUE = 900, KING_VALUE = 20000;
     private static final int BAD_PAWN_STRUCTURE_PENALTY = -50;
+    private static final int[] pawnPST = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 10, -20, -20, 10, 10, 5, 5, -5, -10, 0, 0, -10, -5, 5, 0, 0, 0, 20, 20, 0, 0, 0, 5, 5, 10, 25, 25, 10, 5, 5, 10, 10, 20, 30, 30, 20, 10, 10, 50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 0, 0, 0, 0, 0, 0};
+    private static final int[] knightPST = new int[]{-50, -40, -30, -30, -30, -30, -40, -50, -40, -20, 0, 5, 5, 0, -20, -40, -30, 5, 10, 15, 15, 10, 5, -30, -30, 0, 15, 20, 20, 15, 0, -30, -30, 5, 15, 20, 20, 15, 5, -30, -30, 0, 10, 15, 15, 10, 0, -30, -40, -20, 0, 0, 0, 0, -20, -40, -50, -40, -30, -30, -30, -30, -40, -50};
+    private static final int[] bishopPST = new int[]{-20, -10, -10, -10, -10, -10, -10, -20, -10, 5, 0, 0, 0, 0, 5, -10, -10, 10, 10, 10, 10, 10, 10, -10, -10, 0, 10, 10, 10, 10, 0, -10, -10, 5, 5, 10, 10, 5, 5, -10, -10, 0, 5, 10, 10, 5, 0, -10, -10, 0, 0, 0, 0, 0, 0, -10, -20, -10, -10, -10, -10, -10, -10, -20};
+    private static final int[] rookPST = new int[]{0, 0, 0, 5, 5, 0, 0, 0, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, 5, 10, 10, 10, 10, 10, 10, 5, 0, 0, 0, 0, 0, 0, 0, 0};
+    private static final int[] queenPST = new int[]{-20, -10, -10, -5, -5, -10, -10, -20, -10, 0, 5, 0, 0, 0, 0, -10, -10, 5, 5, 5, 5, 5, 0, -10, 0, 0, 5, 5, 5, 5, 0, -5, -5, 0, 5, 5, 5, 5, 0, -5, -10, 0, 5, 5, 5, 5, 0, -10, -10, 0, 0, 0, 0, 0, 0, -10, -20, -10, -10, -5, -5, -10, -10, -20};
+    private static final int[] kingPST = new int[]{20, 30, 10,  0,  0, 10, 30, 20, 20, 20,  0,  0,  0,  0, 20, 20,-10,-20,-20,0,0,-20,-20,-10,-20,-30,0,20000,20000,0,-30,-20,-30,-40,0,20000,20000,0,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30};
 
     public static int evaluate(Board board) {
         long ownBoard, enemyBoard;
@@ -48,6 +54,28 @@ public class Evaluation {
         value = value + (getSetBits(ownBoard & board.kings) - getSetBits(enemyBoard & board.kings)) * KING_VALUE;
         value = value + (ownBlockedPawns - enemyBlockedPawns + ownDoubledPawns - enemyDoubledPawns + ownIsolatedPawns - enemyIsolatedPawns) * BAD_PAWN_STRUCTURE_PENALTY;
         return value;
+    }
+
+    private int calculatePSTBonus(Board board, Color color){
+        long currentTeam, enemyTeam;
+        int result = 0;
+        if(color == WHITE){
+            currentTeam = board.whitePieces;
+            enemyTeam = board.blackPieces;
+        }else{
+            currentTeam = board.blackPieces;
+            enemyTeam = board.whitePieces;
+        }
+
+        for(int i = 0; i < 64; i++){
+            long index = 1L << i;
+            if((currentTeam & index) != 0){
+
+            }else if((enemyTeam & index) != 0){
+                
+            }
+        }
+        return result;
     }
 
     public static int getBlockedPawnCount(Board board, Color color){
