@@ -12,7 +12,7 @@ public class AlphaBetaPerfomance {
     Hier kommt, wie in der Vorlesung beschrieben, die Alpha-Beta KI rein.
      */
         public static void measureAveragePerformanceOfMiniMax(String[] fens, int passes){
-            System.out.println("MiniMax performance");
+            System.out.println("Alpha-Beta performance");
 
             double elapsedTime = 0d;
             long nanoStart = 0L;
@@ -40,7 +40,7 @@ public class AlphaBetaPerfomance {
         }*/
         for (int i = 0; i < passes; i++){
             long nanoStart = System.nanoTime();
-            getBestMove(board,5,moveMasks);
+            getBestMove(board,3,moveMasks);
             long nanoEnd = System.nanoTime();
             long nanoElapsed = nanoEnd -nanoStart;
             nanoTimes[i] = nanoElapsed;
