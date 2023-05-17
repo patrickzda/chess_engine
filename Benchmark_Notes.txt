@@ -1,0 +1,9 @@
+evaluation() ist bewertungs funktion
+minimax 
+	1. laufzeit
+	2. Anzahl untersuchter zustände
+	3. bester zug
+Alpha-Beta
+	1. laufzeit
+	2. Anzahl untersuchter zustände
+	3. bester zug

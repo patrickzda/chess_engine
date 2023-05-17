@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class MoveGeneratorPerformance {
 
     public void measureAveragePerformanceOnBoards(String[] fens, int passes){
+        System.out.println("Movegenerator performance");
         long startMilliTime = 0L;
         long stopTime = 0L;
         double elapsedTime = 0d;
