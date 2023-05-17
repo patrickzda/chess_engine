@@ -24,6 +24,7 @@ public class Evaluation {
         int ownIsolatedPawns, enemyIsolatedPawns;
         int ownDoubledPawns, enemyDoubledPawns;
         int ownBlockedPawns, enemyBlockedPawns;
+        int pstBonus;
 
         if (board.getTurn() == WHITE) {
             ownBoard = board.whitePieces;
@@ -34,8 +35,8 @@ public class Evaluation {
             enemyDoubledPawns = getDoubledPawnCount(board, BLACK);
             ownBlockedPawns = getBlockedPawnCount(board, WHITE);
             enemyBlockedPawns = getBlockedPawnCount(board, BLACK);
-        }
-        else {
+            pstBonus = calculatePSTBonus(board, WHITE);
+        }else {
             ownBoard = board.blackPieces;
             enemyBoard = board.whitePieces;
             ownIsolatedPawns = getIsolatedPawnCount(board, BLACK);
@@ -44,6 +45,7 @@ public class Evaluation {
             enemyDoubledPawns = getDoubledPawnCount(board, WHITE);
             ownBlockedPawns = getBlockedPawnCount(board, BLACK);
             enemyBlockedPawns = getBlockedPawnCount(board, WHITE);
+            pstBonus = calculatePSTBonus(board, BLACK);
         }
 
         int value = (getSetBits(ownBoard & board.pawns) - getSetBits(enemyBoard & board.pawns)) * PAWN_VALUE;
@@ -53,11 +55,14 @@ public class Evaluation {
         value = value + (getSetBits(ownBoard & board.queens) - getSetBits(enemyBoard & board.queens)) * QUEEN_VALUE;
         value = value + (getSetBits(ownBoard & board.kings) - getSetBits(enemyBoard & board.kings)) * KING_VALUE;
         value = value + (ownBlockedPawns - enemyBlockedPawns + ownDoubledPawns - enemyDoubledPawns + ownIsolatedPawns - enemyIsolatedPawns) * BAD_PAWN_STRUCTURE_PENALTY;
+        value = value + pstBonus;
         return value;
     }
 
-    private int calculatePSTBonus(Board board, Color color){
+    private static int calculatePSTBonus(Board board, Color color){
         long currentTeam, enemyTeam;
+        long currentPawns, currentKnights, currentBishops, currentRooks, currentQueens, currentKings;
+        long enemyPawns, enemyKnights, enemyBishops, enemyRooks, enemyQueens, enemyKings;
         int result = 0;
         if(color == WHITE){
             currentTeam = board.whitePieces;
@@ -67,12 +72,50 @@ public class Evaluation {
             enemyTeam = board.whitePieces;
         }
 
+        currentPawns = board.pawns & currentTeam;
+        currentKnights = board.knights & currentTeam;
+        currentBishops = board.bishops & currentTeam;
+        currentRooks = board.rooks & currentTeam;
+        currentQueens = board.queens & currentTeam;
+        currentKings = board.kings & currentTeam;
+
+        enemyPawns = board.pawns & enemyTeam;
+        enemyKnights = board.knights & enemyTeam;
+        enemyBishops = board.bishops & enemyTeam;
+        enemyRooks = board.rooks & enemyTeam;
+        enemyQueens = board.queens & enemyTeam;
+        enemyKings = board.kings & enemyTeam;
+
         for(int i = 0; i < 64; i++){
             long index = 1L << i;
             if((currentTeam & index) != 0){
-
+                if((currentPawns & index) != 0){
+                    result = result + pawnPST[i];
+                }else if((currentKnights & index) != 0){
+                    result = result + knightPST[i];
+                }else if((currentBishops & index) != 0){
+                    result = result + bishopPST[i];
+                }else if((currentRooks & index) != 0){
+                    result = result + rookPST[i];
+                }else if((currentQueens & index) != 0){
+                    result = result + queenPST[i];
+                }else if((currentKings & index) != 0){
+                    result = result + kingPST[i];
+                }
             }else if((enemyTeam & index) != 0){
-                
+                if((enemyPawns & index) != 0){
+                    result = result + pawnPST[63 - i];
+                }else if((enemyKnights & index) != 0){
+                    result = result + knightPST[63- i];
+                }else if((enemyBishops & index) != 0){
+                    result = result + bishopPST[63 - i];
+                }else if((enemyRooks & index) != 0){
+                    result = result + rookPST[63 - i];
+                }else if((enemyQueens & index) != 0){
+                    result = result + queenPST[63 - i];
+                }else if((enemyKings & index) != 0){
+                    result = result + kingPST[63 - i];
+                }
             }
         }
         return result;
