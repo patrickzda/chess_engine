@@ -19,15 +19,15 @@ public class MoveGeneratorTest {
         MoveMasks m = new MoveMasks();
 
         Board[] boards = {
-            new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w -"),
-            new Board("8/8/4r3/3R4/8/8/8/8 w -"),
-            new Board("8/8/4r3/3R4/8/8/8/8 b -"),
-            new Board("8/8/3Rr3/3rR3/8/8/8/8 w -"),
-            new Board("8/8/3Rr3/3rR3/8/8/8/8 b -"),
-            new Board("8/8/2r1R3/8/2r1R3/8/8/8 w -"),
-            new Board("8/8/2r1R3/8/2r1R3/8/8/8 b -"),
-            new Board("rnbqkbnr/1pppppp1/8/8/8/8/1PPPPPP1/1NBQKBN1 w -"),
-            new Board("1nbqkbn1/1pppppp1/8/8/8/8/1PPPPPP1/RNBQKBNR b -"),
+            new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 0"),
+            new Board("8/8/4r3/3R4/8/8/8/8 w - - 0 0"),
+            new Board("8/8/4r3/3R4/8/8/8/8 b - - 0 0"),
+            new Board("8/8/3Rr3/3rR3/8/8/8/8 w - - 0 0"),
+            new Board("8/8/3Rr3/3rR3/8/8/8/8 b - - 0 0"),
+            new Board("8/8/2r1R3/8/2r1R3/8/8/8 w - - 0 0"),
+            new Board("8/8/2r1R3/8/2r1R3/8/8/8 b - - 0 0"),
+            new Board("rnbqkbnr/1pppppp1/8/8/8/8/1PPPPPP1/1NBQKBN1 w - - 0 0"),
+            new Board("1nbqkbn1/1pppppp1/8/8/8/8/1PPPPPP1/RNBQKBNR b - - 0 0"),
         };
 
         Move[][] results = {
@@ -52,15 +52,15 @@ public class MoveGeneratorTest {
         MoveMasks m = new MoveMasks();
 
         Board[] boards = {
-            new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w -"),
-            new Board("8/8/3b4/8/3B4/8/8/8 w -"),
-            new Board("8/8/3b4/8/3B4/8/8/8 b -"),
-            new Board("8/8/4bb2/8/3B2B1/8/8/8 w -"),
-            new Board("8/8/4bb2/8/3B2B1/8/8/8 b -"),
-            new Board("8/1p5p/2P3p1/8/4B3/8/2p3P1/1p5p w -"),
-            new Board("8/1p5p/2P3p1/8/4b3/8/2p3P1/1p5p b -"),
-            new Board("rnbqkbnr/pppppppp/8/8/8/8/P1P2P1P/RN1QK1NR w -"),
-            new Board("rn1qk1nr/p1p2p1p/8/8/8/8/PPPPPPPP/RNBQKBNR b -"),
+            new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 0"),
+            new Board("8/8/3b4/8/3B4/8/8/8 w - - 0 0"),
+            new Board("8/8/3b4/8/3B4/8/8/8 b - - 0 0"),
+            new Board("8/8/4bb2/8/3B2B1/8/8/8 w - - 0 0"),
+            new Board("8/8/4bb2/8/3B2B1/8/8/8 b - - 0 0"),
+            new Board("8/1p5p/2P3p1/8/4B3/8/2p3P1/1p5p w - - 0 0"),
+            new Board("8/1p5p/2P3p1/8/4b3/8/2p3P1/1p5p b - - 0 0"),
+            new Board("rnbqkbnr/pppppppp/8/8/8/8/P1P2P1P/RN1QK1NR w - - 0 0"),
+            new Board("rn1qk1nr/p1p2p1p/8/8/8/8/PPPPPPPP/RNBQKBNR b - - 0 0"),
         };
 
         Move[][] results = {
@@ -85,15 +85,15 @@ public class MoveGeneratorTest {
         MoveMasks m = new MoveMasks();
 
         Board[] boards = {
-            new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w -"),
-            new Board("8/8/8/4q3/2Q5/8/8/8 w -"),
-            new Board("8/8/8/4q3/2Q5/8/8/8 b -"),
-            new Board("8/8/8/P1p1p3/8/P1Q1P3/8/p1p1P3 w -"),
-            new Board("8/8/8/P1p1p3/8/P1q1P3/8/p1p1P3 b -"),
-            new Board("rn1qkbnr/pp3ppp/3p4/8/8/8/PP3PPP/RN1QKBNR w -"),
-            new Board("rn1qkbnr/pp3ppp/3p4/8/8/8/PP3PPP/RN1QKBNR b -"),
-            new Board("rnbqkbnr/pppppppp/8/8/8/8/PP3PPP/RN2KBNR w -"),
-            new Board("rn2kbnr/pp3ppp/8/8/8/8/PPPPPPPP/RNBQKBNR b -"),
+            new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 0"),
+            new Board("8/8/8/4q3/2Q5/8/8/8 w - - 0 0"),
+            new Board("8/8/8/4q3/2Q5/8/8/8 b - - 0 0"),
+            new Board("8/8/8/P1p1p3/8/P1Q1P3/8/p1p1P3 w - - 0 0"),
+            new Board("8/8/8/P1p1p3/8/P1q1P3/8/p1p1P3 b - - 0 0"),
+            new Board("rn1qkbnr/pp3ppp/3p4/8/8/8/PP3PPP/RN1QKBNR w - - 0 0"),
+            new Board("rn1qkbnr/pp3ppp/3p4/8/8/8/PP3PPP/RN1QKBNR b - - 0 0"),
+            new Board("rnbqkbnr/pppppppp/8/8/8/8/PP3PPP/RN2KBNR w - - 0 0"),
+            new Board("rn2kbnr/pp3ppp/8/8/8/8/PPPPPPPP/RNBQKBNR b - - 0 0"),
         };
 
         Move[][] results = {
@@ -302,7 +302,7 @@ public class MoveGeneratorTest {
             new Board(),
             new Board("rnbqkbnr/1pppppp1/p6p/8/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 1 3"),
             new Board("rnbqkbnr/ppppp1pp/8/5p2/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2"),
-            new Board("4kr2/4b3/8/2p1R2p/4n1p1/3q2P1/7P/4K3 w - - 4"),
+            new Board("4kr2/4b3/8/2p1R2p/4n1p1/3q2P1/7P/4K3 w - - 4 7"),
             new Board("rnb1kbnr/pp1ppppp/2p5/q7/8/3P1P2/PPP1P1PP/RNBQKBNR w KQkq - 0 1"),
             new Board("7k/7q/5pqp/6p1/NP3P1P/1KP3P1/2B5/8 b - - 0 1"),
             new Board("r2kq3/3r4/8/8/7b/p7/P3BN2/R3K2R w KQq - 0 1"),

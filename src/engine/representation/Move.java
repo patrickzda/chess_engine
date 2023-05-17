@@ -7,6 +7,7 @@ public class Move {
     public long whitePieces, blackPieces, kings, queens, rooks, bishops, knights, pawns;
     public boolean hasWhiteKingMoved, hasBlackKingMoved, hasWhiteLongRookMoved, hasWhiteShortRookMoved, hasBlackLongRookMoved, hasBlackShortRookMoved;
 
+    public int movesSinceLastPawnMoveOrCapture = 0;
 
     public Move(int startFieldIndex, int endFieldIndex, PieceType pieceType){
         this.startFieldIndex = startFieldIndex;
@@ -26,8 +27,17 @@ public class Move {
         return pieceType;
     }
 
+    private String indexToChessField(int index) {
+        int rank = index % 8;
+        int file = index / 8;
+        String[] rows = {"1", "2", "3", "4", "5", "6", "7", "8"};
+        String[] cols = {"a", "b", "c", "d", "e", "f", "g", "h"};
+
+        return cols[rank] + rows[file];
+    }
+
     @Override
     public String toString() {
-        return Board.indexToChessField(startFieldIndex) + "->" + Board.indexToChessField(endFieldIndex);
+        return indexToChessField(startFieldIndex) + "->" + indexToChessField(endFieldIndex);
     }
 }
