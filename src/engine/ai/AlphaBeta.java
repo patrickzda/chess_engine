@@ -68,9 +68,7 @@ public class AlphaBeta {
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
         if (depth < 1) {
-            System.out.println("Suchtiefe muss mindestes 1 sein!!!\n" +
-                    "Alpha-Beta Suche wird nicht funktionieren!");
-            return moves[0];
+            throw new IllegalArgumentException("Suchtiefe muss mindestes 1 sein!!!\n" + "Alpha-Beta Suche wird nicht funktionieren!");
         }
 
         int alpha = Integer.MIN_VALUE;
@@ -79,37 +77,14 @@ public class AlphaBeta {
         int score;
         Move bestMove = moves[0];
 
-        if (board.getTurn() == Color.WHITE) {
-            for (int i = 0; i < moves.length; i++) {
-                board.doMove(moves[i]);
-                score = alphaBetaMin(board, alpha, beta, depth - 1, moveMasks); // Aufruf von AlphaBeta ohne sich die Moves zu merken
-                board.undoLastMove();
+        for (int i = 0; i < moves.length; i++) {
+            board.doMove(moves[i]);
+            score = alphaBetaMin(board, alpha, beta, depth - 1, moveMasks); // Aufruf von AlphaBeta ohne sich die Moves zu merken
+            board.undoLastMove();
 
-                if (score >= beta) {    // cutoff: Dieser Move ist schlecht und es kann nicht besser werden
-                    break;
-                }
-
-                if (score > alpha) {
-                    alpha = score;
-                    bestMove = moves[i];    // in der ersten Suchtiefe den besten Move merken
-                }
-            }
-        }
-
-        else {
-            for (int i = 0; i < moves.length; i++) {
-                board.doMove(moves[i]);
-                score = alphaBetaMax(board, alpha, beta, depth - 1, moveMasks); // Aufruf von AlphaBeta ohne sich die Moves zu merken
-                board.undoLastMove();
-
-                if (score <= alpha) {    // cutoff: Dieser Move ist schlecht und es kann nicht besser werden
-                    break;
-                }
-
-                if (score < beta) {
-                    beta = score;
-                    bestMove = moves[i];    // in der ersten Suchtiefe den besten Move merken
-                }
+            if (score > alpha) {
+                alpha = score;
+                bestMove = moves[i];    // in der ersten Suchtiefe den besten Move merken
             }
         }
 
