@@ -8,31 +8,35 @@ import engine.representation.Color;
 import engine.representation.Move;
 
 public class AlphaBetaPerfomance {
-        /*
-    Hier kommt, wie in der Vorlesung beschrieben, die Alpha-Beta KI rein.
-     */
-        public static void measureAveragePerformanceOfMiniMax(String[] fens, int passes){
-            System.out.println("Alpha-Beta performance");
+    public static int counterboards = 0;
+    public static int counterMoves = 0;
 
-            double elapsedTime = 0d;
-            long nanoStart = 0L;
-            long nanoEnd = 0L;
-            long nanoElapsed = 0L;
-            System.out.println("Board , t in ms , t in ns , avg in ms , avg in ns");
+    public static void measureAveragePerformanceOfMiniMax(String[] fens, int passes, int depth){
+        System.out.println("Alpha-Beta performance");
+
+        double elapsedTime = 0d;
+        long nanoStart = 0L;
+        long nanoEnd = 0L;
+        long nanoElapsed = 0L;
+        System.out.println("Board , t in ms , t in ns , avg in ms , avg in ns, positions , depth");
+        for (int i = 1; i < depth+1; i++) {
             for (String fen : fens) {
                 MoveMasks moveMasks = new MoveMasks();
                 Board board = new Board(fen);
                 //String warmup = averageExecutionTime(board,moveMasks,passes/2);
                 nanoStart = System.nanoTime();
-                getBestMove(board,3,moveMasks);
+                getBestMove(board,i,moveMasks);
                 nanoEnd = System.nanoTime();
                 nanoElapsed = nanoEnd - nanoStart;
                 elapsedTime = nanoElapsed/1000000d;
+                counterMoves = counterboards;
                 String averageTime = averageExecutionTime(new Board(fen), moveMasks, passes);
 
-                if (passes > 0) System.out.println(fen + " , " + elapsedTime + " , "+nanoElapsed+" , "+averageTime);
+                if (passes > 0) System.out.println(fen + " , " + elapsedTime + " , "+nanoElapsed+" , "+averageTime+" , "+counterMoves+" , "+i);
+                counterboards= 0;
             }
         }
+    }
     private static String averageExecutionTime(Board board,MoveMasks moveMasks, int passes){
         long[] nanoTimes = new long[passes];
        /* for (int i = 0; i < passes; i++){
@@ -64,6 +68,7 @@ public class AlphaBetaPerfomance {
 
 
     private static int alphaBetaMax(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
+        counterboards++;
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
         if (depth == 0 || moves.length == 0) {
@@ -89,6 +94,7 @@ public class AlphaBetaPerfomance {
     }
 
     private static int alphaBetaMin(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
+        counterboards++;
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
         if (depth == 0 || moves.length == 0) {
@@ -116,12 +122,11 @@ public class AlphaBetaPerfomance {
     // gibt den besten Move anhand der AlphaBeta Suche mit der Bewertungsfunktion zurück
     // ACHTUNG: depth muss >= 1 sein
     public static Move getBestMove(Board board, int depth, MoveMasks moveMasks) {
+        counterboards++;
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
         if (depth < 1) {
-            System.out.println("Suchtiefe muss mindestes 1 sein!!!\n" +
-                    "Alpha-Beta Suche wird nicht funktionieren!");
-            return moves[0];
+            throw new IllegalArgumentException("Suchtiefe muss mindestes 1 sein!!!\n" + "Alpha-Beta Suche wird nicht funktionieren!");
         }
 
         int alpha = Integer.MIN_VALUE;
@@ -130,37 +135,14 @@ public class AlphaBetaPerfomance {
         int score;
         Move bestMove = moves[0];
 
-        if (board.getTurn() == Color.WHITE) {
-            for (int i = 0; i < moves.length; i++) {
-                board.doMove(moves[i]);
-                score = alphaBetaMin(board, alpha, beta, depth - 1, moveMasks); // Aufruf von AlphaBeta ohne sich die Moves zu merken
-                board.undoLastMove();
+        for (int i = 0; i < moves.length; i++) {
+            board.doMove(moves[i]);
+            score = alphaBetaMin(board, alpha, beta, depth - 1, moveMasks); // Aufruf von AlphaBeta ohne sich die Moves zu merken
+            board.undoLastMove();
 
-                if (score >= beta) {    // cutoff: Dieser Move ist schlecht und es kann nicht besser werden
-                    break;
-                }
-
-                if (score > alpha) {
-                    alpha = score;
-                    bestMove = moves[i];    // in der ersten Suchtiefe den besten Move merken
-                }
-            }
-        }
-
-        else {
-            for (int i = 0; i < moves.length; i++) {
-                board.doMove(moves[i]);
-                score = alphaBetaMax(board, alpha, beta, depth - 1, moveMasks); // Aufruf von AlphaBeta ohne sich die Moves zu merken
-                board.undoLastMove();
-
-                if (score <= alpha) {    // cutoff: Dieser Move ist schlecht und es kann nicht besser werden
-                    break;
-                }
-
-                if (score < beta) {
-                    beta = score;
-                    bestMove = moves[i];    // in der ersten Suchtiefe den besten Move merken
-                }
+            if (score > alpha) {
+                alpha = score;
+                bestMove = moves[i];    // in der ersten Suchtiefe den besten Move merken
             }
         }
 
