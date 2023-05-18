@@ -18,7 +18,7 @@ public class AlphaBetaPerfomance {
         long nanoStart = 0L;
         long nanoEnd = 0L;
         long nanoElapsed = 0L;
-        System.out.println("Board , t in ms , t in ns , avg in ms , avg in ns, positions , depth");
+        System.out.println("Board, t in ms, t in ns, avg in ms, avg in ns, positions, positions/ms, depth");
         for (int i = 1; i < depth+1; i++) {
             for (String fen : fens) {
                 MoveMasks moveMasks = new MoveMasks();
@@ -31,8 +31,8 @@ public class AlphaBetaPerfomance {
                 elapsedTime = nanoElapsed/1000000d;
                 counterMoves = counterboards;
                 String averageTime = averageExecutionTime(new Board(fen), moveMasks, passes);
-
-                if (passes > 0) System.out.println(fen + " , " + elapsedTime + " , "+nanoElapsed+" , "+averageTime+" , "+counterMoves+" , "+i);
+                double posPerMs = counterMoves/elapsedTime;
+                if (passes > 0) System.out.println(fen + ", " + elapsedTime + ", "+nanoElapsed+", "+averageTime+", "+counterMoves+", "+posPerMs+", "+i);
                 counterboards= 0;
             }
         }
@@ -51,7 +51,7 @@ public class AlphaBetaPerfomance {
         }
         long nanoAvg = findAverage(nanoTimes);
         double avg = nanoAvg/1000000d;
-        return avg+" , "+nanoAvg;
+        return avg+", "+nanoAvg;
     }
     private static long findAverage(long[] array){
         long sum = findSum(array);
