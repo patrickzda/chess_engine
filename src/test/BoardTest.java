@@ -1,5 +1,6 @@
 package test;
 
+import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
 import org.junit.jupiter.api.Test;
@@ -174,7 +175,7 @@ class BoardTest {
             new Board("8/k6p/8/7K/8/8/7r/6q1 w - - 8 56"),
             new Board("8/k6p/8/7K/8/8/5r2/6q1 b - - 7 55"),
             new Board("2r1nr2/R5pp/k1N5/2q5/2P3P1/1P1P4/P4PQP/6K1 b - - 0 29"),
-            new Board("7k/8/8/4p3/4P3/1r6/1r6/K7 w - - 0 1")
+            new Board("7k/8/8/4p3/4P3/1r6/1r6/K7 w - - 0 1"),
         };
 
         boolean[] results = {
@@ -182,7 +183,8 @@ class BoardTest {
         };
 
         for(int i = 0; i < results.length; i++){
-            assertEquals(results[i], boards[i].isGameWon(m));
+            Move[] legalMoves = MoveGenerator.generateLegalMoves(boards[i], m);
+            assertEquals(results[i], boards[i].isGameWon(m, legalMoves.length));//, legalMoves));
         }
     }
 
@@ -196,15 +198,42 @@ class BoardTest {
             new Board("8/k6p/8/7K/8/8/5r2/6q1 b - - 7 55"),
             new Board("2r1nr2/R5pp/k1N5/2q5/2P3P1/1P1P4/P4PQP/6K1 b - - 0 29"),
             new Board("7k/8/8/4p3/4P3/1r6/1r6/K7 w - - 0 1"),
-            new Board("8/7b/7b/p7/Pp2k3/1P6/KP5p/3q4 w - - 0 2")
+            new Board("8/7b/7b/p7/Pp6/1P6/KP4kp/3q4 w - - 0 2")
         };
 
         GameState[] results = {
-            GameState.START_GAME, GameState.START_GAME, GameState.START_GAME, GameState.START_GAME, GameState.START_GAME, GameState.START_GAME, GameState.DRAW
+            GameState.WHITE_WON, GameState.MID_GAME, GameState.BLACK_WON, GameState.END_GAME, GameState.MID_GAME, GameState.DRAW, GameState.DRAW
         };
 
         for(int i = 0; i < results.length; i++){
+
+            if (results[i] != boards[i].getGameState(m)) {
+                System.out.println("FEHLER: " + i);
+                System.out.println("erwartet: " + results[i]);
+                System.out.println("ergebnis: " + boards[i].getGameState(m));
+
+                int kingIndex;
+                Color attacker;
+
+                if (boards[i].getTurn() == Color.WHITE) {
+                    kingIndex = Long.numberOfTrailingZeros(boards[i].kings & boards[i].whitePieces);
+                    attacker = Color.BLACK;
+                }
+                else {
+                    kingIndex = Long.numberOfTrailingZeros(boards[i].kings & boards[i].blackPieces);
+                    attacker = Color.WHITE;
+                }
+
+
+                Move[] legalMoves = MoveGenerator.generateLegalMoves(boards[i], m);
+
+                System.out.println("isAttacked: " + MoveGenerator.isAttacked(boards[i], m, kingIndex, attacker));
+                System.out.println("isGameWon: " + boards[i].isGameWon(m, legalMoves.length));
+            }
+
             assertEquals(results[i], boards[i].getGameState(m));
+
         }
+
     }
 }
