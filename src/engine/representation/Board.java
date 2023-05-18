@@ -352,7 +352,7 @@ public class Board {
 
         if(hasWhiteKingMoved && hasBlackKingMoved){
             result = result + "-";
-        }else{
+        }else if((!hasWhiteKingMoved && !hasWhiteShortRookMoved) || (!hasWhiteKingMoved && !hasWhiteLongRookMoved) || (!hasBlackKingMoved && !hasBlackShortRookMoved) || (!hasBlackKingMoved && !hasBlackLongRookMoved)){
             if(!hasWhiteKingMoved && !hasWhiteShortRookMoved){
                 result = result + "K";
             }
@@ -365,6 +365,8 @@ public class Board {
             if(!hasBlackKingMoved && !hasBlackLongRookMoved){
                 result = result + "q";
             }
+        }else{
+            result = result + "-";
         }
 
         result = result + " - " + movesSinceLastPawnMoveOrCapture + " " + totalMoves;

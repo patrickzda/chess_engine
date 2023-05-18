@@ -23,7 +23,16 @@ public class Main {
         //AlphaBetaPerfomance.measureAveragePerformanceOfMiniMax(fens,100,5);
         //MiniMaxPerformance.measureAveragePerformanceOfMiniMax(fens,100,5);
 
-        playAgainstItself();
+        //playAgainstItself();
+
+        playMove(args);
+    }
+
+    static void playMove(String[] args){
+        Board board = new Board(args[0]);
+        Move m = AlphaBeta.getBestMove(board, Integer.parseInt(args[1]), new MoveMasks());
+        board.doMove(m);
+        System.out.println(board.toFENString());
     }
 
     static void playAgainstItself(){
