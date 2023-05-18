@@ -16,7 +16,7 @@ public class MiniMaxPerformance {
         long nanoStart = 0L;
         long nanoEnd = 0L;
         long nanoElapsed = 0L;
-        System.out.println("Board, t in ms, t in ns, avg in ms, avg in ns, positions, depth");
+        System.out.println("Board, t in ms, t in ns, avg in ms, avg in ns, positions, positions/ms, depth");
         for (int i = 1; i < depth+1; i++) {
             for (String fen : fens) {
                 MoveMasks moveMasks = new MoveMasks();
@@ -29,8 +29,8 @@ public class MiniMaxPerformance {
                 elapsedTime = nanoElapsed/1000000d;
                 counterMoves = counterboards;
                 String averageTime = averageExecutionTime(new Board(fen), moveMasks, passes);
-
-                if (passes > 0) System.out.println(fen + ", " + elapsedTime + ", "+nanoElapsed+", "+averageTime+", "+counterMoves+", "+i);
+                double posPerMs = counterMoves/elapsedTime;
+                if (passes > 0) System.out.println(fen + ", " + elapsedTime + ", "+nanoElapsed+", "+averageTime+", "+counterMoves+", "+posPerMs+", "+i);
                 counterboards= 0;
             }
         }

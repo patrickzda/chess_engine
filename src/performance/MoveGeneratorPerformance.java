@@ -17,7 +17,7 @@ public class MoveGeneratorPerformance {
         long nanoStart = 0L;
         long nanoEnd = 0L;
         long nanoElapsed = 0L;
-        System.out.println("Board, t in \u03BCs, t in ns, avg in \u03BCs, avg in ns");
+        System.out.println("Board, t in ms, t in ns, avg in ms, avg in ns");
         for (String fen : fens) {
             MoveMasks moveMasks = new MoveMasks();
             Board board = new Board(fen);
@@ -26,7 +26,7 @@ public class MoveGeneratorPerformance {
             MoveGenerator.generateLegalMoves(board, moveMasks);
             nanoEnd = System.nanoTime();
             nanoElapsed = nanoEnd - nanoStart;
-            elapsedTime = nanoElapsed/1000d;
+            elapsedTime = nanoElapsed/1000000d;
             String averageTime = averageExecutionTime(new Board(fen), moveMasks, passes);
 
             if (passes > 0) System.out.println(fen + ", " + elapsedTime + ", "+nanoElapsed+", "+averageTime);
@@ -51,7 +51,7 @@ public class MoveGeneratorPerformance {
             nanoTimes[i] = nanoElapsed;
         }
         long nanoAvg = findAverage(nanoTimes);
-        double avg = nanoAvg/1000d;
+        double avg = nanoAvg/1000000d;
         return avg+", "+nanoAvg;
     }
     private static long findAverage(long[] array){
