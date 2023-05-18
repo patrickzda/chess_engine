@@ -352,7 +352,7 @@ public class Board {
 
         if(hasWhiteKingMoved && hasBlackKingMoved){
             result = result + "-";
-        }else{
+        }else if((!hasWhiteKingMoved && !hasWhiteShortRookMoved) || (!hasWhiteKingMoved && !hasWhiteLongRookMoved) || (!hasBlackKingMoved && !hasBlackShortRookMoved) || (!hasBlackKingMoved && !hasBlackLongRookMoved)){
             if(!hasWhiteKingMoved && !hasWhiteShortRookMoved){
                 result = result + "K";
             }
@@ -365,6 +365,8 @@ public class Board {
             if(!hasBlackKingMoved && !hasBlackLongRookMoved){
                 result = result + "q";
             }
+        }else{
+            result = result + "-";
         }
 
         result = result + " - " + movesSinceLastPawnMoveOrCapture + " " + totalMoves;
@@ -373,7 +375,8 @@ public class Board {
     }
 
     public GameState getGameState(MoveMasks moveMasks) {
-        if (isGameWon(moveMasks)) {
+        Move[] legalMoves = MoveGenerator.generateLegalMoves(this, moveMasks);
+        if (isGameWon(moveMasks, legalMoves.length)) {
             if (getTurn() == Color.WHITE) {
                 return GameState.BLACK_WON;
             }
@@ -427,7 +430,7 @@ public class Board {
         return ((kings & HILL_TOP) != 0);
     }
 
-    public boolean isGameWon(MoveMasks moveMasks) {
+    public boolean isGameWon(MoveMasks moveMasks, int legalMovesLength) {
         boolean checkMate = false;
         Color currentColor = getTurn();
         long currentTeam;
@@ -442,12 +445,11 @@ public class Board {
             currentTeam = blackPieces;
         }
 
-        Move[] moves = MoveGenerator.generateLegalMoves(this, moveMasks);
-        if (moves.length == 0 && MoveGenerator.isAttacked(this, moveMasks, Long.numberOfTrailingZeros(kings & currentTeam), otherColor)) {
+        if (legalMovesLength == 0 && MoveGenerator.isAttacked(this, moveMasks, Long.numberOfTrailingZeros(kings & currentTeam), otherColor)) {
             checkMate = true;
         }
 
-        return isKingOfTheHill() | checkMate;
+        return isKingOfTheHill() || checkMate;
     }
 
     @Override
