@@ -5,6 +5,7 @@ import engine.move_generation.MoveMasks;
 import engine.representation.*;
 
 import static java.lang.Math.max;
+import static java.lang.Math.subtractExact;
 
 public class AlphaBeta {
 
@@ -83,6 +84,24 @@ public class AlphaBeta {
                 bestMove = moves[i];    // in der ersten Suchtiefe den besten Move merken
             }
         }
+
+        return bestMove;
+    }
+
+    public static Move getBestMoveTimed(Board board, MoveMasks moveMasks, int millis) {
+        long startTime = System.nanoTime();
+        long finishTime = startTime + (millis * 1000000L);
+        int searchDepth = 0;
+        Move bestMove = new Move(0, 0, PieceType.PAWN);
+
+        while (System.nanoTime() < finishTime) {
+            searchDepth++;
+            bestMove = getBestMove(board, searchDepth, moveMasks);
+        }
+
+        float factor = (float) (startTime - System.nanoTime()) / (startTime - finishTime);
+
+        System.out.println("erreicht Suchtiefe: " + searchDepth + " nach " + ((System.nanoTime() - startTime)/1000000) + "ms (Faktor: " + factor + ")");
 
         return bestMove;
     }
