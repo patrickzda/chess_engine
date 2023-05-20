@@ -11,47 +11,43 @@ public class AlphaBetaPerfomance {
     public static int counterboards = 0;
     public static int counterMoves = 0;
 
-    public static void measureAveragePerformanceOfMiniMax(String[] fens, int passes, int depth){
+    public static void measureAveragePerformanceOfAlphaBeta(String[] fens, int passes, int depth){
         System.out.println("Alpha-Beta performance");
 
         double elapsedTime = 0d;
         long nanoStart = 0L;
         long nanoEnd = 0L;
         long nanoElapsed = 0L;
-        System.out.println("Board, t in ms, t in ns, avg in ms, avg in ns, positions, positions/ms, depth");
-        for (int i = 1; i < depth+1; i++) {
-            for (String fen : fens) {
+        System.out.println("Board, avg in ms, positions, positions/s, depth, move");
+        for (String fen : fens) {
+            for (int i = 1; i < depth+1; i++) {
                 MoveMasks moveMasks = new MoveMasks();
                 Board board = new Board(fen);
-                //String warmup = averageExecutionTime(board,moveMasks,passes/2);
                 nanoStart = System.nanoTime();
-                getBestMove(board,i,moveMasks);
+                Move move = getBestMove(board,i,moveMasks);
                 nanoEnd = System.nanoTime();
                 nanoElapsed = nanoEnd - nanoStart;
                 elapsedTime = nanoElapsed/1000000d;
                 counterMoves = counterboards;
-                String averageTime = averageExecutionTime(new Board(fen), moveMasks, passes);
-                double posPerMs = counterMoves/elapsedTime;
-                if (passes > 0) System.out.println(fen + ", " + elapsedTime + ", "+nanoElapsed+", "+averageTime+", "+counterMoves+", "+posPerMs+", "+i);
+                String averageTime = averageExecutionTime(new Board(fen), moveMasks, passes,i);
+                double posPerMs = (counterMoves/elapsedTime)*1000 ;
+                if (passes > 0) System.out.println(fen + ", "+averageTime+", "+counterMoves+", "+posPerMs+", "+i+", "+move.toString());
                 counterboards= 0;
             }
         }
     }
-    private static String averageExecutionTime(Board board,MoveMasks moveMasks, int passes){
+    private static String averageExecutionTime(Board board,MoveMasks moveMasks, int passes,int depth){
         long[] nanoTimes = new long[passes];
-       /* for (int i = 0; i < passes; i++){
-            getBestMove(board,3,moveMasks);
-        }*/
         for (int i = 0; i < passes; i++){
             long nanoStart = System.nanoTime();
-            getBestMove(board,3,moveMasks);
+            getBestMove(board,depth,moveMasks);
             long nanoEnd = System.nanoTime();
             long nanoElapsed = nanoEnd -nanoStart;
             nanoTimes[i] = nanoElapsed;
         }
         long nanoAvg = findAverage(nanoTimes);
         double avg = nanoAvg/1000000d;
-        return avg+", "+nanoAvg;
+        return avg+"";
     }
     private static long findAverage(long[] array){
         long sum = findSum(array);
@@ -68,7 +64,7 @@ public class AlphaBetaPerfomance {
 
 
     private static int alphaBetaMax(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
-        counterboards++;
+
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
         if (depth == 0 || moves.length == 0) {
@@ -79,6 +75,7 @@ public class AlphaBetaPerfomance {
 
         for (int i = 0; i < moves.length; i++) {
             board.doMove(moves[i]);
+            counterboards++;
             score = alphaBetaMin(board, alpha, beta, depth - 1, moveMasks);
             board.undoLastMove();
 
@@ -94,7 +91,6 @@ public class AlphaBetaPerfomance {
     }
 
     private static int alphaBetaMin(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
-        counterboards++;
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
         if (depth == 0 || moves.length == 0) {
@@ -105,6 +101,7 @@ public class AlphaBetaPerfomance {
 
         for (int i = 0; i < moves.length; i++) {
             board.doMove(moves[i]);
+            counterboards++;
             score = alphaBetaMax(board, alpha, beta, depth - 1, moveMasks);
             board.undoLastMove();
 
@@ -122,7 +119,7 @@ public class AlphaBetaPerfomance {
     // gibt den besten Move anhand der AlphaBeta Suche mit der Bewertungsfunktion zurück
     // ACHTUNG: depth muss >= 1 sein
     public static Move getBestMove(Board board, int depth, MoveMasks moveMasks) {
-        counterboards++;
+
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
         if (depth < 1) {
@@ -137,6 +134,7 @@ public class AlphaBetaPerfomance {
 
         for (int i = 0; i < moves.length; i++) {
             board.doMove(moves[i]);
+            counterboards++;
             score = alphaBetaMin(board, alpha, beta, depth - 1, moveMasks); // Aufruf von AlphaBeta ohne sich die Moves zu merken
             board.undoLastMove();
 
