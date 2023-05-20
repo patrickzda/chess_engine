@@ -15,7 +15,7 @@ public class EvaluationPeformance {
             long nanoStart = 0L;
             long nanoEnd = 0L;
             long nanoElapsed = 0L;
-            System.out.println("Board, t in ms, t in ns, avg in ms, avg in ns");
+            System.out.println("Board, avg in ms");
             for (String fen : fens) {
                 MoveMasks moveMasks = new MoveMasks();
                 Board board = new Board(fen);
@@ -27,7 +27,7 @@ public class EvaluationPeformance {
                 elapsedTime = nanoElapsed/1000000d;
                 String averageTime = averageExecutionTime(new Board(fen), moveMasks, passes);
 
-                if (passes > 0) System.out.println(fen + ", " + elapsedTime + ", "+nanoElapsed+", "+averageTime);
+                if (passes > 0) System.out.println(fen + ", "+averageTime);
             }
         }
 
@@ -47,11 +47,10 @@ public class EvaluationPeformance {
                 long nanoElapsed = nanoEnd -nanoStart;
                 times[i] = elapsedTime;
                 nanoTimes[i] = nanoElapsed;
-                System.out.println(nanoElapsed/1000000d);
             }
             long nanoAvg = findAverage(nanoTimes);
             double avg = nanoAvg/1000000d;
-            return avg+", "+nanoAvg;
+            return avg+"";
         }
         private static long findAverage(long[] array){
             long sum = findSum(array);
