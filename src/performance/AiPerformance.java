@@ -48,9 +48,10 @@ public class AiPerformance {
                     gameState = board.getGameState(masks);
                     if (gameState == GameState.DRAW || gameState == GameState.BLACK_WON) {
                         System.out.println("Stockfish won with elocount:"+startelo);
+                        kiWoncounter--;
                         break;
                     }
-                    System.out.println(board);
+                    //System.out.println(board);
                 }
             }else if (kiWon){
                 startelo = startelo+100;
@@ -74,9 +75,11 @@ public class AiPerformance {
                     gameState = board.getGameState(masks);
                     if (gameState == GameState.DRAW || gameState == GameState.BLACK_WON) {
                         System.out.println("Stockfish won with elocount:"+startelo);
+                        kiWoncounter--;
                         break;
+
                     }
-                    System.out.println(board);
+                    //System.out.println(board);
                 }
             }
         }
