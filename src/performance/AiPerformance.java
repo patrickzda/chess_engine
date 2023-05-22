@@ -17,100 +17,64 @@ public class AiPerformance {
 
     //Damit diese Methode funktioniert muss folgendes gewährleistet sein: Im Ordner, in dem sich das Projekt chess_engine befindet, muss die Stockfish-Binary liegen.
     //Gibt für eine bestimmte Elo-Spielstärke (min 1320, max 3190), einen bestimmten FEN-String und eine Rechenzeitangabe einen Zug zurück.
-    public static void howMuchElohasMyAI(int startelo,int depth,int eloCalctime){
+    public static void howMuchElohasMyAI(int startelo,int eloCalctime){
         boolean kiWon = false;
         int kiWoncounter = 0;
-        startelo = startelo+100;
-        if(startelo < 1320 || startelo > 3190){
-            System.out.println("Elo has to be in the bound of 1320 and 3190\n Elo Set to 1500");
-            startelo = 1500;
-        }
-        while (kiWoncounter < 10){
-            if(!kiWon){
-                startelo = startelo-100;
-                Board board = new Board();
-                MoveMasks masks = new MoveMasks();
-                GameState gameState;
-                gameState = board.getGameState(masks);
-                System.out.println(gameState);
-                while (true){
-                    Move m = AlphaBeta.getBestMove(board, depth, masks);
-                    board.doMove(m);
-                    gameState = board.getGameState(masks);
-                    if (gameState == GameState.DRAW || gameState == GameState.WHITE_WON) {
-                        System.out.println("The Ai won with elocount:"+startelo);
-                        kiWon = true;
-                        kiWoncounter++;
-                        break;
-                    }
-                    Move stockFishMove = stockfishMove(getMoveFromStockfish(startelo, board.toFENString(), eloCalctime),board);
-                    board.doMove(stockFishMove);
-                    gameState = board.getGameState(masks);
-                    if (gameState == GameState.DRAW || gameState == GameState.BLACK_WON) {
-                        System.out.println("Stockfish won with elocount:"+startelo);
-                        kiWoncounter--;
-                        break;
-                    }
-                    //System.out.println(board);
-                }
-            }else if (kiWon){
-                startelo = startelo+100;
-                Board board = new Board();
-                MoveMasks masks = new MoveMasks();
-                GameState gameState;
-                gameState = board.getGameState(masks);
-                System.out.println(gameState);
-                while (true){
-                    Move m = AlphaBeta.getBestMove(board, depth, masks);
-                    board.doMove(m);
-                    gameState = board.getGameState(masks);
-                    if (gameState == GameState.DRAW || gameState == GameState.WHITE_WON) {
-                        System.out.println("The Ai won with elocount:"+startelo);
-                        kiWon = true;
-                        kiWoncounter++;
-                        break;
-                    }
-                    Move stockFishMove = stockfishMove(getMoveFromStockfish(startelo, board.toFENString(), eloCalctime),board);
-                    board.doMove(stockFishMove);
-                    gameState = board.getGameState(masks);
-                    if (gameState == GameState.DRAW || gameState == GameState.BLACK_WON) {
-                        System.out.println("Stockfish won with elocount:"+startelo);
-                        kiWoncounter--;
-                        break;
 
-                    }
-                    //System.out.println(board);
-                }
-            }
+        if(startelo < 1320 || startelo > 3190){
+            System.out.println("Elo has to be in the bound of 1320 and 3190\n Elo Set to 1320");
+            startelo = 1320;
         }
+        int lowElo = startelo;
+        int highElo = 3100;
+        int middleElo = (lowElo+highElo)/2;
+        boolean lowerEnd = playAgainstStockfish(lowElo,eloCalctime);
+        boolean uperEnd = playAgainstStockfish(highElo,eloCalctime);
+        boolean middle = playAgainstStockfish(middleElo,eloCalctime);
+        if(uperEnd){
+            System.out.println("already better than 3190!");
+            //return;
+        }
+        if (lowerEnd){
+            System.out.println("lost against the smallest elo of Stockfish your Ai is Trash");
+            //return;
+        }
+        int eloStagnation = middleElo+1;
+        while (eloStagnation != middleElo){
+            if (middle){ // uper end
+                lowElo = middleElo;
+                middleElo = (lowElo+highElo)/2;
+            }else { // lower end
+                highElo = middleElo;
+                middleElo = (lowElo+highElo)/2;
+            }
+            eloStagnation = middleElo;
+            middle = playAgainstStockfish(middleElo,eloCalctime);
+
+            System.out.println(middleElo);
+        }
+    }
+    public static boolean playAgainstStockfish(int elo,int calcTimeMilli){
         Board board = new Board();
         MoveMasks masks = new MoveMasks();
         GameState gameState;
-        gameState = board.getGameState(masks);
-        System.out.println(gameState);
         while (true){
-            Move m = AlphaBeta.getBestMove(board, depth, masks);
+            Move m = AlphaBeta.getBestMoveTimed(board,masks,calcTimeMilli);
             board.doMove(m);
             gameState = board.getGameState(masks);
             if (gameState == GameState.DRAW || gameState == GameState.WHITE_WON) {
-                System.out.println("The Ai won with elocount:"+startelo);
-                kiWon = true;
-                kiWoncounter++;
-                break;
+                System.out.println("The Ai won with elocount:"+elo);
+                return true;
             }
-            Move stockFishMove = stockfishMove(getMoveFromStockfish(startelo, board.toFENString(), eloCalctime),board);
+            Move stockFishMove = stockfishMove(getMoveFromStockfish(elo, board.toFENString(), calcTimeMilli),board);
             board.doMove(stockFishMove);
             gameState = board.getGameState(masks);
             if (gameState == GameState.DRAW || gameState == GameState.BLACK_WON) {
-                System.out.println("Stockfish won with elocount:"+startelo);
-                break;
+                System.out.println("Stockfish won with elocount:"+elo);
+                return false;
             }
-            //System.out.println(board);
         }
-
-
     }
-
     public static Move stockfishMove(String move,Board board){
            String []fields = {"a1","b1","c1","d1","e1","f1","g1","h1",
                               "a2","b2","c2","d2","e2","f2","g2","h2",

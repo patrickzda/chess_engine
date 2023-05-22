@@ -28,7 +28,8 @@ public class MiniMaxPerformance {
                 elapsedTime = nanoElapsed/1000000d;
                 counterMoves = counterboards;
                 String averageTime = averageExecutionTime(new Board(fen), moveMasks, passes,i);
-                double posPerMs = (counterMoves/elapsedTime)*1000;
+                double sec = nanoElapsed/1000000000d;
+                int posPerMs = (int) Math.round(counterMoves/sec);
                 if (passes > 0) System.out.println(fen+", " +averageTime+", "+counterMoves+", "+posPerMs+", "+i+", "+move);
                 counterboards= 0;
             }

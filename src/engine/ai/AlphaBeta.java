@@ -99,9 +99,9 @@ public class AlphaBeta {
             bestMove = getBestMove(board, searchDepth, moveMasks);
         }
 
-        float factor = (float) (startTime - System.nanoTime()) / (startTime - finishTime);
+        //float factor = (float) (startTime - System.nanoTime()) / (startTime - finishTime);
 
-        System.out.println("erreicht Suchtiefe: " + searchDepth + " nach " + ((System.nanoTime() - startTime)/1000000) + "ms (Faktor: " + factor + ")");
+        //System.out.println("erreicht Suchtiefe: " + searchDepth + " nach " + ((System.nanoTime() - startTime)/1000000) + "ms (Faktor: " + factor + ")");
 
         return bestMove;
     }
