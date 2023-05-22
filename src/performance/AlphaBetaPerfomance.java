@@ -7,9 +7,14 @@ import engine.representation.Board;
 import engine.representation.Color;
 import engine.representation.Move;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class AlphaBetaPerfomance {
     public static int counterboards = 0;
     public static int counterMoves = 0;
+    public static List<List<String>> rows = new ArrayList<>();
 
     public static void measureAveragePerformanceOfAlphaBeta(String[] fens, int passes, int depth){
         System.out.println("Alpha-Beta performance");
@@ -18,7 +23,8 @@ public class AlphaBetaPerfomance {
         long nanoStart = 0L;
         long nanoEnd = 0L;
         long nanoElapsed = 0L;
-        System.out.println("Board, avg in ms, positions, positions/s, depth, move");
+        List<String> headers = Arrays.asList("Board", "avg in ms", "positions", "positions/s", "depth", "move");
+        rows.add(headers);
         for (String fen : fens) {
             for (int i = 1; i < depth+1; i++) {
                 MoveMasks moveMasks = new MoveMasks();
@@ -29,15 +35,19 @@ public class AlphaBetaPerfomance {
                 nanoElapsed = nanoEnd - nanoStart;
                 elapsedTime = nanoElapsed/1000000d;
                 counterMoves = counterboards;
-                String averageTime = averageExecutionTime(new Board(fen), moveMasks, passes,i);
-                double sec = nanoElapsed/1000000000d;
-                int posPerMs = (int) Math.round(counterMoves/sec);
-                if (passes > 0) System.out.println(fen + ", "+averageTime+", "+counterMoves+", "+posPerMs+", "+i+", "+move.toString());
+                double averageTime = averageExecutionTime(new Board(fen), moveMasks, passes,i);
+                int posPerMs = (int) Math.round((counterMoves/averageTime)*1000);
+                if (passes > 0){
+                    rows.add(Arrays.asList(fen,averageTime+"",counterMoves+"",posPerMs+"",i+"",move.toString()));
+                    //System.out.println(fen + ", "+averageTime+", "+counterMoves+", "+posPerMs+", "+i+", "+move.toString());
+                }
                 counterboards= 0;
             }
         }
+        System.out.println(formatAsTable(rows));
     }
-    private static String averageExecutionTime(Board board,MoveMasks moveMasks, int passes,int depth){
+
+    private static double averageExecutionTime(Board board,MoveMasks moveMasks, int passes,int depth){
         long[] nanoTimes = new long[passes];
         for (int i = 0; i < passes; i++){
             long nanoStart = System.nanoTime();
@@ -48,7 +58,7 @@ public class AlphaBetaPerfomance {
         }
         long nanoAvg = findAverage(nanoTimes);
         double avg = nanoAvg/1000000d;
-        return avg+"";
+        return avg;
     }
     private static long findAverage(long[] array){
         long sum = findSum(array);
@@ -62,8 +72,6 @@ public class AlphaBetaPerfomance {
         }
         return sum;
     }
-
-
     private static int alphaBetaMax(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
 
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
@@ -90,7 +98,6 @@ public class AlphaBetaPerfomance {
         }
         return alpha;
     }
-
     private static int alphaBetaMin(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
@@ -116,7 +123,6 @@ public class AlphaBetaPerfomance {
         }
         return beta;
     }
-
     // gibt den besten Move anhand der AlphaBeta Suche mit der Bewertungsfunktion zurück
     // ACHTUNG: depth muss >= 1 sein
     public static Move getBestMove(Board board, int depth, MoveMasks moveMasks) {
@@ -146,5 +152,29 @@ public class AlphaBetaPerfomance {
         }
 
         return bestMove;
+    }
+    public static String formatAsTable(List<List<String>> rows) {
+        int[] maxLengths = new int[rows.get(0).size()];
+        for (List<String> row : rows)
+        {
+            for (int i = 0; i < row.size(); i++)
+            {
+                maxLengths[i] = Math.max(maxLengths[i], row.get(i).length());
+            }
+        }
+
+        StringBuilder formatBuilder = new StringBuilder();
+        for (int maxLength : maxLengths)
+        {
+            formatBuilder.append("%-").append(maxLength + 2).append("s");
+        }
+        String format = formatBuilder.toString();
+
+        StringBuilder result = new StringBuilder();
+        for (List<String> row : rows)
+        {
+            result.append(String.format(format, row.toArray(new String[0]))).append("\n");
+        }
+        return result.toString();
     }
 }

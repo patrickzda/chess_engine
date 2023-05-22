@@ -24,10 +24,10 @@ public class Main {
         String fens[] = new String[]{"2k5/6q1/3P1P2/4N3/8/1K6/8/8 w - - 0 1","rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1","4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1","8/6k1/5bP1/4p2p/2qpP2P/1b2BK2/p1r5/6R1 w - - 1 2","6k1/r4ppp/r7/1b6/8/8/4QPPP/4R1K1 w - - 0 1"};
         //MoveGeneratorPerformance moveGeneratorPerformance = new MoveGeneratorPerformance();
         //moveGeneratorPerformance.measureAveragePerformanceOnBoards(fens,10000);
-        //EvaluationPeformance evaluationPeformance = new EvaluationPeformance();
-        //evaluationPeformance.measureAveragePerformanceOfEvaluation(fens,10000);
-        AlphaBetaPerfomance.measureAveragePerformanceOfAlphaBeta(fens,5,5);
-        //MiniMaxPerformance.measureAveragePerformanceOfMiniMax(fens,5,5);
+        EvaluationPeformance evaluationPeformance = new EvaluationPeformance();
+        evaluationPeformance.measureAveragePerformanceOfEvaluation(fens,10000);
+        AlphaBetaPerfomance.measureAveragePerformanceOfAlphaBeta(fens,5,2);
+        //MiniMaxPerformance.measureAveragePerformanceOfMiniMax(fens,5,2);
         //AiPerformance.howMuchElohasMyAI(1320,5,1000);
     }
     static void playMove(String[] args){
