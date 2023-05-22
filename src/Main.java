@@ -15,9 +15,9 @@ public class Main {
 
 
         //playAgainstItself();
-        performance();
+        //performance();
 
-        //playMove(args);
+        playMove(args);
     }
 
     static void performance(){
@@ -32,7 +32,7 @@ public class Main {
     }
     static void playMove(String[] args){
         Board board = new Board(args[0]);
-        Move m = AlphaBeta.getBestMove(board, Integer.parseInt(args[1]), new MoveMasks());
+        Move m = AlphaBeta.getBestMoveTimed(board, new MoveMasks(), 1000);
         board.doMove(m);
         System.out.println(board.toFENString());
     }
