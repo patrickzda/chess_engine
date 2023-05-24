@@ -24,11 +24,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="MoveGeneratorTest: Test für isAttacked()">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PJ_KI_MST2.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/PJ_KI_MST2.pptx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/performance/AlphaBetaPerfomance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/performance/AlphaBetaPerfomance.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/performance/EvaluationPeformance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/performance/EvaluationPeformance.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/performance/MiniMaxPerformance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/performance/MiniMaxPerformance.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -199,9 +195,6 @@
       <workItem from="1683028102371" duration="11460000" />
       <workItem from="1683103429657" duration="7771000" />
       <workItem from="1683634980839" duration="4411000" />
-      <workItem from="1684784057078" duration="20000" />
-      <workItem from="1684860060416" duration="3116000" />
-      <workItem from="1684872628725" duration="672000" />
     </task>
     <task id="LOCAL-00001" summary="Board: Brett kann ausgegeben werden.">
       <created>1682438269949</created>

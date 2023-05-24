@@ -12,7 +12,7 @@ import java.util.List;
 public class EvaluationPeformance {
     public static List<List<String>> rows = new ArrayList<>();
     public void measureAveragePerformanceOfEvaluation(String[] fens, int passes){
-        System.out.println("Evaluation benchmark");
+        System.out.println("Evaulation funktion");
         long startMilliTime = 0L;
         long stopTime = 0L;
         double elapsedTime = 0d;

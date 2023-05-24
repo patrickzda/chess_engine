@@ -16,7 +16,7 @@ public class MiniMaxPerformance {
     public static int counterMoves = 0;
     public static List<List<String>> rows = new ArrayList<>();
     public static void measureAveragePerformanceOfMiniMax(String[] fens, int passes,int depth){
-        System.out.println("MiniMax benchmark");
+        System.out.println("MiniMax performance");
 
         double elapsedTime = 0d;
         long nanoStart = 0L;

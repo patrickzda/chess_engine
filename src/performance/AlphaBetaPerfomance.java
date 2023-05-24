@@ -17,7 +17,7 @@ public class AlphaBetaPerfomance {
     public static List<List<String>> rows = new ArrayList<>();
 
     public static void measureAveragePerformanceOfAlphaBeta(String[] fens, int passes, int depth){
-        System.out.println("Alpha-Beta benchmark");
+        System.out.println("Alpha-Beta performance");
 
         double elapsedTime = 0d;
         long nanoStart = 0L;
