@@ -12,27 +12,25 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
-
-
         //playAgainstItself();
-        //performance();
+        performance();
 
-        playMove(args);
+        //playMove(args);
     }
 
     static void performance(){
         String fens[] = new String[]{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0" ,"4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w KQkq - 0 0","8/6k1/5bP1/4p2p/3pP2P/1b1qBK2/p1r5/6R1 b KQkq - 0 0"};
-        MoveGeneratorPerformance moveGeneratorPerformance = new MoveGeneratorPerformance();
-        moveGeneratorPerformance.measureAveragePerformanceOnBoards(fens,10000);
-        //EvaluationPeformance evaluationPeformance = new EvaluationPeformance();
-        //evaluationPeformance.measureAveragePerformanceOfEvaluation(fens,10000);
-        //AlphaBetaPerfomance.measureAveragePerformanceOfAlphaBeta(fens,5,4);
-        //MiniMaxPerformance.measureAveragePerformanceOfMiniMax(fens,5,2);
+        //MoveGeneratorPerformance moveGeneratorPerformance = new MoveGeneratorPerformance();
+        //moveGeneratorPerformance.measureAveragePerformanceOnBoards(fens,10000);
+        EvaluationPeformance evaluationPeformance = new EvaluationPeformance();
+        evaluationPeformance.measureAveragePerformanceOfEvaluation(fens,10000);
+        AlphaBetaPerfomance.measureAveragePerformanceOfAlphaBeta(fens,1,4);
+        MiniMaxPerformance.measureAveragePerformanceOfMiniMax(fens,1,4);
         //AiPerformance.howMuchElohasMyAI(1320,5,1000);
     }
     static void playMove(String[] args){
         Board board = new Board(args[0]);
-        Move m = AlphaBeta.getBestMoveTimed(board, new MoveMasks(), 1000);
+        Move m = AlphaBeta.getBestMoveTimed(board, new MoveMasks(), 1500);
         board.doMove(m);
         System.out.println(board.toFENString());
     }
