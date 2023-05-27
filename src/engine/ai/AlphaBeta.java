@@ -12,7 +12,7 @@ public class AlphaBeta {
     private static int alphaBetaMax(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
-        if (depth == 0 || moves.length == 0) {
+        if (depth == 0 || board.isGameWon(moveMasks, moves.length) || moves.length == 0) {
             return Evaluation.evaluate(board);
         }
 
@@ -37,7 +37,7 @@ public class AlphaBeta {
     private static int alphaBetaMin(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
-        if (depth == 0 || moves.length == 0) {
+        if (depth == 0 || board.isGameWon(moveMasks, moves.length) || moves.length == 0) {
             return -Evaluation.evaluate(board);
         }
 
