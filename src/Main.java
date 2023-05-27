@@ -24,13 +24,13 @@ public class Main {
         //moveGeneratorPerformance.measureAveragePerformanceOnBoards(fens,10000);
         EvaluationPeformance evaluationPeformance = new EvaluationPeformance();
         evaluationPeformance.measureAveragePerformanceOfEvaluation(fens,10000);
-        AlphaBetaPerfomance.measureAveragePerformanceOfAlphaBeta(fens,1,4);
-        MiniMaxPerformance.measureAveragePerformanceOfMiniMax(fens,1,4);
+        //AlphaBetaPerfomance.measureAveragePerformanceOfAlphaBeta(fens,1,4);
+        //MiniMaxPerformance.measureAveragePerformanceOfMiniMax(fens,1,4);
         //AiPerformance.howMuchElohasMyAI(1320,5,1000);
     }
     static void playMove(String[] args){
         Board board = new Board(args[0]);
-        Move m = AlphaBeta.getBestMoveTimed(board, new MoveMasks(), 1500);
+        Move m = AlphaBeta.getBestMoveTimed(board, new MoveMasks(), 500);
         board.doMove(m);
         System.out.println(board.toFENString());
     }

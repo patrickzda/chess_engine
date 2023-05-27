@@ -40,7 +40,6 @@ public class Evaluation {
             isolatedPawns = getIsolatedPawnCount(board, WHITE) - getIsolatedPawnCount(board, BLACK);
             doubledPawns = getDoubledPawnCount(board, WHITE) - getDoubledPawnCount(board, BLACK);
             blockedPawns = getBlockedPawnCount(board, WHITE) - getBlockedPawnCount(board, BLACK);
-
         }else {
             ownBoard = board.blackPieces;
             enemyBoard = board.whitePieces;
