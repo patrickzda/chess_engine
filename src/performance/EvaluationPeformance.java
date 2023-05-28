@@ -26,7 +26,7 @@ public class EvaluationPeformance {
             Board board = new Board(fen);
             String warmup = averageExecutionTime(board,moveMasks,passes/2);
             nanoStart = System.nanoTime();
-            Evaluation.evaluate(board);
+            Evaluation.evaluate(board, moveMasks);
             nanoEnd = System.nanoTime();
             nanoElapsed = nanoEnd - nanoStart;
             elapsedTime = nanoElapsed/1000000d;
@@ -49,7 +49,7 @@ public class EvaluationPeformance {
         for (int i = 0; i < passes; i++){
             long nanoStart = System.nanoTime();
             long startTime = System.currentTimeMillis();
-            Evaluation.evaluate(board);
+            Evaluation.evaluate(board, moveMasks);
             long nanoEnd = System.nanoTime();
             long stopTime = System.currentTimeMillis();
             long elapsedTime = stopTime - startTime;

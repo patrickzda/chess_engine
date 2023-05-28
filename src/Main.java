@@ -1,14 +1,7 @@
 import engine.ai.AlphaBeta;
-import engine.ai.DummyAi;
-import engine.ai.Evaluation;
-import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
 import performance.*;
-
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {

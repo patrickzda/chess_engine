@@ -78,7 +78,7 @@ public class MiniMaxPerformance {
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
         if (depth == 0 || moves.length == 0) {
-            return Evaluation.evaluate(board);
+            return Evaluation.evaluate(board, moveMasks);
         }
 
         int score;
@@ -99,7 +99,7 @@ public class MiniMaxPerformance {
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
         if (depth == 0 || moves.length == 0) {
-            return -Evaluation.evaluate(board);
+            return -Evaluation.evaluate(board, moveMasks);
         }
 
         int score;

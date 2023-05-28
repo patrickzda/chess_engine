@@ -5,12 +5,12 @@ import java.util.Random;
 
 public class TranspositionTable {
 
-    private final int HASHTABLE_SIZE = 10000;
-    private final TranspositionTableEntry[] entries = new TranspositionTableEntry[HASHTABLE_SIZE];
+    private final int HASHTABLE_SIZE = 64000;
+    private final TranspositionTableEntry[] depthEntries = new TranspositionTableEntry[HASHTABLE_SIZE], alwaysReplaceEntries = new TranspositionTableEntry[HASHTABLE_SIZE];
     private final long[][] zobristValues = new long[64][12];
     private final long blackToMove;
 
-    TranspositionTable(){
+    public TranspositionTable(){
         Random random = new Random();
 
         blackToMove = random.nextLong();
@@ -20,15 +20,19 @@ public class TranspositionTable {
             }
         }
 
-        Arrays.fill(entries, null);
+        Arrays.fill(depthEntries, null);
+        Arrays.fill(alwaysReplaceEntries, null);
     }
 
+    //Einträge sollten immer hinzugefügt werden, sobald ein Wert in der Suche returned wird
     public void addEntry(Board board, Move bestMove, int depth, int evaluation){
         long zobristKey = generateKey(board);
         int index = (int) (zobristKey % HASHTABLE_SIZE);
 
-        if(entries[index] == null || entries[index].getDepth() <= depth || (entries[index].getZobristKey() != zobristKey && depth >= 3)){
-            entries[index] = new TranspositionTableEntry(zobristKey, bestMove, depth, evaluation);
+        if(depthEntries[index] == null || depthEntries[index].getDepth() <= depth){
+            depthEntries[index] = new TranspositionTableEntry(zobristKey, bestMove, depth, evaluation);
+        }else{
+            alwaysReplaceEntries[index] = new TranspositionTableEntry(zobristKey, bestMove, depth, evaluation);
         }
     }
 
@@ -36,8 +40,10 @@ public class TranspositionTable {
         long zobristKey = generateKey(board);
         int index = (int) (zobristKey % HASHTABLE_SIZE);
 
-        if(entries[index] != null && entries[index].getZobristKey() == zobristKey && entries[index].getDepth() >= depth){
-            return entries[index];
+        if(depthEntries[index] != null && depthEntries[index].getZobristKey() == zobristKey && depthEntries[index].getDepth() >= depth){
+            return depthEntries[index];
+        }else if(alwaysReplaceEntries[index] != null && alwaysReplaceEntries[index].getZobristKey() == zobristKey && alwaysReplaceEntries[index].getDepth() >= depth){
+            return alwaysReplaceEntries[index];
         }else{
             return null;
         }

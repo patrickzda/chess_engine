@@ -23,11 +23,11 @@ public class Evaluation {
     private static final int[] queenPSTBlack = new int[]{6, 1, -8, -104, 69, 24, 88, 26, 14, 32, 60, -10, 20, 76, 57, 24, -2, 43, 32, 60, 72, 63, 43, 2, 1, -16, 22, 17, 25, 20, -13, -6, -14, -15, -2, -5, -1, -10, -20, -22,-30, -6, -13, -11, -16, -11, -16, -27, -36, -18, 0, -19, -15, -15, -21, -38, -39, -30, -31, -13, -31, -36, -34, -42};
     private static final int[] kingPSTBlack = new int[]{4, 54, 47, -99, -99, 60, 83, -62, -32, 10, 55, 56, 56, 55, 10, 3, -62, 12, -57, 44, -67, 28, 37, -31, -55, 50, 11, CHECKMATE_BONUS, CHECKMATE_BONUS, 13, 0, -49, -55, -43, -52, CHECKMATE_BONUS, CHECKMATE_BONUS, -47, -8, -50, -47, -42, -43, 0, 0, -32, -29, -32, -4, 3, -14, 0, 0, -18, 13, 4, 17, 30, -3, -14, 6, -1, 40, 18};
 
-    public static int evaluate(Board board) {
+    public static int evaluate(Board board, MoveMasks masks) {
         long ownBoard, enemyBoard;
         int isolatedPawns, doubledPawns, blockedPawns;
 
-        GameState state = board.getGameState(new MoveMasks());
+        GameState state = board.getGameState(masks);
         if(state == GameState.DRAW){
             return 0;
         }else if(state == GameState.WHITE_WON | state == GameState.BLACK_WON){
