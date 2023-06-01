@@ -16,6 +16,7 @@ public class AlphaBeta {
             return Evaluation.evaluate(board, moveMasks);
         }
 
+        Move bestMove = moves[0];
         int score;
 
         for (int i = 0; i < moves.length; i++) {
@@ -23,11 +24,12 @@ public class AlphaBeta {
             score = alphaBetaMin(board, alpha, beta, depth - 1, moveMasks);
             board.undoLastMove();
 
-            if (score >= beta) {    // beta-cutoff
+            if (score >= beta) {
                 return beta;
             }
 
             if (score > alpha) {
+                bestMove = moves[i];
                 alpha = score;
             }
         }
@@ -41,6 +43,7 @@ public class AlphaBeta {
             return -Evaluation.evaluate(board, moveMasks);
         }
 
+        Move bestEnemyMove = moves[0];
         int score;
 
         for (int i = 0; i < moves.length; i++) {
@@ -48,11 +51,12 @@ public class AlphaBeta {
             score = alphaBetaMax(board, alpha, beta, depth - 1, moveMasks);
             board.undoLastMove();
 
-            if (score <= alpha) {    // alpha-cutoff
+            if (score <= alpha) {
                 return alpha;
             }
 
             if (score < beta) {
+                bestEnemyMove = moves[i];
                 beta = score;
             }
         }
@@ -81,7 +85,7 @@ public class AlphaBeta {
 
             if (score > alpha) {
                 alpha = score;
-                bestMove = moves[i];    // in der ersten Suchtiefe den besten Move merken
+                bestMove = moves[i];
             }
         }
 
@@ -98,11 +102,6 @@ public class AlphaBeta {
             searchDepth++;
             bestMove = getBestMove(board, searchDepth, moveMasks);
         }
-
-        //float factor = (float) (startTime - System.nanoTime()) / (startTime - finishTime);
-
-        //System.out.println("erreicht Suchtiefe: " + searchDepth + " nach " + ((System.nanoTime() - startTime)/1000000) + "ms (Faktor: " + factor + ")");
-
         return bestMove;
     }
 }
