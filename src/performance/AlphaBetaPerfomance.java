@@ -4,7 +4,6 @@ import engine.ai.Evaluation;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.Board;
-import engine.representation.Color;
 import engine.representation.Move;
 
 import java.util.ArrayList;
@@ -76,7 +75,7 @@ public class AlphaBetaPerfomance {
 
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
-        if (depth == 0 || board.isGameWon(moveMasks, moves.length) || moves.length == 0) {
+        if (depth == 0 || board.isGameLost(moveMasks, moves.length) || moves.length == 0) {
             return Evaluation.evaluate(board, moveMasks);
         }
 
@@ -101,7 +100,7 @@ public class AlphaBetaPerfomance {
     private static int alphaBetaMin(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
-        if (depth == 0 || board.isGameWon(moveMasks, moves.length) || moves.length == 0) {
+        if (depth == 0 || board.isGameLost(moveMasks, moves.length) || moves.length == 0) {
             return -Evaluation.evaluate(board, moveMasks);
         }
 

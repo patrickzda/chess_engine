@@ -6,7 +6,6 @@ import engine.move_generation.MoveMasks;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class Board {
@@ -376,7 +375,7 @@ public class Board {
 
     public GameState getGameState(MoveMasks moveMasks) {
         Move[] legalMoves = MoveGenerator.generateLegalMoves(this, moveMasks);
-        if (isGameWon(moveMasks, legalMoves.length)) {
+        if (isGameLost(moveMasks, legalMoves.length)) {
             if (getTurn() == Color.WHITE) {
                 return GameState.BLACK_WON;
             }
@@ -430,7 +429,8 @@ public class Board {
         return ((kings & HILL_TOP) != 0);
     }
 
-    public boolean isGameWon(MoveMasks moveMasks, int legalMovesLength) {
+    //Prüft, ob der Spieler, der aktuell dran ist, verloren hat
+    public boolean isGameLost(MoveMasks moveMasks, int legalMovesLength) {
         boolean checkMate = false;
         Color currentColor = getTurn();
         long currentTeam;

@@ -5,9 +5,6 @@ import engine.move_generation.MoveMasks;
 import engine.representation.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Stack;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class BoardTest {
@@ -184,7 +181,7 @@ class BoardTest {
 
         for(int i = 0; i < results.length; i++){
             Move[] legalMoves = MoveGenerator.generateLegalMoves(boards[i], m);
-            assertEquals(results[i], boards[i].isGameWon(m, legalMoves.length));//, legalMoves));
+            assertEquals(results[i], boards[i].isGameLost(m, legalMoves.length));//, legalMoves));
         }
     }
 
@@ -228,7 +225,7 @@ class BoardTest {
                 Move[] legalMoves = MoveGenerator.generateLegalMoves(boards[i], m);
 
                 System.out.println("isAttacked: " + MoveGenerator.isAttacked(boards[i], m, kingIndex, attacker));
-                System.out.println("isGameWon: " + boards[i].isGameWon(m, legalMoves.length));
+                System.out.println("isGameWon: " + boards[i].isGameLost(m, legalMoves.length));
             }
 
             assertEquals(results[i], boards[i].getGameState(m));
