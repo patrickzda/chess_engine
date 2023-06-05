@@ -4,11 +4,12 @@ import engine.move_generation.MoveMasks;
 import engine.representation.*;
 
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 import static engine.representation.Color.*;
 
 public class Evaluation {
+    private static final int[] PIECE_VALUES = new int[]{60000, 930, 480, 320, 280, 100};
     private static final int PAWN_VALUE = 100, KNIGHT_VALUE = 280, BISHOP_VALUE = 320, ROOK_VALUE = 480, QUEEN_VALUE = 930, KING_VALUE = 60000;
     private static final int BAD_PAWN_STRUCTURE_PENALTY = -25;
     private static final int CHECKMATE_BONUS = KING_VALUE + 10 * QUEEN_VALUE;
@@ -62,23 +63,38 @@ public class Evaluation {
         return value;
     }
 
-    public static Move[] sortMoves(TranspositionTable table, Board board, Move[] moves){
-        ArrayList<Move> sortedMoves = new ArrayList<Move>(moves.length);
+    public static void sortMoves(TranspositionTable table, Board board, Move[] moves){
         TranspositionTableEntry entry = table.lookup(board);
 
         if(entry != null){
             Move bestSavedMove = entry.getBestMove();
             for(int i = 0; i < moves.length; i++){
                 if(bestSavedMove.getStartFieldIndex() == moves[i].getStartFieldIndex() && bestSavedMove.getEndFieldIndex() == moves[i].getEndFieldIndex()){
-                    sortedMoves.add(moves[i]);
+                    moves[i].evaluation = moves[i].evaluation + 10000;
                     break;
                 }
             }
         }
 
+        for(int i = 0; i < moves.length; i++){
+            PieceType capturedPiece = board.getCapturedPieceType(moves[i]);
 
+            if(capturedPiece != null){
+                moves[i].evaluation = PIECE_VALUES[capturedPiece.ordinal()] - PIECE_VALUES[moves[i].getPieceType().ordinal()];
+            }
 
-        return sortedMoves.toArray(new Move[0]);
+            if(moves[i].isPromotionToQueen){
+                moves[i].evaluation = moves[i].evaluation + QUEEN_VALUE;
+            }else if(moves[i].isPromotionToRook){
+                moves[i].evaluation = moves[i].evaluation + ROOK_VALUE;
+            }else if(moves[i].isPromotionToBishop){
+                moves[i].evaluation = moves[i].evaluation + BISHOP_VALUE;
+            }else if(moves[i].isPromotionToKnight){
+                moves[i].evaluation = moves[i].evaluation + KNIGHT_VALUE;
+            }
+        }
+
+        Arrays.sort(moves);
     }
 
     private static int calculatePSTBonus(Board board){

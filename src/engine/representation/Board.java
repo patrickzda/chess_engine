@@ -4,6 +4,7 @@ import engine.ai.Evaluation;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 
+import java.awt.color.ColorSpace;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
@@ -453,49 +454,41 @@ public class Board {
     }
 
     public PieceType getCapturedPieceType(Move move){
-        long enemyPawnsBefore, enemyKnightsBefore, enemyBishopsBefore, enemyRooksBefore, enemyQueensBefore;
-        long enemyPawns, enemyKnights, enemyBishops, enemyRooks, enemyQueens;
+        long enemyPieces;
+        long beforePawns, beforeKnights, beforeBishops, beforeRooks, beforeQueens;
 
         if(turn == Color.WHITE){
-            enemyPawnsBefore = blackPieces & pawns;
-            enemyKnightsBefore = blackPieces & knights;
-            enemyBishopsBefore = blackPieces & bishops;
-            enemyRooksBefore = blackPieces & rooks;
-            enemyQueensBefore = blackPieces & queens;
+            beforePawns = blackPieces & pawns;
+            beforeKnights = blackPieces & knights;
+            beforeBishops = blackPieces & bishops;
+            beforeRooks = blackPieces & rooks;
+            beforeQueens = blackPieces & queens;
         }else{
-            enemyPawnsBefore = whitePieces & pawns;
-            enemyKnightsBefore = whitePieces & knights;
-            enemyBishopsBefore = whitePieces & bishops;
-            enemyRooksBefore = whitePieces & rooks;
-            enemyQueensBefore = whitePieces & queens;
+            beforePawns = whitePieces & pawns;
+            beforeKnights = whitePieces & knights;
+            beforeBishops = whitePieces & bishops;
+            beforeRooks = whitePieces & rooks;
+            beforeQueens = whitePieces & queens;
         }
 
         PieceType type = null;
         doMove(move);
 
         if(turn == Color.WHITE){
-            enemyPawns = blackPieces & pawns;
-            enemyKnights = blackPieces & knights;
-            enemyBishops = blackPieces & bishops;
-            enemyRooks = blackPieces & rooks;
-            enemyQueens = blackPieces & queens;
+            enemyPieces = whitePieces;
         }else{
-            enemyPawns = whitePieces & pawns;
-            enemyKnights = whitePieces & knights;
-            enemyBishops = whitePieces & bishops;
-            enemyRooks = whitePieces & rooks;
-            enemyQueens = whitePieces & queens;
+            enemyPieces = blackPieces;
         }
 
-        if(enemyPawns != enemyPawnsBefore){
+        if(beforePawns != (enemyPieces & pawns)){
             type = PieceType.PAWN;
-        }else if(enemyKnights != enemyKnightsBefore){
+        }else if(beforeKnights != (enemyPieces & knights)){
             type = PieceType.KNIGHT;
-        }else if(enemyBishops != enemyBishopsBefore){
+        }else if(beforeBishops != (enemyPieces & bishops)){
             type = PieceType.BISHOP;
-        }else if(enemyRooks != enemyRooksBefore){
+        }else if(beforeRooks != (enemyPieces & rooks)){
             type = PieceType.ROOK;
-        }else if(enemyQueens != enemyQueensBefore){
+        }else if(beforeQueens != (enemyPieces & queens)){
             type = PieceType.QUEEN;
         }
 
