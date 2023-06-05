@@ -4,6 +4,8 @@ import engine.move_generation.MoveMasks;
 import engine.representation.*;
 
 
+import java.util.ArrayList;
+
 import static engine.representation.Color.*;
 
 public class Evaluation {
@@ -60,12 +62,18 @@ public class Evaluation {
         return value;
     }
 
-    public static Move[] sortMoves(TranspositionTable table, Move[] moves){
-        for(int i = 0; i < moves.length; i++){
+    public static Move[] sortMoves(TranspositionTable table, Board board, Move[] moves){
+        ArrayList<Move> sortedMoves = new ArrayList<Move>(moves.length);
+        TranspositionTableEntry entry = table.lookup(board);
+        if(entry != null){
+            for(int i = 0; i < moves.length; i++){
 
+            }
         }
 
-        return moves;
+
+
+        return sortedMoves.toArray(new Move[0]);
     }
 
     private static int calculatePSTBonus(Board board){
