@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class TranspositionTable {
-
     private final int HASHTABLE_SIZE = 64000;
     private final TranspositionTableEntry[] depthEntries = new TranspositionTableEntry[HASHTABLE_SIZE], alwaysReplaceEntries = new TranspositionTableEntry[HASHTABLE_SIZE];
     private final long[][] zobristValues = new long[64][12];

@@ -97,11 +97,16 @@ public class AlphaBeta {
         long finishTime = startTime + (millis * 1000000L);
         int searchDepth = 0;
         Move bestMove = new Move(0, 0, PieceType.PAWN);
+        //Moves generieren
 
         while (System.nanoTime() < finishTime) {
             searchDepth++;
-            bestMove = getBestMove(board, searchDepth, moveMasks);
+            bestMove = getBestMove(board, searchDepth, moveMasks);      //+ Evaluationen aller Moves global speichern
+
+            //Moves auf Basis der globalen Evaluation sortieren
         }
+
+        //Globale Evaluationen clearen
         return bestMove;
     }
 }
