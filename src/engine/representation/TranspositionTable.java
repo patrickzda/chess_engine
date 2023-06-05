@@ -35,6 +35,7 @@ public class TranspositionTable {
         }
     }
 
+    //Kann in Alpha-Beta verwendet werden
     public TranspositionTableEntry getEntry(Board board, int depth){
         long zobristKey = generateKey(board);
         int index = (int) (zobristKey % HASHTABLE_SIZE);
@@ -42,6 +43,20 @@ public class TranspositionTable {
         if(depthEntries[index] != null && depthEntries[index].getZobristKey() == zobristKey && depthEntries[index].getDepth() >= depth){
             return depthEntries[index];
         }else if(alwaysReplaceEntries[index] != null && alwaysReplaceEntries[index].getZobristKey() == zobristKey && alwaysReplaceEntries[index].getDepth() >= depth){
+            return alwaysReplaceEntries[index];
+        }else{
+            return null;
+        }
+    }
+
+    //Darf nur von Patrick verwendet werden
+    public TranspositionTableEntry lookup(Board board){
+        long zobristKey = generateKey(board);
+        int index = (int) (zobristKey % HASHTABLE_SIZE);
+
+        if(depthEntries[index] != null && depthEntries[index].getZobristKey() == zobristKey){
+            return depthEntries[index];
+        }else if(alwaysReplaceEntries[index] != null && alwaysReplaceEntries[index].getZobristKey() == zobristKey){
             return alwaysReplaceEntries[index];
         }else{
             return null;
