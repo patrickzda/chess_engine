@@ -1,13 +1,18 @@
 import engine.ai.AlphaBeta;
+import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
 import performance.*;
+
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
         //playAgainstItself();
 
-        performance();
+        //performance();
+
+        playTimed(new String[]{"2k5/6q1/3P1P2/4N3/8/1K6/8/8 w - - 0 1", "4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1", "6k1/r4ppp/r7/1b6/8/8/4QPPP/4R1K1 w - - 0 1"}, 5000);
 
         //playMove(args);
 
@@ -48,7 +53,8 @@ public class Main {
         GameState gameState;
 
         while(counter < 400){
-            Move m = AlphaBeta.getBestMove(board, 5, masks);
+            Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
+            Move m = AlphaBeta.getBestMove(board, moves, 5, masks);
             board.doMove(m);
 
             gameState = board.getGameState(masks);
