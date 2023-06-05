@@ -65,9 +65,14 @@ public class Evaluation {
     public static Move[] sortMoves(TranspositionTable table, Board board, Move[] moves){
         ArrayList<Move> sortedMoves = new ArrayList<Move>(moves.length);
         TranspositionTableEntry entry = table.lookup(board);
-        if(entry != null){
-            for(int i = 0; i < moves.length; i++){
 
+        if(entry != null){
+            Move bestSavedMove = entry.getBestMove();
+            for(int i = 0; i < moves.length; i++){
+                if(bestSavedMove.getStartFieldIndex() == moves[i].getStartFieldIndex() && bestSavedMove.getEndFieldIndex() == moves[i].getEndFieldIndex()){
+                    sortedMoves.add(moves[i]);
+                    break;
+                }
             }
         }
 

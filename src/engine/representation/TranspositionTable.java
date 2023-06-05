@@ -38,6 +38,7 @@ public class TranspositionTable {
     //Kann in Alpha-Beta verwendet werden
     public TranspositionTableEntry getEntry(Board board, int depth){
         long zobristKey = generateKey(board);
+
         int index = (int) (zobristKey % HASHTABLE_SIZE);
 
         if(depthEntries[index] != null && depthEntries[index].getZobristKey() == zobristKey && depthEntries[index].getDepth() >= depth){
@@ -103,7 +104,7 @@ public class TranspositionTable {
             }
         }
 
-        return key;
+        return Math.abs(key);
     }
 
 }

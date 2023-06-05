@@ -452,6 +452,57 @@ public class Board {
         return isKingOfTheHill() || checkMate;
     }
 
+    public PieceType getCapturedPieceType(Move move){
+        long enemyPawnsBefore, enemyKnightsBefore, enemyBishopsBefore, enemyRooksBefore, enemyQueensBefore;
+        long enemyPawns, enemyKnights, enemyBishops, enemyRooks, enemyQueens;
+
+        if(turn == Color.WHITE){
+            enemyPawnsBefore = blackPieces & pawns;
+            enemyKnightsBefore = blackPieces & knights;
+            enemyBishopsBefore = blackPieces & bishops;
+            enemyRooksBefore = blackPieces & rooks;
+            enemyQueensBefore = blackPieces & queens;
+        }else{
+            enemyPawnsBefore = whitePieces & pawns;
+            enemyKnightsBefore = whitePieces & knights;
+            enemyBishopsBefore = whitePieces & bishops;
+            enemyRooksBefore = whitePieces & rooks;
+            enemyQueensBefore = whitePieces & queens;
+        }
+
+        PieceType type = null;
+        doMove(move);
+
+        if(turn == Color.WHITE){
+            enemyPawns = blackPieces & pawns;
+            enemyKnights = blackPieces & knights;
+            enemyBishops = blackPieces & bishops;
+            enemyRooks = blackPieces & rooks;
+            enemyQueens = blackPieces & queens;
+        }else{
+            enemyPawns = whitePieces & pawns;
+            enemyKnights = whitePieces & knights;
+            enemyBishops = whitePieces & bishops;
+            enemyRooks = whitePieces & rooks;
+            enemyQueens = whitePieces & queens;
+        }
+
+        if(enemyPawns != enemyPawnsBefore){
+            type = PieceType.PAWN;
+        }else if(enemyKnights != enemyKnightsBefore){
+            type = PieceType.KNIGHT;
+        }else if(enemyBishops != enemyBishopsBefore){
+            type = PieceType.BISHOP;
+        }else if(enemyRooks != enemyRooksBefore){
+            type = PieceType.ROOK;
+        }else if(enemyQueens != enemyQueensBefore){
+            type = PieceType.QUEEN;
+        }
+
+        undoLastMove();
+        return type;
+    }
+
     @Override
     public String toString(){
         StringBuilder stringBuilder = new StringBuilder();
