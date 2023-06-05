@@ -7,7 +7,7 @@ public class Move implements Comparable<Move>{
     public long whitePieces, blackPieces, kings, queens, rooks, bishops, knights, pawns;
     public boolean hasWhiteKingMoved, hasBlackKingMoved, hasWhiteLongRookMoved, hasWhiteShortRookMoved, hasBlackLongRookMoved, hasBlackShortRookMoved;
     public int movesSinceLastPawnMoveOrCapture = 0;
-    public int evaluation;
+    public int evaluation = 0;
 
     public Move(int startFieldIndex, int endFieldIndex, PieceType pieceType){
         this.startFieldIndex = startFieldIndex;
@@ -43,7 +43,7 @@ public class Move implements Comparable<Move>{
 
     @Override
     public int compareTo(Move other) {
-        return Integer.compare(evaluation, other.evaluation);
+        return -Integer.compare(evaluation, other.evaluation);
     }
 
 }
