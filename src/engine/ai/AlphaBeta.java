@@ -95,18 +95,32 @@ public class AlphaBeta {
     public static Move getBestMoveTimed(Board board, MoveMasks moveMasks, int millis) {
         long startTime = System.nanoTime();
         long finishTime = startTime + (millis * 1000000L);
+        long nextDepthSearchTime = 0;
+        long lastFinishTime = System.nanoTime();
         int searchDepth = 0;
         Move bestMove = new Move(0, 0, PieceType.PAWN);
         //Moves generieren
 
-        while (System.nanoTime() < finishTime) {
+        while (System.nanoTime() + nextDepthSearchTime < finishTime) {
             searchDepth++;
             bestMove = getBestMove(board, searchDepth, moveMasks);      //+ Evaluationen aller Moves global speichern
 
+            nextDepthSearchTime = (lastFinishTime - startTime) * 30;
+
+            lastFinishTime = System.nanoTime();
             //Moves auf Basis der globalen Evaluation sortieren
         }
 
         //Globale Evaluationen clearen
+
+        long stopTime = System.nanoTime();
+        long totalTime = (stopTime - startTime) / 1000000L;
+        double ratio = ((double) totalTime) / millis;
+
+//        System.out.println("gegebene Zeit: " + millis + "ms\n" +
+//                           "gebrauchtre Zeit: " + totalTime + "ms\n" +
+//                           "Verhältnis: " + ratio + " (" + ratio * 100 + "%)\n" +
+//                           "erreichte Suchtiefe: " + searchDepth);
         return bestMove;
     }
 }
