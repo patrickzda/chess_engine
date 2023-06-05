@@ -124,7 +124,7 @@ public class AlphaBeta {
 
             bestMove = getBestMove(board, moves, searchDepth, moveMasks);
 
-            nextDepthSearchTime = (System.nanoTime() - startTime) * 2;
+            nextDepthSearchTime = (System.nanoTime() - startTime) * 10;
 
             Arrays.sort(moves);
         }
