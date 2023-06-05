@@ -60,6 +60,14 @@ public class Evaluation {
         return value;
     }
 
+    public static Move[] sortMoves(TranspositionTable table, Move[] moves){
+        for(int i = 0; i < moves.length; i++){
+
+        }
+
+        return moves;
+    }
+
     private static int calculatePSTBonus(Board board){
         long whitePawns, whiteKnights, whiteBishops, whiteRooks, whiteQueens, whiteKings;
         long blackPawns, blackKnights, blackBishops, blackRooks, blackQueens, blackKings;

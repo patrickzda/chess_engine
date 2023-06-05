@@ -1,13 +1,13 @@
 package engine.representation;
 
-public class Move {
+public class Move implements Comparable<Move>{
     private final int startFieldIndex, endFieldIndex;
     private final PieceType pieceType;
     public boolean isEnPassant = false, isCastling = false, isPromotionToQueen = false, isPromotionToRook = false, isPromotionToBishop = false, isPromotionToKnight = false, isPawnTwoForward = false;
     public long whitePieces, blackPieces, kings, queens, rooks, bishops, knights, pawns;
     public boolean hasWhiteKingMoved, hasBlackKingMoved, hasWhiteLongRookMoved, hasWhiteShortRookMoved, hasBlackLongRookMoved, hasBlackShortRookMoved;
-
     public int movesSinceLastPawnMoveOrCapture = 0;
+    public int evaluation;
 
     public Move(int startFieldIndex, int endFieldIndex, PieceType pieceType){
         this.startFieldIndex = startFieldIndex;
@@ -40,4 +40,10 @@ public class Move {
     public String toString() {
         return indexToChessField(startFieldIndex) + "->" + indexToChessField(endFieldIndex);
     }
+
+    @Override
+    public int compareTo(Move other) {
+        return Integer.compare(evaluation, other.evaluation);
+    }
+
 }
