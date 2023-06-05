@@ -6,9 +6,11 @@ import performance.*;
 public class Main {
     public static void main(String[] args) {
         //playAgainstItself();
+
         performance();
 
         //playMove(args);
+
     }
 
     static void performance(){
@@ -26,6 +28,16 @@ public class Main {
         Move m = AlphaBeta.getBestMoveTimed(board, new MoveMasks(), 500);
         board.doMove(m);
         System.out.println(board.toFENString());
+    }
+
+    static void playTimed(String[] fens, int millis){
+        MoveMasks m = new MoveMasks();
+        for (int i = 0; i < fens.length; i++) {
+            Board b = new Board(fens[i]);
+            Move move = AlphaBeta.getBestMoveTimed(b, m, millis);
+            System.out.println(move);
+            System.out.println();
+        }
     }
 
     static void playAgainstItself(){
