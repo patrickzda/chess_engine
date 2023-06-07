@@ -21,9 +21,7 @@ public class AlphaBeta {
         Evaluation.sortMoves(transpositionTable, board, moves);
 
         if (depth == 0 || board.isGameLost(moveMasks, moves.length) || moves.length == 0) {
-            int finalEvaluation = Evaluation.evaluate(board, moveMasks);
-            transpositionTable.addEntry(board, new Move(0, 0, PieceType.PAWN), depth, finalEvaluation);
-            return finalEvaluation;
+            return Evaluation.evaluate(board, moveMasks);
         }
 
         Move bestMove = moves[0];
@@ -58,9 +56,7 @@ public class AlphaBeta {
         Evaluation.sortMoves(transpositionTable, board, moves);
 
         if (depth == 0 || board.isGameLost(moveMasks, moves.length) || moves.length == 0) {
-            int finalEvaluation = -Evaluation.evaluate(board, moveMasks);
-            transpositionTable.addEntry(board, new Move(0, 0, PieceType.PAWN), depth, -finalEvaluation);
-            return finalEvaluation;
+            return -Evaluation.evaluate(board, moveMasks);
         }
 
         Move bestEnemyMove = moves[0];
@@ -108,14 +104,12 @@ public class AlphaBeta {
             }
         }
 
-        //HIER MUSS NOCHMAL GESCHAUT WERDEN: ANPASSEN, JE NACHDEM WAS ANALYSIERT WERDEN SOLL
-        //transpositionTable.addEntry(board, bestMove, depth, bestMove.evaluation);
-        transpositionTable.clear();
+        transpositionTable.addEntry(board, bestMove, depth, bestMove.evaluation);
         return bestMove;
     }
 
     public static Move getBestMoveTimed(Board board, MoveMasks moveMasks, int millis) {
-        long startTime = System.nanoTime();
+        long startTime = System.nanoTime(), beginningTime = System.nanoTime();
         long finishTime = startTime + (millis * 1000000L);
 
         long nextDepthSearchTime = 0;
@@ -134,6 +128,15 @@ public class AlphaBeta {
 
             Arrays.sort(moves);
         }
+
+        long stopTime = System.nanoTime();
+        long totalTime = (stopTime - beginningTime) / 1000000L;
+        double ratio = ((double) totalTime) / millis;
+
+        System.out.println("gegebene Zeit: " + millis + "ms\n" +
+                "gebrauchte Zeit: " + totalTime + "ms\n" +
+                "Verhältnis: " + ratio + " (" + ratio * 100 + "%)\n" +
+                "erreichte Suchtiefe: " + searchDepth);
 
         return bestMove;
     }

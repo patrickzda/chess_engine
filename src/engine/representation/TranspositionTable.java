@@ -8,7 +8,6 @@ public class TranspositionTable {
     private final TranspositionTableEntry[] depthEntries = new TranspositionTableEntry[HASHTABLE_SIZE], alwaysReplaceEntries = new TranspositionTableEntry[HASHTABLE_SIZE];
     private final long[][] zobristValues = new long[64][12];
     private final long blackToMove;
-    private int hitCount = 0;
 
     public TranspositionTable(){
         Random random = new Random();
@@ -42,10 +41,8 @@ public class TranspositionTable {
         int index = (int) Long.remainderUnsigned(zobristKey, HASHTABLE_SIZE);
 
         if(depthEntries[index] != null && depthEntries[index].getZobristKey() == zobristKey && depthEntries[index].getDepth() >= depth){
-            hitCount++;
             return depthEntries[index];
         }else if(alwaysReplaceEntries[index] != null && alwaysReplaceEntries[index].getZobristKey() == zobristKey && alwaysReplaceEntries[index].getDepth() >= depth){
-            hitCount++;
             return alwaysReplaceEntries[index];
         }else{
             return null;
@@ -109,13 +106,4 @@ public class TranspositionTable {
         return key;
     }
 
-    public void clear(){
-        hitCount = 0;
-        Arrays.fill(depthEntries, null);
-        Arrays.fill(alwaysReplaceEntries, null);
-    }
-
-    public int getHitCount() {
-        return hitCount;
-    }
 }
