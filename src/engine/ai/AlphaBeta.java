@@ -4,24 +4,26 @@ import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
 import java.util.Arrays;
-import static java.lang.Math.max;
-import static java.lang.Math.subtractExact;
+
+import static java.lang.Math.*;
 
 public class AlphaBeta {
 
-    static TranspositionTable transpositionTable = new TranspositionTable();
+    static final TranspositionTable table = new TranspositionTable();
 
     private static int alphaBetaMax(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
-        TranspositionTableEntry entry = transpositionTable.getEntry(board, depth);
-        if (entry != null) {
+        TranspositionTableEntry entry = table.getEntry(board, depth);
+        if(entry != null){
             return entry.getEvaluation();
         }
 
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
-        Evaluation.sortMoves(transpositionTable, board, moves);
+        Evaluation.sortMoves(table, board, moves);
 
         if (depth == 0 || board.isGameLost(moveMasks, moves.length) || moves.length == 0) {
-            return Evaluation.evaluate(board, moveMasks);
+            int finalEval = Evaluation.evaluate(board, moveMasks);
+            table.addEntry(board, new Move(0, 0, PieceType.PAWN), depth, finalEval, EvaluationType.EXACT);
+            return finalEval;
         }
 
         Move bestMove = moves[0];
@@ -33,7 +35,6 @@ public class AlphaBeta {
             board.undoLastMove();
 
             if (score >= beta) {
-                transpositionTable.addEntry(board, moves[i], depth, beta);
                 return beta;
             }
 
@@ -42,21 +43,24 @@ public class AlphaBeta {
                 alpha = score;
             }
         }
-        transpositionTable.addEntry(board, bestMove, depth, alpha);
+
+        table.addEntry(board, bestMove, depth, -alpha, EvaluationType.EXACT);
         return alpha;
     }
 
     private static int alphaBetaMin(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
-        TranspositionTableEntry entry = transpositionTable.getEntry(board, depth);
-        if (entry != null) {
+        TranspositionTableEntry entry = table.getEntry(board, depth);
+        if(entry != null){
             return -entry.getEvaluation();
         }
 
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
-        Evaluation.sortMoves(transpositionTable, board, moves);
+        Evaluation.sortMoves(table, board, moves);
 
         if (depth == 0 || board.isGameLost(moveMasks, moves.length) || moves.length == 0) {
-            return -Evaluation.evaluate(board, moveMasks);
+            int finalEval = -Evaluation.evaluate(board, moveMasks);
+            table.addEntry(board, new Move(0, 0, PieceType.PAWN), depth, -finalEval, EvaluationType.EXACT);
+            return finalEval;
         }
 
         Move bestEnemyMove = moves[0];
@@ -68,7 +72,6 @@ public class AlphaBeta {
             board.undoLastMove();
 
             if (score <= alpha) {
-                transpositionTable.addEntry(board, moves[i], depth, -alpha);
                 return alpha;
             }
 
@@ -77,13 +80,17 @@ public class AlphaBeta {
                 beta = score;
             }
         }
-        transpositionTable.addEntry(board, bestEnemyMove, depth, -beta);
+        table.addEntry(board, bestEnemyMove, depth, -beta, EvaluationType.EXACT);
         return beta;
     }
 
     public static Move getBestMove(Board board, Move[] moves, int depth, MoveMasks moveMasks) {
         if (depth < 1) {
             throw new IllegalArgumentException("Suchtiefe muss mindestes 1 sein!!!\n" + "Alpha-Beta Suche wird nicht funktionieren!");
+        }
+
+        if(moves.length == 0){
+            return null;
         }
 
         int alpha = Integer.MIN_VALUE;
@@ -104,7 +111,8 @@ public class AlphaBeta {
             }
         }
 
-        transpositionTable.addEntry(board, bestMove, depth, bestMove.evaluation);
+        table.addEntry(board, bestMove, depth, bestMove.evaluation, EvaluationType.EXACT);
+
         return bestMove;
     }
 

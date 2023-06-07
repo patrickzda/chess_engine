@@ -4,7 +4,6 @@ import engine.ai.Evaluation;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 
-import java.awt.color.ColorSpace;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
@@ -133,7 +132,7 @@ public class Board {
         return hasWhiteShortRookMoved;
     }
 
-    public boolean gettHasBlackLongRookMoved() {
+    public boolean getHasBlackLongRookMoved() {
         return hasBlackLongRookMoved;
     }
 

@@ -159,7 +159,7 @@ public class MoveGenerator {
             currentTeam = current.blackPieces;
             hasKingMoved = current.getHasBlackKingMoved();
             hasShortRookMoved = current.getHasBlackShortRookMoved();
-            hasLongRookMoved = current.gettHasBlackLongRookMoved();
+            hasLongRookMoved = current.getHasBlackLongRookMoved();
 
             shortCastlingMask = blackShortCastling;
             longCastlingMask = blackLongCastling;

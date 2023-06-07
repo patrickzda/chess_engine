@@ -7,12 +7,19 @@ public class TranspositionTable {
     private final int HASHTABLE_SIZE = 64000;
     private final TranspositionTableEntry[] depthEntries = new TranspositionTableEntry[HASHTABLE_SIZE], alwaysReplaceEntries = new TranspositionTableEntry[HASHTABLE_SIZE];
     private final long[][] zobristValues = new long[64][12];
-    private final long blackToMove;
+    private final long blackToMove, whiteKingMoved, blackKingMoved, whiteShortRookMoved, whiteLongRookMoved, blackShortRookMoved, blackLongRookMoved;
 
     public TranspositionTable(){
         Random random = new Random();
 
         blackToMove = random.nextLong();
+        whiteKingMoved = random.nextLong();
+        blackKingMoved = random.nextLong();
+        whiteShortRookMoved = random.nextLong();
+        whiteLongRookMoved = random.nextLong();
+        blackShortRookMoved = random.nextLong();
+        blackLongRookMoved = random.nextLong();
+
         for(int i = 0; i < 64; i++){
             for(int j = 0; j < 12; j++){
                 zobristValues[i][j] = random.nextLong();
@@ -24,14 +31,14 @@ public class TranspositionTable {
     }
 
     //Einträge sollten immer hinzugefügt werden, sobald ein Wert in der Suche returned wird
-    public void addEntry(Board board, Move bestMove, int depth, int evaluation){
+    public void addEntry(Board board, Move bestMove, int depth, int evaluation, EvaluationType type){
         long zobristKey = generateKey(board);
         int index = (int) Long.remainderUnsigned(zobristKey, HASHTABLE_SIZE);
 
         if(depthEntries[index] == null || depthEntries[index].getDepth() <= depth){
-            depthEntries[index] = new TranspositionTableEntry(zobristKey, bestMove, depth, evaluation);
+            depthEntries[index] = new TranspositionTableEntry(zobristKey, bestMove, depth, evaluation, type);
         }else{
-            alwaysReplaceEntries[index] = new TranspositionTableEntry(zobristKey, bestMove, depth, evaluation);
+            alwaysReplaceEntries[index] = new TranspositionTableEntry(zobristKey, bestMove, depth, evaluation, type);
         }
     }
 
@@ -63,7 +70,7 @@ public class TranspositionTable {
         }
     }
 
-    private long generateKey(Board board){
+    public long generateKey(Board board){
         long key = 0L;
 
         if(board.getTurn() == Color.BLACK){
@@ -101,9 +108,31 @@ public class TranspositionTable {
                     key = key ^ zobristValues[i][11];
                 }
             }
+
+            if(board.getHasWhiteKingMoved()){
+                key = key ^ whiteKingMoved;
+            }
+            if(board.getHasBlackKingMoved()){
+                key = key ^ blackKingMoved;
+            }
+            if(board.getHasWhiteShortRookMoved()){
+                key = key ^ whiteShortRookMoved;
+            }
+            if(board.getHasBlackShortRookMoved()){
+                key = key ^ blackShortRookMoved;
+            }
+            if(board.getHasWhiteLongRookMoved()){
+                key = key ^ whiteLongRookMoved;
+            }
+            if(board.getHasBlackLongRookMoved()){
+                key = key ^ blackLongRookMoved;
+            }
         }
 
         return key;
     }
 
+    public int getSize() {
+        return HASHTABLE_SIZE;
+    }
 }

@@ -1,37 +1,45 @@
 import engine.ai.AlphaBeta;
-import engine.ai.Evaluation;
+import engine.ai.NegaScout;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
 import performance.*;
-import test.FENData;
-
-import java.util.Arrays;
+import test.AlphaBetaTest;
 
 public class Main {
     public static void main(String[] args) {
         //playMove(args);
-        measureAverageTimeOnFENData(4, 0, 25);
+        measureAverageTimeOnFENData(4);
     }
 
-    static void measureAverageTimeOnFENData(int depth, int startIndex, int endIndex){
-        long averageTime = 0;
+    static void measureAverageTimeOnFENData(int depth){
+        String[] fens = new String[]{"2k5/6q1/3P1P2/4N3/8/1K6/8/8 w - - 0 1" ,"4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1","6k1/r4ppp/r7/1b6/8/8/4QPPP/4R1K1 w - - 0 1", "r2qk2r/p1p1p1P1/1pn4b/1N1Pb3/1PB1N1nP/8/1B1PQPp1/R3K2R b Qkq - 0 1", "r1bq4/pp1p1k1p/2p2p1p/2b5/3Nr1Q1/2N1P3/PPPK1PPP/3R1B1R w - - 0 1", "3r1rk1/p1p1qp1p/1p2b1p1/6n1/R1PNp3/2QP2P1/3B1P1P/5RK1 w - - 0 1", "3r4/7p/2p2kp1/2P2p2/3P4/2K3P1/8/5R2 b - - 0 1"};
         MoveMasks masks = new MoveMasks();
-        for(int i = startIndex; i < endIndex; i++){
-            String currentFEN = FENData.FEN_DATA[i] + " 0 1";
-            averageTime = averageTime + FENData.getTimeOfDepth(new Board(currentFEN), masks, depth);
-        }
-        System.out.println((averageTime / (endIndex - startIndex)) / 1000000 + " ms");
-    }
+        long totalTime = 0L;
 
-    static void measureAverageDepthOnFENData(int millisPerSearch, int startIndex, int endIndex){
-        int averageDepth = 0;
-        MoveMasks masks = new MoveMasks();
-        for(int i = startIndex; i < endIndex; i++){
-            String currentFEN = FENData.FEN_DATA[i] + " 0 1";
-            averageDepth = averageDepth + FENData.getDepthOfBestMoveTimed(new Board(currentFEN), masks, millisPerSearch);
+        for(int i = 0; i < fens.length; i++){
+            Board b = new Board(fens[i]);
+            Move[] moves = MoveGenerator.generateLegalMoves(b, masks);
+            long startTime = System.nanoTime();
+            System.out.println(AlphaBeta.getBestMove(b, moves, depth, masks));
+            totalTime = totalTime + (System.nanoTime() - startTime);
         }
-        System.out.println(averageDepth / (endIndex - startIndex));
+
+        System.out.println("///");
+
+        long totalBasicTime = 0L;
+        for(int i = 0; i < fens.length; i++){
+            Board b = new Board(fens[i]);
+            Move[] moves = MoveGenerator.generateLegalMoves(b, masks);
+            long startTime = System.nanoTime();
+            System.out.println(AlphaBetaTest.bestMove(b, moves, depth, masks));
+            totalBasicTime = totalBasicTime + (System.nanoTime() - startTime);
+        }
+
+        System.out.println("Aktuelle Implementation: " + (totalTime / fens.length) / 1000000);
+        System.out.println("Einfaches AlphaBeta: " + (totalBasicTime / fens.length) / 1000000);
+
+        System.out.println("Die aktuelle Implementation ist ca. " + ((double) totalBasicTime / (double) totalTime) + " Mal schneller");
     }
 
     static void performance(){
