@@ -152,4 +152,34 @@ public class AiPerformance {
         }
     }
 
+    public static String getMoveFromFairy(int elo, String fen, int timeInMillis){
+        try {
+            Process engine = Runtime.getRuntime().exec("../fairystockfish");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(engine.getInputStream()));
+            OutputStreamWriter writer = new OutputStreamWriter(engine.getOutputStream());
+            writer.write("setoption name UCI_Variant value kingofthehill\n");
+            writer.flush();
+            writer.write("setoption name UCI_LimitStrength value true\n");
+            writer.flush();
+            writer.write("setoption name UCI_Elo value " + elo + "\n");
+            writer.flush();
+
+            writer.write("position fen " + fen + "\n");
+            writer.flush();
+            writer.write("go movetime " + timeInMillis + "\n");
+            writer.flush();
+
+            Thread.sleep(timeInMillis + 25);
+            String currentLine = reader.readLine();
+            while (!currentLine.contains("bestmove")) {
+                System.out.println(currentLine);
+                currentLine = reader.readLine();
+            }
+            return currentLine.split(" ")[1];
+        }catch (IOException | InterruptedException e){
+            System.out.println(e.getMessage());
+            return "";
+        }
+    }
+
 }
