@@ -86,27 +86,24 @@ public class AlphaBeta {
 
     public static Move getBestMove(Board board, Move[] moves, int depth, MoveMasks moveMasks) {
         if (depth < 1) {
-            throw new IllegalArgumentException("Suchtiefe muss mindestes 1 sein!!!\n" + "Alpha-Beta Suche wird nicht funktionieren!");
+            throw new IllegalArgumentException("Suchtiefe muss mindestens 1 sein!");
         }
 
         if(moves.length == 0){
             return null;
         }
 
-        int alpha = Integer.MIN_VALUE;
-        int beta = Integer.MAX_VALUE;
-
-        int score;
+        int score, bestScore = Integer.MIN_VALUE;
         Move bestMove = moves[0];
 
         for (int i = 0; i < moves.length; i++) {
             board.doMove(moves[i]);
-            score = alphaBetaMin(board, alpha, beta, depth - 1, moveMasks); // Aufruf von AlphaBeta ohne sich die Moves zu merken
+            score = alphaBetaMin(board, Integer.MIN_VALUE, Integer.MAX_VALUE, depth - 1, moveMasks);
             moves[i].evaluation = score;
             board.undoLastMove();
 
-            if (score > alpha) {
-                alpha = score;
+            if (score > bestScore) {
+                bestScore = score;
                 bestMove = moves[i];
             }
         }
