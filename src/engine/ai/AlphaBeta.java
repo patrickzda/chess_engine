@@ -163,8 +163,6 @@ public class AlphaBeta {
             bestMove = getBestMove(board, moves, searchDepth, moveMasks);
         }
 
-
-
         return bestMove;
     }
 }
