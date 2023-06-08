@@ -146,6 +146,11 @@ class BoardTest {
         nextMove.isCastling = true;
         testBoard.doMove(nextMove);
         assertEquals(testBoard.toFENString(), "2kr3r/8/8/8/8/8/8/R3K2R w - - 1 2");
+
+        testBoard = new Board("4r1k1/1bqr1pbp/p2p2p1/4p3/2p1P3/PnP2N1P/BP2QPP1/2BRR1K1 b Qq - 1 1");
+        nextMove = new Move(60, 58, PieceType.ROOK);
+        testBoard.doMove(nextMove);
+        assertEquals(testBoard.toFENString(), "2r3k1/1bqr1pbp/p2p2p1/4p3/2p1P3/PnP2N1P/BP2QPP1/2BRR1K1 w Qq - 2 2");
     }
 
     @Test

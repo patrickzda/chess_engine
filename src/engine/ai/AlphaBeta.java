@@ -67,7 +67,7 @@ public class AlphaBeta {
         if(entry != null){
             if(entry.getType() == EvaluationType.EXACT){
                 return -entry.getEvaluation();
-            } else if(entry.getType() == EvaluationType.LOWERBOUND){
+            }else if(entry.getType() == EvaluationType.LOWERBOUND){
                 alpha = Math.max(alpha, entry.getEvaluation());
             }else if(entry.getType() == EvaluationType.UPPERBOUND){
                 beta = Math.min(beta, entry.getEvaluation());
@@ -136,6 +136,14 @@ public class AlphaBeta {
         table.addEntry(board, bestMove, depth, bestMove.evaluation, EvaluationType.EXACT);
 
         return bestMove;
+    }
+
+    public void clearTable(){
+        table.clear();
+    }
+
+    public void printTTStats(){
+        table.printStats();
     }
 
     public Move getBestMoveTimed(Board board, MoveMasks moveMasks, int millis) {

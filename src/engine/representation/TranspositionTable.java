@@ -1,18 +1,19 @@
 package engine.representation;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
 public class TranspositionTable {
     private final int HASHTABLE_SIZE = 64000;
-    private final TranspositionTableEntry[] depthEntries = new TranspositionTableEntry[HASHTABLE_SIZE], alwaysReplaceEntries = new TranspositionTableEntry[HASHTABLE_SIZE];
+    private final TranspositionTableEntry[][] depthEntries = new TranspositionTableEntry[HASHTABLE_SIZE][2], alwaysReplaceEntries = new TranspositionTableEntry[HASHTABLE_SIZE][2];
     private final long[][] zobristValues = new long[64][12];
-    private final long blackToMove, whiteKingMoved, blackKingMoved, whiteShortRookMoved, whiteLongRookMoved, blackShortRookMoved, blackLongRookMoved;
+    private final long whiteKingMoved, blackKingMoved, whiteShortRookMoved, whiteLongRookMoved, blackShortRookMoved, blackLongRookMoved;
+    //private int filledEntries = 0, triedToAddCount = 0, overriddenEntries = 0;
 
     public TranspositionTable(){
         Random random = new Random();
 
-        blackToMove = random.nextLong();
         whiteKingMoved = random.nextLong();
         blackKingMoved = random.nextLong();
         whiteShortRookMoved = random.nextLong();
@@ -26,45 +27,60 @@ public class TranspositionTable {
             }
         }
 
-        Arrays.fill(depthEntries, null);
-        Arrays.fill(alwaysReplaceEntries, null);
+        for(int i = 0; i < HASHTABLE_SIZE; i++){
+            depthEntries[i] = new TranspositionTableEntry[]{null, null};
+            alwaysReplaceEntries[i] = new TranspositionTableEntry[]{null, null};
+        }
     }
 
-    //Einträge sollten immer hinzugefügt werden, sobald ein Wert in der Suche returned wird
     public void addEntry(Board board, Move bestMove, int depth, int evaluation, EvaluationType type){
         long zobristKey = generateKey(board);
         int index = (int) Long.remainderUnsigned(zobristKey, HASHTABLE_SIZE);
 
-        if(depthEntries[index] == null || depthEntries[index].getDepth() <= depth){
-            depthEntries[index] = new TranspositionTableEntry(zobristKey, bestMove, depth, evaluation, type);
+        //triedToAddCount++;
+
+        if(depthEntries[index][board.getTurn().ordinal()] == null || depthEntries[index][board.getTurn().ordinal()].getDepth() <= depth){
+
+            //if(depthEntries[index][board.getTurn().ordinal()] == null){
+            //    filledEntries++;
+            //}else{
+            //    overriddenEntries++;
+            //}
+
+            depthEntries[index][board.getTurn().ordinal()] = new TranspositionTableEntry(zobristKey, bestMove, depth, evaluation, type);
         }else{
-            alwaysReplaceEntries[index] = new TranspositionTableEntry(zobristKey, bestMove, depth, evaluation, type);
+
+            //if(alwaysReplaceEntries[index][board.getTurn().ordinal()] == null){
+            //    filledEntries++;
+            //}else{
+            //    overriddenEntries++;
+            //}
+
+            alwaysReplaceEntries[index][board.getTurn().ordinal()] = new TranspositionTableEntry(zobristKey, bestMove, depth, evaluation, type);
         }
     }
 
-    //Kann in Alpha-Beta verwendet werden
     public TranspositionTableEntry getEntry(Board board, int depth){
         long zobristKey = generateKey(board);
         int index = (int) Long.remainderUnsigned(zobristKey, HASHTABLE_SIZE);
 
-        if(depthEntries[index] != null && depthEntries[index].getZobristKey() == zobristKey && depthEntries[index].getDepth() >= depth){
-            return depthEntries[index];
-        }else if(alwaysReplaceEntries[index] != null && alwaysReplaceEntries[index].getZobristKey() == zobristKey && alwaysReplaceEntries[index].getDepth() >= depth){
-            return alwaysReplaceEntries[index];
+        if(depthEntries[index][board.getTurn().ordinal()] != null && depthEntries[index][board.getTurn().ordinal()].getZobristKey() == zobristKey && depthEntries[index][board.getTurn().ordinal()].getDepth() >= depth){
+            return depthEntries[index][board.getTurn().ordinal()];
+        }else if(alwaysReplaceEntries[index][board.getTurn().ordinal()] != null && alwaysReplaceEntries[index][board.getTurn().ordinal()].getZobristKey() == zobristKey && alwaysReplaceEntries[index][board.getTurn().ordinal()].getDepth() >= depth){
+            return alwaysReplaceEntries[index][board.getTurn().ordinal()];
         }else{
             return null;
         }
     }
 
-    //Darf nur von Patrick verwendet werden
     public TranspositionTableEntry lookup(Board board){
         long zobristKey = generateKey(board);
         int index = (int) Long.remainderUnsigned(zobristKey, HASHTABLE_SIZE);
 
-        if(depthEntries[index] != null && depthEntries[index].getZobristKey() == zobristKey){
-            return depthEntries[index];
-        }else if(alwaysReplaceEntries[index] != null && alwaysReplaceEntries[index].getZobristKey() == zobristKey){
-            return alwaysReplaceEntries[index];
+        if(depthEntries[index][board.getTurn().ordinal()] != null && depthEntries[index][board.getTurn().ordinal()].getZobristKey() == zobristKey){
+            return depthEntries[index][board.getTurn().ordinal()];
+        }else if(alwaysReplaceEntries[index][board.getTurn().ordinal()] != null && alwaysReplaceEntries[index][board.getTurn().ordinal()].getZobristKey() == zobristKey){
+            return alwaysReplaceEntries[index][board.getTurn().ordinal()];
         }else{
             return null;
         }
@@ -72,10 +88,6 @@ public class TranspositionTable {
 
     public long generateKey(Board board){
         long key = 0L;
-
-        if(board.getTurn() == Color.BLACK){
-            key = key ^ blackToMove;
-        }
 
         for(int i = 0; i < 64; i++){
             long index = 1L << i;
@@ -130,6 +142,26 @@ public class TranspositionTable {
         }
 
         return key;
+    }
+
+    public void printStats(){
+        //System.out.println("---");
+        //System.out.println("Table is filled up to " + (((double) (filledEntries / 1000)) / ((double) (HASHTABLE_SIZE * 4) / 1000)) * 100 + " %");
+        //System.out.println("Tried to fill table with " + triedToAddCount + " entries");
+        //System.out.println("Total filled entries: " + filledEntries);
+        //System.out.println("Total amount of overridden entries: " + overriddenEntries);
+        //System.out.println("---");
+    }
+
+    public void clear(){
+        //filledEntries = 0;
+        //triedToAddCount = 0;
+        //overriddenEntries = 0;
+
+        for(int i = 0; i < HASHTABLE_SIZE; i++){
+            depthEntries[i] = new TranspositionTableEntry[]{null, null};
+            alwaysReplaceEntries[i] = new TranspositionTableEntry[]{null, null};
+        }
     }
 
     public int getSize() {

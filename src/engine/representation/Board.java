@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Board {
     private final String[] pieceIdentifiers = new String[]{"K", "Q", "R", "B", "N", "P"};
     public long whitePieces, blackPieces, kings, queens, rooks, bishops, knights, pawns;
-    private final ArrayList<Move> moves = new ArrayList<Move>();
+    public final ArrayList<Move> moves = new ArrayList<Move>();
     private Color turn = Color.WHITE;
     private boolean hasWhiteKingMoved = false, hasBlackKingMoved = false, hasWhiteLongRookMoved = false, hasWhiteShortRookMoved = false, hasBlackLongRookMoved = false, hasBlackShortRookMoved = false;
     private int movesSinceLastPawnMoveOrCapture = 0, totalMoves = 1;
@@ -82,26 +82,32 @@ public class Board {
         }
 
         String castlingRights = sections[2];
-        if(!castlingRights.contains("K")){
+        if(!castlingRights.contains("K") | (rooks & whitePieces & 128L) == 0){
             hasWhiteShortRookMoved = true;
         }
-        if(!castlingRights.contains("Q")){
+        if(!castlingRights.contains("Q") | (rooks & whitePieces & 1L) == 0){
             hasWhiteLongRookMoved = true;
         }
-        if(!castlingRights.contains("k")){
+        if(!castlingRights.contains("k") | (rooks & blackPieces & -9223372036854775808L) == 0){
             hasBlackShortRookMoved = true;
         }
-        if(!castlingRights.contains("q")){
+        if(!castlingRights.contains("q") | (rooks & blackPieces & 72057594037927936L) == 0){
             hasBlackLongRookMoved = true;
         }
         if(castlingRights.equals("-")){
             hasWhiteKingMoved = true;
             hasBlackKingMoved = true;
+        }else{
+            if((kings & whitePieces & 16L) == 0L){
+                hasWhiteKingMoved = true;
+            }
+            if((kings & blackPieces & 1152921504606846976L) == 0L){
+                hasBlackKingMoved = true;
+            }
         }
 
         movesSinceLastPawnMoveOrCapture = Integer.parseInt(sections[4]);
         totalMoves = Integer.parseInt(sections[5]);
-
     }
 
     private String fillLeadingZeros(long l){
