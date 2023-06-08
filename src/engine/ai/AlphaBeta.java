@@ -8,13 +8,26 @@ import java.util.Arrays;
 import static java.lang.Math.*;
 
 public class AlphaBeta {
+    private final TranspositionTable table;
+    private final double EFFECTIVE_BRANCHING_FACTOR = Math.sqrt(35);
+    public AlphaBeta(){
+        table = new TranspositionTable();
+    }
 
-    static final TranspositionTable table = new TranspositionTable();
-
-    private static int alphaBetaMax(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
+    private int alphaBetaMax(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
         TranspositionTableEntry entry = table.getEntry(board, depth);
         if(entry != null){
-            return entry.getEvaluation();
+            if(entry.getType() == EvaluationType.EXACT){
+                return entry.getEvaluation();
+            }else if(entry.getType() == EvaluationType.LOWERBOUND){
+                alpha = Math.max(alpha, entry.getEvaluation());
+            }else if(entry.getType() == EvaluationType.UPPERBOUND){
+                beta = Math.min(beta, entry.getEvaluation());
+            }
+
+            if(alpha >= beta){
+                return entry.getEvaluation();
+            }
         }
 
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
@@ -35,6 +48,7 @@ public class AlphaBeta {
             board.undoLastMove();
 
             if (score >= beta) {
+                table.addEntry(board, moves[i], depth, -beta, EvaluationType.LOWERBOUND);
                 return beta;
             }
 
@@ -48,10 +62,20 @@ public class AlphaBeta {
         return alpha;
     }
 
-    private static int alphaBetaMin(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
+    private int alphaBetaMin(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
         TranspositionTableEntry entry = table.getEntry(board, depth);
         if(entry != null){
-            return -entry.getEvaluation();
+            if(entry.getType() == EvaluationType.EXACT){
+                return -entry.getEvaluation();
+            } else if(entry.getType() == EvaluationType.LOWERBOUND){
+                alpha = Math.max(alpha, entry.getEvaluation());
+            }else if(entry.getType() == EvaluationType.UPPERBOUND){
+                beta = Math.min(beta, entry.getEvaluation());
+            }
+
+            if(alpha >= beta){
+                return -entry.getEvaluation();
+            }
         }
 
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
@@ -72,6 +96,7 @@ public class AlphaBeta {
             board.undoLastMove();
 
             if (score <= alpha) {
+                table.addEntry(board, moves[i], depth, -alpha, EvaluationType.UPPERBOUND);
                 return alpha;
             }
 
@@ -84,7 +109,7 @@ public class AlphaBeta {
         return beta;
     }
 
-    public static Move getBestMove(Board board, Move[] moves, int depth, MoveMasks moveMasks) {
+    public Move getBestMove(Board board, Move[] moves, int depth, MoveMasks moveMasks) {
         if (depth < 1) {
             throw new IllegalArgumentException("Suchtiefe muss mindestens 1 sein!");
         }
@@ -113,10 +138,9 @@ public class AlphaBeta {
         return bestMove;
     }
 
-    public static Move getBestMoveTimed(Board board, MoveMasks moveMasks, int millis) {
+    public Move getBestMoveTimed(Board board, MoveMasks moveMasks, int millis) {
         long startTime = System.nanoTime(), beginningTime = System.nanoTime();
         long finishTime = startTime + (millis * 1000000L);
-
         long nextDepthSearchTime = 0;
         int searchDepth = 0;
 
@@ -129,12 +153,24 @@ public class AlphaBeta {
 
             bestMove = getBestMove(board, moves, searchDepth, moveMasks);
 
-            nextDepthSearchTime = (System.nanoTime() - startTime) * 10;
+            nextDepthSearchTime = Math.round((System.nanoTime() - startTime) * EFFECTIVE_BRANCHING_FACTOR);
 
             Arrays.sort(moves);
         }
 
-        long stopTime = System.nanoTime();
+        while(((double) (System.nanoTime() - beginningTime) / (millis * 1000000L)) < 0.35){
+            searchDepth++;
+            bestMove = getBestMove(board, moves, searchDepth, moveMasks);
+        }
+
+
+
+        return bestMove;
+    }
+}
+
+/*
+long stopTime = System.nanoTime();
         long totalTime = (stopTime - beginningTime) / 1000000L;
         double ratio = ((double) totalTime) / millis;
 
@@ -142,7 +178,4 @@ public class AlphaBeta {
                 "gebrauchte Zeit: " + totalTime + "ms\n" +
                 "Verhältnis: " + ratio + " (" + ratio * 100 + "%)\n" +
                 "erreichte Suchtiefe: " + searchDepth);
-
-        return bestMove;
-    }
-}
+ */

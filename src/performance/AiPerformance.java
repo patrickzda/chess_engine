@@ -58,8 +58,9 @@ public class AiPerformance {
         Board board = new Board();
         MoveMasks masks = new MoveMasks();
         GameState gameState;
+        AlphaBeta alphaBeta = new AlphaBeta();
         while (true){
-            Move m = AlphaBeta.getBestMoveTimed(board,masks,calcTimeMilli);
+            Move m = alphaBeta.getBestMoveTimed(board,masks,calcTimeMilli);
             board.doMove(m);
             gameState = board.getGameState(masks);
             if (gameState == GameState.DRAW || gameState == GameState.WHITE_WON) {
