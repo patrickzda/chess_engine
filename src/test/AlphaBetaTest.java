@@ -27,7 +27,7 @@ public class AlphaBetaTest {
             Board b = new Board(fens[i]);
             Move[] moves = MoveGenerator.generateLegalMoves(b, masks);
             Move basicAlphaBetaMove = bestMove(b, moves, depth, masks);
-            Move newAlphaBetaMove = alphaBeta.getBestMove(b, moves, depth, masks);
+            Move newAlphaBetaMove = alphaBeta.getBestMove(b, moves, depth, Integer.MIN_VALUE, Integer.MAX_VALUE, masks);
             //alphaBeta.printTTStats();
             alphaBeta.clearTable();
 
@@ -110,6 +110,8 @@ public class AlphaBetaTest {
             score = alphaBetaMin(board, Integer.MIN_VALUE, Integer.MAX_VALUE, depth - 1, moveMasks); // Aufruf von AlphaBeta ohne sich die Moves zu merken
             board.undoLastMove();
             moves[i].evaluation = score;
+
+            System.out.println(moves[i] + ": " + score);
 
             if (score > bestScore) {
                 bestScore = score;

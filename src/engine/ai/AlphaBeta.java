@@ -3,13 +3,17 @@ package engine.ai;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
+import test.AlphaBetaTest;
+
 import java.util.Arrays;
 
 import static java.lang.Math.*;
 
 public class AlphaBeta {
-    private final TranspositionTable table;
-    private final double EFFECTIVE_BRANCHING_FACTOR = Math.sqrt(35);
+    public final TranspositionTable table;
+    private final double EFFECTIVE_BRANCHING_FACTOR = Math.sqrt(35), FURTHER_SEARCH_PERCENTAGE = 0.35;
+    private final int MINIMAL_WINDOW_OFFSET = 50;
+
     public AlphaBeta(){
         table = new TranspositionTable();
     }
@@ -44,7 +48,9 @@ public class AlphaBeta {
 
         for (int i = 0; i < moves.length; i++) {
             board.doMove(moves[i]);
+
             score = alphaBetaMin(board, alpha, beta, depth - 1, moveMasks);
+
             board.undoLastMove();
 
             if (score >= beta) {
@@ -92,7 +98,9 @@ public class AlphaBeta {
 
         for (int i = 0; i < moves.length; i++) {
             board.doMove(moves[i]);
+
             score = alphaBetaMax(board, alpha, beta, depth - 1, moveMasks);
+
             board.undoLastMove();
 
             if (score <= alpha) {
@@ -109,7 +117,7 @@ public class AlphaBeta {
         return beta;
     }
 
-    public Move getBestMove(Board board, Move[] moves, int depth, MoveMasks moveMasks) {
+    public Move getBestMove(Board board, Move[] moves, int depth, int alpha, int beta, MoveMasks moveMasks) {
         if (depth < 1) {
             throw new IllegalArgumentException("Suchtiefe muss mindestens 1 sein!");
         }
@@ -123,7 +131,7 @@ public class AlphaBeta {
 
         for (int i = 0; i < moves.length; i++) {
             board.doMove(moves[i]);
-            score = alphaBetaMin(board, Integer.MIN_VALUE, Integer.MAX_VALUE, depth - 1, moveMasks);
+            score = alphaBetaMin(board, alpha, beta, depth - 1, moveMasks);
             moves[i].evaluation = score;
             board.undoLastMove();
 
@@ -151,25 +159,48 @@ public class AlphaBeta {
         long finishTime = startTime + (millis * 1000000L);
         long nextDepthSearchTime = 0;
         int searchDepth = 0;
+        int alpha = Integer.MIN_VALUE, beta = Integer.MAX_VALUE;
+
+        //int mwsSuccess = 0;
 
         Move bestMove = new Move(0, 0, PieceType.PAWN);
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
-        while (System.nanoTime() + nextDepthSearchTime < finishTime) {
+        while (System.nanoTime() + nextDepthSearchTime < finishTime | ((double) (System.nanoTime() - beginningTime) / (millis * 1000000L)) < FURTHER_SEARCH_PERCENTAGE) {
             searchDepth++;
+
+            if(searchDepth > 1){
+                alpha = bestMove.evaluation - MINIMAL_WINDOW_OFFSET;
+                beta = bestMove.evaluation + MINIMAL_WINDOW_OFFSET;
+            }
+
             startTime = System.nanoTime();
+            bestMove = getBestMove(board, moves, searchDepth, alpha, beta, moveMasks);
 
-            bestMove = getBestMove(board, moves, searchDepth, moveMasks);
+            if(bestMove.evaluation <= alpha || bestMove.evaluation >= beta){
+                alpha = Integer.MIN_VALUE;
+                beta = Integer.MAX_VALUE;
 
-            nextDepthSearchTime = Math.round((System.nanoTime() - startTime) * EFFECTIVE_BRANCHING_FACTOR);
+                startTime = System.nanoTime();
+                bestMove = getBestMove(board, moves, searchDepth, alpha, beta, moveMasks);
+            }
+            //else{
+            //    mwsSuccess++;
+            //}
+
+            if(searchDepth >= 2){
+                nextDepthSearchTime = Math.round((System.nanoTime() - startTime) * EFFECTIVE_BRANCHING_FACTOR);
+            }
 
             Arrays.sort(moves);
         }
 
-        while(((double) (System.nanoTime() - beginningTime) / (millis * 1000000L)) < 0.35){
-            searchDepth++;
-            bestMove = getBestMove(board, moves, searchDepth, moveMasks);
-        }
+        //long stopTime = System.nanoTime();
+        //long totalTime = (stopTime - beginningTime) / 1000000L;
+        //double ratio = ((double) totalTime) / millis;
+
+        //System.out.println("gegebene Zeit: " + millis + "ms\n" + "gebrauchte Zeit: " + totalTime + "ms\n" + "Verhältnis: " + ratio + " (" + ratio * 100 + "%)\n" + "erreichte Suchtiefe: " + searchDepth);
+        //System.out.println("Anteil erfolgreicher MWS Durchläufe: " + ((double) mwsSuccess / (double) searchDepth));
 
         return bestMove;
     }
