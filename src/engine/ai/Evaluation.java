@@ -22,7 +22,7 @@ public class Evaluation {
         if(state == GameState.DRAW){
             return 0;
         }else if(state == GameState.WHITE_WON | state == GameState.BLACK_WON){
-            return -CHECKMATE_BONUS;
+            return -CHECKMATE_BONUS + board.moves.size();
         }
 
         if (board.getTurn() == WHITE) {

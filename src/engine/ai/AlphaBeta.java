@@ -10,25 +10,31 @@ import java.util.Arrays;
 import static java.lang.Math.*;
 
 public class AlphaBeta {
-    public final TranspositionTable table;
+    public TranspositionTable table;
     private final double EFFECTIVE_BRANCHING_FACTOR = Math.sqrt(35), FURTHER_SEARCH_PERCENTAGE = 0.35;
     private final int MINIMAL_WINDOW_OFFSET = 50;
+
+    public int maxHitCount = 0, maxErrorCount = 0, minHitCount = 0, minErrorCount = 0;
 
     public AlphaBeta(){
         table = new TranspositionTable();
     }
 
+    //Bedingung für Cutoff: Sei E der Elternknoten, A der aktuelle Knoten und K die Menge an Kinderknoten, die Situation wird aus sich von E betrachtet: Falls die Bewertung von E besser ist als die Bewertung von A, so wird K abgeschnitten
+
     private int alphaBetaMax(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
         TranspositionTableEntry entry = table.getEntry(board, depth);
+
         if(entry != null){
             if(entry.getType() == EvaluationType.EXACT){
-                return entry.getEvaluation();
-            }else if(entry.getType() == EvaluationType.LOWERBOUND){
+                return Math.max(alpha, entry.getEvaluation());
+            }
+            else if(entry.getType() == EvaluationType.LOWERBOUND){
                 alpha = Math.max(alpha, entry.getEvaluation());
             }else if(entry.getType() == EvaluationType.UPPERBOUND){
                 beta = Math.min(beta, entry.getEvaluation());
             }
-
+            //
             if(alpha >= beta){
                 return entry.getEvaluation();
             }
@@ -36,9 +42,11 @@ public class AlphaBeta {
 
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
         Evaluation.sortMoves(table, board, moves);
+        EvaluationType type = EvaluationType.LOWERBOUND;
 
         if (depth == 0 || board.isGameLost(moveMasks, moves.length) || moves.length == 0) {
             int finalEval = Evaluation.evaluate(board, moveMasks);
+
             table.addEntry(board, new Move(0, 0, PieceType.PAWN), depth, finalEval, EvaluationType.EXACT);
             return finalEval;
         }
@@ -50,35 +58,37 @@ public class AlphaBeta {
             board.doMove(moves[i]);
 
             score = alphaBetaMin(board, alpha, beta, depth - 1, moveMasks);
-
             board.undoLastMove();
 
-            if (score >= beta) {
-                table.addEntry(board, moves[i], depth, -beta, EvaluationType.LOWERBOUND);
+            if (score >= beta) {        //Beta-Cutoff, wenn ich einen Kind-Knoten habe, welcher besser bewertet ist, als Beta → Beta ist der aktuell negativste Wert, welcher erreicht werden kann
+                table.addEntry(board, moves[i], depth, -beta, EvaluationType.UPPERBOUND);
                 return beta;
             }
 
             if (score > alpha) {
+                type = EvaluationType.EXACT;
                 bestMove = moves[i];
                 alpha = score;
             }
         }
 
-        table.addEntry(board, bestMove, depth, -alpha, EvaluationType.EXACT);
+        table.addEntry(board, bestMove, depth, alpha, type);
         return alpha;
     }
 
     private int alphaBetaMin(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
         TranspositionTableEntry entry = table.getEntry(board, depth);
+
         if(entry != null){
             if(entry.getType() == EvaluationType.EXACT){
-                return -entry.getEvaluation();
-            }else if(entry.getType() == EvaluationType.LOWERBOUND){
+                return Math.min(beta, -entry.getEvaluation());
+            }
+            else if(entry.getType() == EvaluationType.LOWERBOUND){
                 alpha = Math.max(alpha, entry.getEvaluation());
             }else if(entry.getType() == EvaluationType.UPPERBOUND){
                 beta = Math.min(beta, entry.getEvaluation());
             }
-
+            //
             if(alpha >= beta){
                 return -entry.getEvaluation();
             }
@@ -86,9 +96,11 @@ public class AlphaBeta {
 
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
         Evaluation.sortMoves(table, board, moves);
+        EvaluationType type = EvaluationType.LOWERBOUND;
 
         if (depth == 0 || board.isGameLost(moveMasks, moves.length) || moves.length == 0) {
             int finalEval = -Evaluation.evaluate(board, moveMasks);
+
             table.addEntry(board, new Move(0, 0, PieceType.PAWN), depth, -finalEval, EvaluationType.EXACT);
             return finalEval;
         }
@@ -98,22 +110,23 @@ public class AlphaBeta {
 
         for (int i = 0; i < moves.length; i++) {
             board.doMove(moves[i]);
-
             score = alphaBetaMax(board, alpha, beta, depth - 1, moveMasks);
-
             board.undoLastMove();
 
-            if (score <= alpha) {
+            if (score <= alpha) {       //Alpha-Cutoff, wenn ich einen Kind-Knoten habe, welcher schlechter bewertet ist, als Alpha → Alpha ist der aktuell positivste Wert, welcher erreicht werden kann
                 table.addEntry(board, moves[i], depth, -alpha, EvaluationType.UPPERBOUND);
                 return alpha;
             }
 
             if (score < beta) {
+                type = EvaluationType.EXACT;
                 bestEnemyMove = moves[i];
                 beta = score;
             }
         }
-        table.addEntry(board, bestEnemyMove, depth, -beta, EvaluationType.EXACT);
+
+        table.addEntry(board, bestEnemyMove, depth, -beta, type);
+
         return beta;
     }
 
@@ -134,6 +147,8 @@ public class AlphaBeta {
             score = alphaBetaMin(board, alpha, beta, depth - 1, moveMasks);
             moves[i].evaluation = score;
             board.undoLastMove();
+
+            //System.out.println(moves[i].toString() + ": " + score);
 
             if (score > bestScore) {
                 bestScore = score;
@@ -204,15 +219,5 @@ public class AlphaBeta {
 
         return bestMove;
     }
+
 }
-
-/*
-long stopTime = System.nanoTime();
-        long totalTime = (stopTime - beginningTime) / 1000000L;
-        double ratio = ((double) totalTime) / millis;
-
-        System.out.println("gegebene Zeit: " + millis + "ms\n" +
-                "gebrauchte Zeit: " + totalTime + "ms\n" +
-                "Verhältnis: " + ratio + " (" + ratio * 100 + "%)\n" +
-                "erreichte Suchtiefe: " + searchDepth);
- */

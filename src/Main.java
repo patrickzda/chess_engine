@@ -13,11 +13,12 @@ public class Main {
     //alpha ist immer der aktuell beste Wert für maximierenden Spieler, beta ist immer der aktuell beste Wert für minimierenden Spieler
     public static void main(String[] args) {
         //playMove(args);
-        measureAverageTimeOnFENData(4);
 
-        //String[] fens = new String[]{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "2k5/6q1/3P1P2/4N3/8/1K6/8/8 w - - 0 1", "4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1", "6k1/r4ppp/r7/1b6/8/8/4QPPP/4R1K1 w - - 0 1", "r2qk2r/p1p1p1P1/1pn4b/1N1Pb3/1PB1N1nP/8/1B1PQPp1/R3K2R b Qkq - 0 1", "r1bq4/pp1p1k1p/2p2p1p/2b5/3Nr1Q1/2N1P3/PPPK1PPP/3R1B1R w - - 0 1", "3r1rk1/p1p1qp1p/1p2b1p1/6n1/R1PNp3/2QP2P1/3B1P1P/5RK1 w - - 0 1", "3r4/7p/2p2kp1/2P2p2/3P4/2K3P1/8/5R2 b - - 0 1", "5rk1/1p4pp/2R1p3/p5Q1/P4P2/6qr/2n3PP/5RK1 w - - 0 1", "r1b2rk1/4qpp1/4p2R/p2pP3/2pP2QP/4P1P1/PqB4K/8 w - - 0 1"};
-        //playTimed(fens, 2000);
+        //Board b = new Board("rnb1k1nr/ppppbqpp/8/4Q3/4P3/P7/1PPP1PPP/RNB1K1NR w KQkq - 0 2");
+        //AlphaBeta alphaBeta = new AlphaBeta();
+        //System.out.println(alphaBeta.getBestMove(b, MoveGenerator.generateLegalMoves(b, new MoveMasks()), 1, Integer.MIN_VALUE, Integer.MAX_VALUE, new MoveMasks()));
 
+        aiArena(4);
     }
 
     static void measureAverageTimeOnFENData(int depth){
@@ -60,12 +61,85 @@ public class Main {
         //AiPerformance.howMuchElohasMyAI(1320,5,1000);
     }
 
+    static void aiArena(int depth){
+        String[] fens = new String[]{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "r1bqkb1r/pppp1ppp/2n2n2/4p3/4P3/2N2N2/PPPP1PPP/R1BQKB1R w KQkq - 0 1", "rnbqkb1r/pp2pppp/5n2/3p4/2PP4/2N5/PP3PPP/R1BQKBNR b KQkq - 0 1", "rnbqkbnr/ppp2ppp/4p3/3pP3/3P4/8/PPP2PPP/RNBQKBNR b KQkq - 0 1", "r1bq1rk1/2p1bppp/p1n2n2/1p1pp3/4P3/1BP2N2/PP1P1PPP/RNBQR1K1 w - - 0 1"};
+        int winCountAdvancedAI = 0, winCountClassicAlphaBeta = 0;
+
+        for(int i = 0; i < fens.length; i++){
+            Board b = new Board(fens[i]);
+            Move[] moves = MoveGenerator.generateLegalMoves(b, new MoveMasks());
+            AlphaBeta alphaBeta = new AlphaBeta();
+            int moveCount = 0;
+            while(!b.isGameLost(new MoveMasks(), moves.length) && moveCount < 200){
+                Move m;
+                if(b.getTurn() == Color.WHITE){
+                    m = alphaBeta.getBestMove(b, MoveGenerator.generateLegalMoves(b, new MoveMasks()), depth, Integer.MIN_VALUE, Integer.MAX_VALUE, new MoveMasks());
+                }else{
+                    m = AlphaBetaTest.bestMove(b, MoveGenerator.generateLegalMoves(b, new MoveMasks()), depth, new MoveMasks());
+                }
+                b.doMove(m);
+                moveCount++;
+                System.out.println(b.toFENString());
+                moves = MoveGenerator.generateLegalMoves(b, new MoveMasks());
+            }
+            if(moveCount == 200){
+                System.out.println("Unentschieden");
+                System.out.println(b.toFENString());
+            }else if(b.getTurn() == Color.BLACK){
+                winCountAdvancedAI++;
+                System.out.println("Die neue Implementation hat gewonnen!");
+            }else{
+                winCountClassicAlphaBeta++;
+                System.out.println("Das klassische AlphaBeta hat gewonnen!");
+            }
+        }
+
+        System.out.println("FARBENTAUSCH: AB JETZT SPIEL DIE NEUE IMPLEMENTATION MIT SCHWARZ");
+
+        for(int i = 0; i < fens.length; i++){
+            Board b = new Board(fens[i]);
+            Move[] moves = MoveGenerator.generateLegalMoves(b, new MoveMasks());
+            AlphaBeta alphaBeta = new AlphaBeta();
+            int moveCount = 0;
+            while(!b.isGameLost(new MoveMasks(), moves.length) && moveCount < 200){
+                Move m;
+                if(b.getTurn() == Color.BLACK){
+                    m = alphaBeta.getBestMove(b, MoveGenerator.generateLegalMoves(b, new MoveMasks()), depth, Integer.MIN_VALUE, Integer.MAX_VALUE, new MoveMasks());
+                }else{
+                    m = AlphaBetaTest.bestMove(b, MoveGenerator.generateLegalMoves(b, new MoveMasks()), depth, new MoveMasks());
+                }
+                b.doMove(m);
+                moveCount++;
+                System.out.println(b.toFENString());
+                moves = MoveGenerator.generateLegalMoves(b, new MoveMasks());
+            }
+            if(moveCount == 200){
+                System.out.println("Unentschieden");
+                System.out.println(b.toFENString());
+            }else if(b.getTurn() == Color.WHITE){
+                winCountAdvancedAI++;
+                System.out.println("Die neue Implementation hat gewonnen!");
+            }else{
+                winCountClassicAlphaBeta++;
+                System.out.println("Das klassische AlphaBeta hat gewonnen!");
+            }
+        }
+
+        System.out.println("Die neue KI hat " + winCountAdvancedAI + " Mal gewonnen");
+        System.out.println("Die standard KI hat " + winCountClassicAlphaBeta + " Mal gewonnen");
+    }
+
     static void playMove(String[] args){
         AlphaBeta alphaBeta = new AlphaBeta();
         MoveMasks masks = new MoveMasks();
         Board board = new Board(args[0]);
         //Move m = alphaBeta.getBestMoveTimed(board, new MoveMasks(), 2000);
-        Move m = alphaBeta.getBestMove(board, MoveGenerator.generateLegalMoves(board, masks), Integer.parseInt(args[1]), Integer.MIN_VALUE, Integer.MAX_VALUE, masks);
+        Move m;
+        if(board.getTurn() == Color.BLACK){
+            m = alphaBeta.getBestMove(board, MoveGenerator.generateLegalMoves(board, masks), Integer.parseInt(args[1]), Integer.MIN_VALUE, Integer.MAX_VALUE, masks);
+        }else{
+            m = AlphaBetaTest.bestMove(board, MoveGenerator.generateLegalMoves(board, masks), Integer.parseInt(args[1]), masks);
+        }
         board.doMove(m);
         System.out.println(board.toFENString());
     }

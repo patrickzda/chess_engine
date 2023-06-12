@@ -25,9 +25,9 @@ public class AlphaBetaTest {
         AlphaBeta alphaBeta = new AlphaBeta();
         for(int i = 0; i < fens.length; i++){
             Board b = new Board(fens[i]);
-            Move[] moves = MoveGenerator.generateLegalMoves(b, masks);
-            Move basicAlphaBetaMove = bestMove(b, moves, depth, masks);
-            Move newAlphaBetaMove = alphaBeta.getBestMove(b, moves, depth, Integer.MIN_VALUE, Integer.MAX_VALUE, masks);
+            Move basicAlphaBetaMove = bestMove(b, MoveGenerator.generateLegalMoves(b, masks), depth, masks);
+
+            Move newAlphaBetaMove = alphaBeta.getBestMove(b, MoveGenerator.generateLegalMoves(b, masks), depth, Integer.MIN_VALUE, Integer.MAX_VALUE, masks);
             //alphaBeta.printTTStats();
             alphaBeta.clearTable();
 
@@ -35,12 +35,13 @@ public class AlphaBetaTest {
                 System.out.println("TESTING: " + fens[i]);
                 System.out.println(basicAlphaBetaMove.toString() + " | " + newAlphaBetaMove.toString());
                 System.out.println(basicAlphaBetaMove.evaluation + " | " + newAlphaBetaMove.evaluation);
+                assertEquals(basicAlphaBetaMove.evaluation, newAlphaBetaMove.evaluation);
                 assertEquals(basicAlphaBetaMove.toString(), newAlphaBetaMove.toString());
             }
         }
     }
 
-    private static int alphaBetaMax(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
+    public static int alphaBetaMax(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
 
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
@@ -55,7 +56,7 @@ public class AlphaBetaTest {
             score = alphaBetaMin(board, alpha, beta, depth - 1, moveMasks);
             board.undoLastMove();
 
-            if (score >= beta) {    // beta-cutoff
+            if (score >= beta) {
                 return beta;
             }
 
@@ -63,10 +64,11 @@ public class AlphaBetaTest {
                 alpha = score;
             }
         }
+
         return alpha;
     }
 
-    private static int alphaBetaMin(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
+    public static int alphaBetaMin(Board board, int alpha, int beta, int depth, MoveMasks moveMasks) {
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
         if (depth == 0 || board.isGameLost(moveMasks, moves.length) || moves.length == 0) {
@@ -80,7 +82,7 @@ public class AlphaBetaTest {
             score = alphaBetaMax(board, alpha, beta, depth - 1, moveMasks);
             board.undoLastMove();
 
-            if (score <= alpha) {    // alpha-cutoff
+            if (score <= alpha) {
                 return alpha;
             }
 
@@ -88,6 +90,7 @@ public class AlphaBetaTest {
                 beta = score;
             }
         }
+
         return beta;
     }
 
@@ -111,7 +114,7 @@ public class AlphaBetaTest {
             board.undoLastMove();
             moves[i].evaluation = score;
 
-            System.out.println(moves[i] + ": " + score);
+            //System.out.println(moves[i] + ": " + score);
 
             if (score > bestScore) {
                 bestScore = score;

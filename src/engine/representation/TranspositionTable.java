@@ -39,6 +39,10 @@ public class TranspositionTable {
 
         //triedToAddCount++;
 
+        if(Math.abs(evaluation) > 69000){
+            return;
+        }
+
         if(depthEntries[index][board.getTurn().ordinal()] == null || depthEntries[index][board.getTurn().ordinal()].getDepth() <= depth){
 
             //if(depthEntries[index][board.getTurn().ordinal()] == null){
