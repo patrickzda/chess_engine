@@ -181,24 +181,12 @@ public class AlphaBeta {
         Move bestMove = new Move(0, 0, PieceType.PAWN);
         Move[] moves = MoveGenerator.generateLegalMoves(board, moveMasks);
 
-        while (System.nanoTime() + nextDepthSearchTime < finishTime | ((double) (System.nanoTime() - beginningTime) / (millis * 1000000L)) < FURTHER_SEARCH_PERCENTAGE) {
+        while (System.nanoTime() + nextDepthSearchTime < finishTime) {
             searchDepth++;
-
-            if(searchDepth > 1){
-                alpha = bestMove.evaluation - MINIMAL_WINDOW_OFFSET;
-                beta = bestMove.evaluation + MINIMAL_WINDOW_OFFSET;
-            }
 
             startTime = System.nanoTime();
             bestMove = getBestMove(board, moves, searchDepth, alpha, beta, moveMasks);
 
-            if(bestMove.evaluation <= alpha || bestMove.evaluation >= beta){
-                alpha = Integer.MIN_VALUE;
-                beta = Integer.MAX_VALUE;
-
-                startTime = System.nanoTime();
-                bestMove = getBestMove(board, moves, searchDepth, alpha, beta, moveMasks);
-            }
             //else{
             //    mwsSuccess++;
             //}
@@ -210,11 +198,11 @@ public class AlphaBeta {
             Arrays.sort(moves);
         }
 
-        //long stopTime = System.nanoTime();
-        //long totalTime = (stopTime - beginningTime) / 1000000L;
-        //double ratio = ((double) totalTime) / millis;
+        long stopTime = System.nanoTime();
+        long totalTime = (stopTime - beginningTime) / 1000000L;
+        double ratio = ((double) totalTime) / millis;
 
-        //System.out.println("gegebene Zeit: " + millis + "ms\n" + "gebrauchte Zeit: " + totalTime + "ms\n" + "Verhältnis: " + ratio + " (" + ratio * 100 + "%)\n" + "erreichte Suchtiefe: " + searchDepth);
+        System.out.println("gegebene Zeit: " + millis + "ms\n" + "gebrauchte Zeit: " + totalTime + "ms\n" + "Verhältnis: " + ratio + " (" + ratio * 100 + "%)\n" + "erreichte Suchtiefe: " + searchDepth);
         //System.out.println("Anteil erfolgreicher MWS Durchläufe: " + ((double) mwsSuccess / (double) searchDepth));
 
         return bestMove;

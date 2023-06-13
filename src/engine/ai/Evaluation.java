@@ -51,6 +51,31 @@ public class Evaluation {
         return value;
     }
 
+    public static int evaluateNegamax(Board board, MoveMasks masks){
+        GameState state = board.getGameState(masks);
+        if(state == GameState.DRAW){
+            return 0;
+        }else if(state == GameState.WHITE_WON){
+            return CHECKMATE_BONUS - board.moves.size();
+        }else if(state == GameState.BLACK_WON){
+            return -CHECKMATE_BONUS + board.moves.size();
+        }
+
+        int value = 0;
+        value = value + (getSetBits(board.whitePieces & board.pawns) - getSetBits(board.blackPieces & board.pawns)) * PAWN_VALUE;
+        value = value + (getSetBits(board.whitePieces & board.knights) - getSetBits(board.blackPieces & board.knights)) * KNIGHT_VALUE;
+        value = value + (getSetBits(board.whitePieces & board.bishops) - getSetBits(board.blackPieces & board.bishops)) * BISHOP_VALUE;
+        value = value + (getSetBits(board.whitePieces & board.rooks) - getSetBits(board.blackPieces & board.rooks)) * ROOK_VALUE;
+        value = value + (getSetBits(board.whitePieces & board.queens) - getSetBits(board.blackPieces & board.queens)) * QUEEN_VALUE;
+        value = value + (getSetBits(board.whitePieces & board.kings) - getSetBits(board.blackPieces & board.kings)) * KING_VALUE;
+        value = value + (getIsolatedPawnCount(board, WHITE) - getIsolatedPawnCount(board, BLACK)) * BAD_PAWN_STRUCTURE_PENALTY;
+        value = value + (getDoubledPawnCount(board, WHITE) - getDoubledPawnCount(board, BLACK)) * BAD_PAWN_STRUCTURE_PENALTY;
+        value = value + (getBlockedPawnCount(board, WHITE) - getBlockedPawnCount(board, BLACK)) * BAD_PAWN_STRUCTURE_PENALTY;
+        value = value + calculatePSTBonusNegamax(board);
+
+        return value;
+    }
+
     public static void sortMoves(TranspositionTable table, Board board, Move[] moves){
         TranspositionTableEntry entry = table.lookup(board);
 
@@ -147,6 +172,66 @@ public class Evaluation {
         }else{
             return blackScore - whiteScore;
         }
+    }
+
+    private static int calculatePSTBonusNegamax(Board board){
+        long whitePawns, whiteKnights, whiteBishops, whiteRooks, whiteQueens, whiteKings;
+        long blackPawns, blackKnights, blackBishops, blackRooks, blackQueens, blackKings;
+        int score = 0;
+
+        whitePawns = board.pawns & board.whitePieces;
+        whiteKnights = board.knights & board.whitePieces;
+        whiteBishops = board.bishops & board.whitePieces;
+        whiteRooks = board.rooks & board.whitePieces;
+        whiteQueens = board.queens & board.whitePieces;
+        whiteKings = board.kings & board.whitePieces;
+
+        blackPawns = board.pawns & board.blackPieces;
+        blackKnights = board.knights & board.blackPieces;
+        blackBishops = board.bishops & board.blackPieces;
+        blackRooks = board.rooks & board.blackPieces;
+        blackQueens = board.queens & board.blackPieces;
+        blackKings = board.kings & board.blackPieces;
+
+        for(int i = 0; i < 64; i++){
+            long index = 1L << i;
+            if((board.whitePieces & index) != 0){
+                if((whitePawns & index) != 0){
+                    score = score + PST.pawnPSTWhite[i];
+                }else if((whiteKnights & index) != 0){
+                    score = score + PST.knightPSTWhite[i];
+                }else if((whiteBishops & index) != 0){
+                    score = score + PST.bishopPSTWhite[i];
+                }else if((whiteRooks & index) != 0){
+                    score = score + PST.rookPSTWhite[i];
+                }else if((whiteQueens & index) != 0){
+                    score = score + PST.queenPSTWhite[i];
+                }else if((whiteKings & index) != 0){
+                    score = score + PST.kingPSTWhite[i];
+                }
+            }
+        }
+
+        for(int i = 0; i < 64; i++){
+            long index = 1L << i;
+            if((board.blackPieces & index) != 0){
+                if((blackPawns & index) != 0){
+                    score = score - PST.pawnPSTBlack[i];
+                }else if((blackKnights & index) != 0){
+                    score = score - PST.knightPSTBlack[i];
+                }else if((blackBishops & index) != 0){
+                    score = score - PST.bishopPSTBlack[i];
+                }else if((blackRooks & index) != 0){
+                    score = score - PST.rookPSTBlack[i];
+                }else if((blackQueens & index) != 0){
+                    score = score - PST.queenPSTBlack[i];
+                }else if((blackKings & index) != 0){
+                    score = score - PST.kingPSTBlack[i];
+                }
+            }
+        }
+
+        return score;
     }
 
     public static int getBlockedPawnCount(Board board, Color color){

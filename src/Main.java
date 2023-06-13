@@ -1,5 +1,6 @@
 import engine.ai.AlphaBeta;
 import engine.ai.Evaluation;
+import engine.ai.Negamax;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
@@ -10,15 +11,16 @@ import java.util.Arrays;
 
 public class Main {
 
-    //alpha ist immer der aktuell beste Wert für maximierenden Spieler, beta ist immer der aktuell beste Wert für minimierenden Spieler
     public static void main(String[] args) {
         //playMove(args);
 
-        //Board b = new Board("rnb1k1nr/ppppbqpp/8/4Q3/4P3/P7/1PPP1PPP/RNB1K1NR w KQkq - 0 2");
+        //Board b = new Board("3r4/7p/2p2kp1/2P2p2/3P4/2K3P1/8/5R2 b - - 0 1");
         //AlphaBeta alphaBeta = new AlphaBeta();
         //System.out.println(alphaBeta.getBestMove(b, MoveGenerator.generateLegalMoves(b, new MoveMasks()), 1, Integer.MIN_VALUE, Integer.MAX_VALUE, new MoveMasks()));
 
-        aiArena(4);
+        //aiArena(4);
+
+        measureAverageTimeOnFENData(4);
     }
 
     static void measureAverageTimeOnFENData(int depth){
@@ -31,7 +33,7 @@ public class Main {
             Board b = new Board(fens[i]);
             Move[] moves = MoveGenerator.generateLegalMoves(b, masks);
             long startTime = System.nanoTime();
-            alphaBeta.getBestMove(b, moves, depth, Integer.MIN_VALUE, Integer.MAX_VALUE, masks);
+            Negamax.getBestMove(b, depth, new MoveMasks());
             totalTime = totalTime + (System.nanoTime() - startTime);
             alphaBeta.clearTable();
         }
@@ -66,6 +68,7 @@ public class Main {
         int winCountAdvancedAI = 0, winCountClassicAlphaBeta = 0;
 
         for(int i = 0; i < fens.length; i++){
+            Negamax.clearTable();
             Board b = new Board(fens[i]);
             Move[] moves = MoveGenerator.generateLegalMoves(b, new MoveMasks());
             AlphaBeta alphaBeta = new AlphaBeta();
@@ -73,7 +76,7 @@ public class Main {
             while(!b.isGameLost(new MoveMasks(), moves.length) && moveCount < 200){
                 Move m;
                 if(b.getTurn() == Color.WHITE){
-                    m = alphaBeta.getBestMove(b, MoveGenerator.generateLegalMoves(b, new MoveMasks()), depth, Integer.MIN_VALUE, Integer.MAX_VALUE, new MoveMasks());
+                    m = Negamax.getBestMove(b, depth, new MoveMasks());
                 }else{
                     m = AlphaBetaTest.bestMove(b, MoveGenerator.generateLegalMoves(b, new MoveMasks()), depth, new MoveMasks());
                 }
@@ -97,6 +100,7 @@ public class Main {
         System.out.println("FARBENTAUSCH: AB JETZT SPIEL DIE NEUE IMPLEMENTATION MIT SCHWARZ");
 
         for(int i = 0; i < fens.length; i++){
+            Negamax.clearTable();
             Board b = new Board(fens[i]);
             Move[] moves = MoveGenerator.generateLegalMoves(b, new MoveMasks());
             AlphaBeta alphaBeta = new AlphaBeta();
@@ -104,7 +108,7 @@ public class Main {
             while(!b.isGameLost(new MoveMasks(), moves.length) && moveCount < 200){
                 Move m;
                 if(b.getTurn() == Color.BLACK){
-                    m = alphaBeta.getBestMove(b, MoveGenerator.generateLegalMoves(b, new MoveMasks()), depth, Integer.MIN_VALUE, Integer.MAX_VALUE, new MoveMasks());
+                    m = Negamax.getBestMove(b, depth, new MoveMasks());
                 }else{
                     m = AlphaBetaTest.bestMove(b, MoveGenerator.generateLegalMoves(b, new MoveMasks()), depth, new MoveMasks());
                 }
@@ -134,12 +138,13 @@ public class Main {
         MoveMasks masks = new MoveMasks();
         Board board = new Board(args[0]);
         //Move m = alphaBeta.getBestMoveTimed(board, new MoveMasks(), 2000);
-        Move m;
-        if(board.getTurn() == Color.BLACK){
-            m = alphaBeta.getBestMove(board, MoveGenerator.generateLegalMoves(board, masks), Integer.parseInt(args[1]), Integer.MIN_VALUE, Integer.MAX_VALUE, masks);
-        }else{
-            m = AlphaBetaTest.bestMove(board, MoveGenerator.generateLegalMoves(board, masks), Integer.parseInt(args[1]), masks);
-        }
+        Move m = Negamax.getBestMove(board, Integer.parseInt(args[1]), masks);
+        //Move m;
+        //if(board.getTurn() == Color.BLACK){
+        //    m = alphaBeta.getBestMove(board, MoveGenerator.generateLegalMoves(board, masks), Integer.parseInt(args[1]), Integer.MIN_VALUE, Integer.MAX_VALUE, masks);
+        //}else{
+        //    m = AlphaBetaTest.bestMove(board, MoveGenerator.generateLegalMoves(board, masks), Integer.parseInt(args[1]), masks);
+        //}
         board.doMove(m);
         System.out.println(board.toFENString());
     }
