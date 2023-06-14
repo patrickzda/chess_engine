@@ -11,6 +11,8 @@ import static engine.representation.Color.*;
 public class Evaluation {
     private static final int[] PIECE_VALUES = new int[]{60000, 930, 480, 320, 280, 100};
     private static final int PAWN_VALUE = 100, KNIGHT_VALUE = 280, BISHOP_VALUE = 320, ROOK_VALUE = 480, QUEEN_VALUE = 930, KING_VALUE = 60000;
+    private static final int KNIGHT_PHASE_VALUE = 1, BISHOP_PHASE_VALUE = 1, ROOK_PHASE_VALUE = 2, QUEEN_PHASE_VALUE = 4;
+    private static final int TOTAL_PHASE = KNIGHT_PHASE_VALUE * 4 + BISHOP_PHASE_VALUE * 4 + ROOK_PHASE_VALUE * 4 + QUEEN_PHASE_VALUE * 2;
     private static final int BAD_PAWN_STRUCTURE_PENALTY = -25;
     private static final int CHECKMATE_BONUS = KING_VALUE + 10 * QUEEN_VALUE;
 
@@ -76,6 +78,16 @@ public class Evaluation {
         return value;
     }
 
+    public static double getGameState(Board board){
+        double phase = TOTAL_PHASE;
+        phase = phase - getSetBits(board.knights) * KNIGHT_PHASE_VALUE;
+        phase = phase - getSetBits(board.bishops) * BISHOP_PHASE_VALUE;
+        phase = phase - getSetBits(board.rooks) * ROOK_PHASE_VALUE;
+        phase = phase - getSetBits(board.queens) * QUEEN_PHASE_VALUE;
+        phase = (phase * 256 + ((double) TOTAL_PHASE / 2)) / TOTAL_PHASE;
+        return phase;
+    }
+
     public static void sortMoves(TranspositionTable table, Board board, Move[] moves){
         TranspositionTableEntry entry = table.lookup(board);
 
@@ -91,6 +103,7 @@ public class Evaluation {
 
         for(int i = 0; i < moves.length; i++){
             PieceType capturedPiece = board.getCapturedPieceType(moves[i]);
+            moves[i].capturedPieceType = capturedPiece;
 
             if(capturedPiece != null){
                 moves[i].evaluation = PIECE_VALUES[capturedPiece.ordinal()] - PIECE_VALUES[moves[i].getPieceType().ordinal()];

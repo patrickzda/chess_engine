@@ -5,9 +5,12 @@ import engine.move_generation.MoveMasks;
 import engine.representation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class Negamax {
     private static final double EFFECTIVE_BRANCHING_FACTOR = Math.sqrt(35);
+    private static final int QUIESCENCE_SEARCH_DEPTH = 2;
     private static final TranspositionTable table = new TranspositionTable();
 
     private static int search(Board board, int depth, MoveMasks masks, int alpha, int beta, int color){
@@ -31,7 +34,18 @@ public class Negamax {
         Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
 
         if (depth == 0 || board.isGameLost(masks, moves.length) || moves.length == 0) {
+            if(board.getMovesSinceLastPawnMoveOrCapture() == 0 && board.moves.size() > 0){
+                Move lastMove = board.moves.get(board.moves.size() - 1);
+                board.undoLastMove();
+                PieceType capturedPiece = board.getCapturedPieceType(lastMove);
+                board.doMove(lastMove);
+
+                if(capturedPiece != null){
+                    return -quiescenceSearch(board, QUIESCENCE_SEARCH_DEPTH, masks, -beta, -alpha, -color);
+                }
+            }
             return color * Evaluation.evaluateNegamax(board, masks);
+            //return color * Evaluation.evaluateNegamax(board, masks);
         }
 
         Evaluation.sortMoves(table, board, moves);
@@ -71,6 +85,36 @@ public class Negamax {
         }
 
         table.addEntry(board, bestMove, depth, value, type);
+
+        return value;
+    }
+
+    private static int quiescenceSearch(Board board, int depth, MoveMasks masks, int alpha, int beta, int color){
+        Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
+
+        if (depth == 0 || board.isGameLost(masks, moves.length) || moves.length == 0) {
+            return color * Evaluation.evaluateNegamax(board, masks);
+        }
+
+        Evaluation.sortMoves(table, board, moves);
+        int value = Integer.MIN_VALUE;
+
+        for(int i = 0; i < moves.length; i++){
+            if(moves[i].capturedPieceType != null && moves[i].getPieceType().ordinal() >= moves[i].capturedPieceType.ordinal()){
+                board.doMove(moves[i]);
+                value = Math.max(value, -quiescenceSearch(board, depth - 1, masks, -beta, -alpha, -color));
+                board.undoLastMove();
+
+                alpha = Math.max(alpha, value);
+                if(alpha >= beta){
+                    break;
+                }
+            }
+        }
+
+        if(value == Integer.MIN_VALUE){
+            value = color * Evaluation.evaluateNegamax(board, masks);
+        }
 
         return value;
     }
@@ -117,7 +161,7 @@ public class Negamax {
             nextDepthSearchTime = (long) ((System.nanoTime() - startTime) * EFFECTIVE_BRANCHING_FACTOR);
         }
 
-        System.out.println("REACHED DEPTH " + currentSearchDepth + " in " + (System.nanoTime() - (endTime - timeInMilliseconds * 1000000L)) / 1000000L + " ms");
+        //System.out.println("REACHED DEPTH " + currentSearchDepth + " in " + (System.nanoTime() - (endTime - timeInMilliseconds * 1000000L)) / 1000000L + " ms");
 
         return bestMove;
     }

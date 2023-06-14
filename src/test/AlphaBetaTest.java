@@ -126,4 +126,22 @@ public class AlphaBetaTest {
         bestMove.evaluation = bestScore;
         return bestMove;
     }
+
+    public static Move getBestMoveTimed(Board board, int timeInMilliseconds, MoveMasks masks){
+        long endTime = System.nanoTime() + timeInMilliseconds * 1000000L, nextDepthSearchTime = 0L;
+        int currentSearchDepth = 1;
+        Move bestMove = null;
+
+        while(System.nanoTime() + nextDepthSearchTime < endTime){
+            long startTime = System.nanoTime();
+            bestMove = bestMove(board, MoveGenerator.generateLegalMoves(board, masks), currentSearchDepth, masks);
+            currentSearchDepth++;
+            nextDepthSearchTime = (long) ((System.nanoTime() - startTime) * Math.sqrt(35));
+        }
+
+        //System.out.println("REACHED DEPTH " + currentSearchDepth + " in " + (System.nanoTime() - (endTime - timeInMilliseconds * 1000000L)) / 1000000L + " ms");
+
+        return bestMove;
+    }
+
 }
