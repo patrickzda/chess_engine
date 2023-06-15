@@ -3,11 +3,10 @@ package engine.ai;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
-import test.AlphaBetaTest;
+import engine.tools.TranspositionTable;
+import engine.tools.TranspositionTableEntry;
 
 import java.util.Arrays;
-
-import static java.lang.Math.*;
 
 public class AlphaBeta {
     public TranspositionTable table;

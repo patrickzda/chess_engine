@@ -2,6 +2,9 @@ package engine.ai;
 
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
+import engine.tools.PST;
+import engine.tools.TranspositionTable;
+import engine.tools.TranspositionTableEntry;
 
 
 import java.util.Arrays;

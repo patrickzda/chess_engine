@@ -1,4 +1,7 @@
-package engine.representation;
+package engine.tools;
+
+import engine.representation.EvaluationType;
+import engine.representation.Move;
 
 public class TranspositionTableEntry {
     private final long zobristKey;

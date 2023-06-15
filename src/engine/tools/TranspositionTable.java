@@ -1,7 +1,10 @@
-package engine.representation;
+package engine.tools;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import engine.representation.Board;
+import engine.representation.EvaluationType;
+import engine.representation.Move;
+import engine.tools.TranspositionTableEntry;
+
 import java.util.Random;
 
 public class TranspositionTable {

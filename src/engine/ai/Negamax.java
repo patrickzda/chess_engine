@@ -3,10 +3,8 @@ package engine.ai;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import engine.tools.TranspositionTable;
+import engine.tools.TranspositionTableEntry;
 
 public class Negamax {
     private static final double EFFECTIVE_BRANCHING_FACTOR = Math.sqrt(35);
