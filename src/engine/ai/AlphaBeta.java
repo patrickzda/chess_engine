@@ -202,7 +202,7 @@ public class AlphaBeta {
         long totalTime = (stopTime - beginningTime) / 1000000L;
         double ratio = ((double) totalTime) / millis;
 
-        System.out.println("gegebene Zeit: " + millis + "ms\n" + "gebrauchte Zeit: " + totalTime + "ms\n" + "Verhältnis: " + ratio + " (" + ratio * 100 + "%)\n" + "erreichte Suchtiefe: " + searchDepth);
+        //System.out.println("gegebene Zeit: " + millis + "ms\n" + "gebrauchte Zeit: " + totalTime + "ms\n" + "Verhältnis: " + ratio + " (" + ratio * 100 + "%)\n" + "erreichte Suchtiefe: " + searchDepth);
         //System.out.println("Anteil erfolgreicher MWS Durchläufe: " + ((double) mwsSuccess / (double) searchDepth));
 
         return bestMove;

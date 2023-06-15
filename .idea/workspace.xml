@@ -26,7 +26,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/engine/ai/AlphaBeta.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/ai/AlphaBeta.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/AlphaBetaTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/AlphaBetaTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/performance/AiPerformance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/performance/AiPerformance.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,7 +84,7 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.AlphaBetaTest.getBestMove">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="chess_engine" />
@@ -157,8 +157,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.AlphaBetaTest.getBestMove" />
         <item itemvalue="Application.Main" />
+        <item itemvalue="JUnit.AlphaBetaTest.getBestMove" />
         <item itemvalue="JUnit.BoardTest.doMove" />
         <item itemvalue="JUnit.BoardTest" />
         <item itemvalue="JUnit.BoardTest.gameState" />

@@ -18,7 +18,7 @@ public class Main {
         //AlphaBeta alphaBeta = new AlphaBeta();
         //System.out.println(alphaBeta.getBestMove(b, MoveGenerator.generateLegalMoves(b, new MoveMasks()), 1, Integer.MIN_VALUE, Integer.MAX_VALUE, new MoveMasks()));
 
-        aiArena(4);
+        //aiArena(4);
 
         //Board b = new Board("5rk1/1p4pp/2R1p3/p5Q1/P4P2/6qr/2n3PP/5RK1 w - - 0 1");
         //b.doMove(new Move(59, 27, PieceType.ROOK));
@@ -29,6 +29,7 @@ public class Main {
         //System.out.println(Evaluation.evaluateNegamax(b, new MoveMasks()));
 
         //measureAverageTimeOnFENData(4);
+        performance();
     }
 
     static void measureAverageTimeOnFENData(int depth){
@@ -61,14 +62,15 @@ public class Main {
     }
 
     static void performance(){
-        String fens[] = new String[]{"2k5/6q1/3P1P2/4N3/8/1K6/8/8 w - - 0 1" ,"4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1","6k1/r4ppp/r7/1b6/8/8/4QPPP/4R1K1 w - - 0 1"};
+        //String fens[] = new String[]{"2k5/6q1/3P1P2/4N3/8/1K6/8/8 w - - 0 1" ,"4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1","6k1/r4ppp/r7/1b6/8/8/4QPPP/4R1K1 w - - 0 1"};
         //MoveGeneratorPerformance moveGeneratorPerformance = new MoveGeneratorPerformance();
         //moveGeneratorPerformance.measureAveragePerformanceOnBoards(fens,10000);
-        EvaluationPeformance evaluationPeformance = new EvaluationPeformance();
-        evaluationPeformance.measureAveragePerformanceOfEvaluation(fens,10000);
-        AlphaBetaPerfomance.measureAveragePerformanceOfAlphaBeta(fens,1,4);
+        //EvaluationPeformance evaluationPeformance = new EvaluationPeformance();
+        //evaluationPeformance.measureAveragePerformanceOfEvaluation(fens,10000);
+        //AlphaBetaPerfomance.measureAveragePerformanceOfAlphaBeta(fens,1,4);
         //MiniMaxPerformance.measureAveragePerformanceOfMiniMax(fens,1,4);
         //AiPerformance.howMuchElohasMyAI(1320,5,1000);
+        AiPerformance.calcElo(1000,2000);
     }
 
     static void aiArena(int depth){
