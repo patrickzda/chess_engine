@@ -29,7 +29,7 @@ public class Main {
         //System.out.println(Evaluation.evaluateNegamax(b, new MoveMasks()));
 
         //measureAverageTimeOnFENData(4);
-        performance();
+        //performance();
     }
 
     static void measureAverageTimeOnFENData(int depth){
