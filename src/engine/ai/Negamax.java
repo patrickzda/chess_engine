@@ -9,6 +9,7 @@ import engine.tools.TranspositionTableEntry;
 public class Negamax {
     private static final double EFFECTIVE_BRANCHING_FACTOR = Math.sqrt(35);
     private static final int QUIESCENCE_SEARCH_DEPTH = 2;
+    private static final int THREAD_COUNT = 2;
     private static final TranspositionTable table = new TranspositionTable();
 
     private static int search(Board board, int depth, MoveMasks masks, int alpha, int beta, int color){
@@ -42,8 +43,7 @@ public class Negamax {
                     return -quiescenceSearch(board, QUIESCENCE_SEARCH_DEPTH, masks, -beta, -alpha, -color);
                 }
             }
-            return color * Evaluation.evaluateNegamax(board, masks);
-            //return color * Evaluation.evaluateNegamax(board, masks);
+            return color * Evaluation.evaluateNegamaxNew(board, masks);
         }
 
         Evaluation.sortMoves(table, board, moves);
@@ -91,7 +91,7 @@ public class Negamax {
         Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
 
         if (depth == 0 || board.isGameLost(masks, moves.length) || moves.length == 0) {
-            return color * Evaluation.evaluateNegamax(board, masks);
+            return color * Evaluation.evaluateNegamaxNew(board, masks);
         }
 
         Evaluation.sortMoves(table, board, moves);
@@ -111,7 +111,7 @@ public class Negamax {
         }
 
         if(value == Integer.MIN_VALUE){
-            value = color * Evaluation.evaluateNegamax(board, masks);
+            value = color * Evaluation.evaluateNegamaxNew(board, masks);
         }
 
         return value;

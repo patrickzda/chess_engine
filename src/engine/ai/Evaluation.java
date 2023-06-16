@@ -92,7 +92,7 @@ public class Evaluation {
         return phase;
     }
 
-    private static double evaluateNegamaxNew(Board board, MoveMasks masks){
+    public static int evaluateNegamaxNew(Board board, MoveMasks masks){
         GameState state = board.getGameState(masks);
         if(state == GameState.DRAW){
             return 0;
@@ -178,7 +178,7 @@ public class Evaluation {
             }
         }
 
-        return (((openingScore * (256 - phase)) + (endGameScore * phase)) / 256) + materialScore + pawnStructureScore;
+        return (int) Math.round((((openingScore * (256 - phase)) + (endGameScore * phase)) / 256) + materialScore + pawnStructureScore);
     }
 
     public static void sortMoves(TranspositionTable table, Board board, Move[] moves){

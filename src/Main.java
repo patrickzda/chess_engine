@@ -21,6 +21,10 @@ public class Main {
         //aiArena(4);
 
         //Board b = new Board("5rk1/1p4pp/2R1p3/p5Q1/P4P2/6qr/2n3PP/5RK1 w - - 0 1");
+
+        //System.out.println(Evaluation.evaluateNegamax(b, new MoveMasks()));
+        //System.out.println(Evaluation.evaluateNegamaxNew(b, new MoveMasks()));
+
         //b.doMove(new Move(59, 27, PieceType.ROOK));
 
         //System.out.println(Negamax.getBestMove(b, 4, new MoveMasks()));
@@ -30,6 +34,9 @@ public class Main {
 
         //measureAverageTimeOnFENData(4);
         //performance();
+
+        Board b = new Board("r1b1k1nr/ppp2ppp/2n5/1Q1p1q2/1b1p4/1PP2NN1/P3PPPP/R1B1KB1R w KQkq - 0 11");
+        System.out.println(Negamax.getBestMove(b, 1, new MoveMasks()));
     }
 
     static void measureAverageTimeOnFENData(int depth){
@@ -148,15 +155,15 @@ public class Main {
         MoveMasks masks = new MoveMasks();
         Board board = new Board(args[0]);
         //Move m = alphaBeta.getBestMoveTimed(board, new MoveMasks(), 2000);
-        Move m = Negamax.getBestMove(board, Integer.parseInt(args[1]), masks);
-        //Move m;
-        //if(board.getTurn() == Color.BLACK){
-        //    //m = Negamax.getBestMove(board, Integer.parseInt(args[1]), masks);
-        //    m = Negamax.getBestMoveTimed(board, 2000, masks);
-        //}else{
-        //    //m = AlphaBetaTest.bestMove(board, MoveGenerator.generateLegalMoves(board, masks), Integer.parseInt(args[1]), masks);
-        //    m = AlphaBetaTest.getBestMoveTimed(board, 2000, masks);
-        //}
+        //Move m = Negamax.getBestMove(board, Integer.parseInt(args[1]), masks);
+        Move m;
+        if(board.getTurn() == Color.WHITE){
+            m = Negamax.getBestMove(board, Integer.parseInt(args[1]), masks);
+            //m = Negamax.getBestMoveTimed(board, 2000, masks);
+        }else{
+            m = AlphaBetaTest.bestMove(board, MoveGenerator.generateLegalMoves(board, masks), Integer.parseInt(args[1]), masks);
+            //m = AlphaBetaTest.getBestMoveTimed(board, 2000, masks);
+        }
         board.doMove(m);
         System.out.println(board.toFENString());
     }

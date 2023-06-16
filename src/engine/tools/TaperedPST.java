@@ -139,7 +139,6 @@ public class TaperedPST {
     public static int getMirroredIndex(int index){
         int mirroredRank = 7 - (index / 8);
         int file = index % 8;
-        System.out.println(mirroredRank * 8 + file);
         return mirroredRank * 8 + file;
     }
 
