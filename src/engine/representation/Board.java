@@ -501,6 +501,14 @@ public class Board {
         return type;
     }
 
+    public void doNullMove(){
+        if(turn == Color.WHITE){
+            turn = Color.BLACK;
+        }else{
+            turn = Color.WHITE;
+        }
+    }
+
     @Override
     public String toString(){
         StringBuilder stringBuilder = new StringBuilder();

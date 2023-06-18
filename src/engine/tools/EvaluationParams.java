@@ -1,6 +1,8 @@
 package engine.tools;
 
-public class TaperedPST {
+public class EvaluationParams {
+    public static final int PAWN_VALUE_MID = 126, KNIGHT_VALUE_MID = 781, BISHOP_VALUE_MID = 825, ROOK_VALUE_MID = 1276, QUEEN_VALUE_MID = 2538;
+    public static final int PAWN_VALUE_END = 208, KNIGHT_VALUE_END = 854, BISHOP_VALUE_END = 915, ROOK_VALUE_END = 1380, QUEEN_VALUE_END = 2682;
     private static final int QUEEN_VALUE = 930, KING_VALUE = 60000;
     private static final int C_B = KING_VALUE + 10 * QUEEN_VALUE;
 
@@ -135,6 +137,20 @@ public class TaperedPST {
           47,  121,  116,  131,  131,  116,  121,   47,
           11,   59,   73,   78,   78,   73,   59,   11
     };
+
+    public static final int[] KNIGHT_MOBILITY_BONUS_MID = new int[]{-62, -53, -12, -3, 3, 12, 21, 28, 37};
+    public static final int[] KNIGHT_MOBILITY_BONUS_END = new int[]{-79, -57, -31, -17, 7, 13, 16, 21, 26};
+    public static final int[] BISHOP_MOBILITY_BONUS_MID = new int[]{-47, -20, 14, 29, 39, 53, 53, 60, 62, 69, 78, 83, 91, 96};
+    public static final int[] BISHOP_MOBILITY_BONUS_END = new int[]{-59, -25, -8, 12, 21, 40, 56, 58, 65, 72, 78, 87, 88, 98};
+    public static final int[] ROOK_MOBILITY_BONUS_MID = new int[]{-60, -24, 0, 3, 4, 14, 20, 30, 41, 41, 41, 45, 57, 58, 67};
+    public static final int[] ROOK_MOBILITY_BONUS_END = new int[]{-82, -15, 17, 43, 72, 100, 102, 122, 133, 139, 153, 160, 165, 170, 175};
+    public static final int[] QUEEN_MOBILITY_BONUS_MID = new int[]{-29, -16, -8, -8, 18, 25, 23, 37, 41, 54, 65, 68, 69, 70, 70, 70, 71, 72, 74, 76, 90, 104, 105, 106, 112, 114, 114, 119};
+    public static final int[] QUEEN_MOBILITY_BONUS_END = new int[]{-49, -29, -8, 17, 39, 54, 59, 73, 76, 95, 95, 101, 124, 128, 132, 133, 136, 140, 147, 149, 153, 169, 171, 171, 178, 185, 187, 221};
+
+    public static final int KNIGHT_OUTPOST_BONUS_MID = 54;
+    public static final int KNIGHT_OUTPOST_BONUS_END = 34;
+    public static final int BISHOP_OUTPOST_BONUS_MID = 31;
+    public static final int BISHOP_OUTPOST_BONUS_END = 25;
 
     public static int getMirroredIndex(int index){
         int mirroredRank = 7 - (index / 8);

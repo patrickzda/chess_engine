@@ -4,6 +4,7 @@ import engine.ai.Negamax;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
+import engine.tools.EvaluationParams;
 import performance.*;
 import test.AlphaBetaTest;
 
@@ -14,29 +15,12 @@ public class Main {
 
     public static void main(String[] args) {
         //playMove(args);
-
-        //AlphaBeta alphaBeta = new AlphaBeta();
-        //System.out.println(alphaBeta.getBestMove(b, MoveGenerator.generateLegalMoves(b, new MoveMasks()), 1, Integer.MIN_VALUE, Integer.MAX_VALUE, new MoveMasks()));
-
-        //aiArena(4);
-
-        //Board b = new Board("5rk1/1p4pp/2R1p3/p5Q1/P4P2/6qr/2n3PP/5RK1 w - - 0 1");
-
-        //System.out.println(Evaluation.evaluateNegamax(b, new MoveMasks()));
-        //System.out.println(Evaluation.evaluateNegamaxNew(b, new MoveMasks()));
-
-        //b.doMove(new Move(59, 27, PieceType.ROOK));
-
-        //System.out.println(Negamax.getBestMove(b, 4, new MoveMasks()));
-
-        //System.out.println(Negamax.iterativeQuiescenceSearch(b, new MoveMasks(), MoveGenerator.generateLegalMoves(b, new MoveMasks()), 1));
-        //System.out.println(Evaluation.evaluateNegamax(b, new MoveMasks()));
-
-        //measureAverageTimeOnFENData(4);
+        measureAverageTimeOnFENData(4);
         //performance();
 
-        Board b = new Board("r1b1k1nr/ppp2ppp/2n5/1Q1p1q2/1b1p4/1PP2NN1/P3PPPP/R1B1KB1R w KQkq - 0 11");
-        System.out.println(Negamax.getBestMove(b, 1, new MoveMasks()));
+        //WICHTIGER TEST
+        //Board b = new Board("r1bqkbnr/pppp1ppp/2n5/3Pp3/4P3/8/PPP2PPP/RNBQKBNR b KQkq - 0 3");
+        //System.out.println(Negamax.getBestMoveTimed(b, 5000, new MoveMasks()));
     }
 
     static void measureAverageTimeOnFENData(int depth){
@@ -69,15 +53,15 @@ public class Main {
     }
 
     static void performance(){
-        //String fens[] = new String[]{"2k5/6q1/3P1P2/4N3/8/1K6/8/8 w - - 0 1" ,"4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1","6k1/r4ppp/r7/1b6/8/8/4QPPP/4R1K1 w - - 0 1"};
+        String fens[] = new String[]{"2k5/6q1/3P1P2/4N3/8/1K6/8/8 w - - 0 1" ,"4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1","6k1/r4ppp/r7/1b6/8/8/4QPPP/4R1K1 w - - 0 1"};
         //MoveGeneratorPerformance moveGeneratorPerformance = new MoveGeneratorPerformance();
         //moveGeneratorPerformance.measureAveragePerformanceOnBoards(fens,10000);
-        //EvaluationPeformance evaluationPeformance = new EvaluationPeformance();
-        //evaluationPeformance.measureAveragePerformanceOfEvaluation(fens,10000);
+        EvaluationPeformance evaluationPeformance = new EvaluationPeformance();
+        evaluationPeformance.measureAveragePerformanceOfEvaluation(fens,10000);
         //AlphaBetaPerfomance.measureAveragePerformanceOfAlphaBeta(fens,1,4);
         //MiniMaxPerformance.measureAveragePerformanceOfMiniMax(fens,1,4);
         //AiPerformance.howMuchElohasMyAI(1320,5,1000);
-        AiPerformance.calcElo(1000,2000);
+        //AiPerformance.calcElo(1000,2000);
     }
 
     static void aiArena(int depth){
@@ -157,12 +141,12 @@ public class Main {
         //Move m = alphaBeta.getBestMoveTimed(board, new MoveMasks(), 2000);
         //Move m = Negamax.getBestMove(board, Integer.parseInt(args[1]), masks);
         Move m;
-        if(board.getTurn() == Color.WHITE){
-            m = Negamax.getBestMove(board, Integer.parseInt(args[1]), masks);
-            //m = Negamax.getBestMoveTimed(board, 2000, masks);
+        if(board.getTurn() == Color.BLACK){
+            //m = Negamax.getBestMove(board, Integer.parseInt(args[1]), masks);
+            m = Negamax.getBestMoveTimed(board, 5000, masks);
         }else{
-            m = AlphaBetaTest.bestMove(board, MoveGenerator.generateLegalMoves(board, masks), Integer.parseInt(args[1]), masks);
-            //m = AlphaBetaTest.getBestMoveTimed(board, 2000, masks);
+            //m = AlphaBetaTest.bestMove(board, MoveGenerator.generateLegalMoves(board, masks), Integer.parseInt(args[1]), masks);
+            m = AlphaBetaTest.getBestMoveTimed(board, 5000, masks);
         }
         board.doMove(m);
         System.out.println(board.toFENString());

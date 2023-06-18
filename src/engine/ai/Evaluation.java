@@ -1,13 +1,16 @@
 package engine.ai;
 
+import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
 import engine.tools.PST;
-import engine.tools.TaperedPST;
+import engine.tools.EvaluationParams;
 import engine.tools.TranspositionTable;
 import engine.tools.TranspositionTableEntry;
 
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static engine.representation.Color.*;
@@ -19,6 +22,7 @@ public class Evaluation {
     private static final int TOTAL_PHASE = KNIGHT_PHASE_VALUE * 4 + BISHOP_PHASE_VALUE * 4 + ROOK_PHASE_VALUE * 4 + QUEEN_PHASE_VALUE * 2;
     private static final int BAD_PAWN_STRUCTURE_PENALTY = -25;
     private static final int CHECKMATE_BONUS = KING_VALUE + 10 * QUEEN_VALUE;
+    private static final long NOT_A_FILE = -72340172838076674L, NOT_H_FILE = 9187201950435737471L;
 
     public static int evaluate(Board board, MoveMasks masks) {
         long ownBoard, enemyBoard;
@@ -82,6 +86,7 @@ public class Evaluation {
         return value;
     }
 
+    //Gibt einen Wert zwischen 0,5 (Keine Figur wurde bewegt) und 256,5 zurück (nur zwei Könige übrig)
     public static double getGamePhase(Board board){
         double phase = TOTAL_PHASE;
         phase = phase - getSetBits(board.knights) * KNIGHT_PHASE_VALUE;
@@ -92,7 +97,7 @@ public class Evaluation {
         return phase;
     }
 
-    public static int evaluateNegamaxNew(Board board, MoveMasks masks){
+    public static int evaluateNegamaxNew(Board board, MoveMasks masks, Move[] currentTeamMoves){
         GameState state = board.getGameState(masks);
         if(state == GameState.DRAW){
             return 0;
@@ -104,7 +109,7 @@ public class Evaluation {
 
         long whitePawns, whiteKnights, whiteBishops, whiteRooks, whiteQueens, whiteKings;
         long blackPawns, blackKnights, blackBishops, blackRooks, blackQueens, blackKings;
-        int openingScore = 0, endGameScore = 0, materialScore = 0, pawnStructureScore = 0;
+        int openingScore = 0, endGameScore = 0, materialScoreMid = 0, materialScoreEnd = 0, pawnStructureScore = 0;
         double phase = getGamePhase(board);
 
         whitePawns = board.pawns & board.whitePieces;
@@ -121,12 +126,19 @@ public class Evaluation {
         blackQueens = board.queens & board.blackPieces;
         blackKings = board.kings & board.blackPieces;
 
-        materialScore = materialScore + (getSetBits(whitePawns) - getSetBits(blackPawns)) * PAWN_VALUE;
-        materialScore = materialScore + (getSetBits(whiteKnights) - getSetBits(blackKnights)) * KNIGHT_VALUE;
-        materialScore = materialScore + (getSetBits(whiteBishops) - getSetBits(blackBishops)) * BISHOP_VALUE;
-        materialScore = materialScore + (getSetBits(whiteRooks) - getSetBits(blackRooks)) * ROOK_VALUE;
-        materialScore = materialScore + (getSetBits(whiteQueens) - getSetBits(blackQueens)) * QUEEN_VALUE;
-        materialScore = materialScore + (getSetBits(whiteKings) - getSetBits(blackKings)) * KING_VALUE;
+        materialScoreMid = materialScoreMid + (getSetBits(whitePawns) - getSetBits(blackPawns)) * EvaluationParams.PAWN_VALUE_MID;
+        materialScoreMid = materialScoreMid + (getSetBits(whiteKnights) - getSetBits(blackKnights)) * EvaluationParams.KNIGHT_VALUE_MID;
+        materialScoreMid = materialScoreMid + (getSetBits(whiteBishops) - getSetBits(blackBishops)) * EvaluationParams.BISHOP_VALUE_MID;
+        materialScoreMid = materialScoreMid + (getSetBits(whiteRooks) - getSetBits(blackRooks)) * EvaluationParams.ROOK_VALUE_MID;
+        materialScoreMid = materialScoreMid + (getSetBits(whiteQueens) - getSetBits(blackQueens)) * EvaluationParams.QUEEN_VALUE_MID;
+        materialScoreMid = materialScoreMid + (getSetBits(whiteKings) - getSetBits(blackKings)) * KING_VALUE;
+
+        materialScoreEnd = materialScoreEnd + (getSetBits(whitePawns) - getSetBits(blackPawns)) * EvaluationParams.PAWN_VALUE_END;
+        materialScoreEnd = materialScoreEnd + (getSetBits(whiteKnights) - getSetBits(blackKnights)) * EvaluationParams.KNIGHT_VALUE_END;
+        materialScoreEnd = materialScoreEnd + (getSetBits(whiteBishops) - getSetBits(blackBishops)) * EvaluationParams.BISHOP_VALUE_END;
+        materialScoreEnd = materialScoreEnd + (getSetBits(whiteRooks) - getSetBits(blackRooks)) * EvaluationParams.ROOK_VALUE_END;
+        materialScoreEnd = materialScoreEnd + (getSetBits(whiteQueens) - getSetBits(blackQueens)) * EvaluationParams.QUEEN_VALUE_END;
+        materialScoreEnd = materialScoreEnd + (getSetBits(whiteKings) - getSetBits(blackKings)) * KING_VALUE;
 
         pawnStructureScore = pawnStructureScore + (getIsolatedPawnCount(board, WHITE) - getIsolatedPawnCount(board, BLACK)) * BAD_PAWN_STRUCTURE_PENALTY;
         pawnStructureScore = pawnStructureScore + (getDoubledPawnCount(board, WHITE) - getDoubledPawnCount(board, BLACK)) * BAD_PAWN_STRUCTURE_PENALTY;
@@ -136,49 +148,60 @@ public class Evaluation {
             long index = 1L << i;
             if((board.whitePieces & index) != 0){
                 if((whitePawns & index) != 0){
-                    openingScore = openingScore + TaperedPST.PAWN_PST_MID[i];
-                    endGameScore = endGameScore + TaperedPST.PAWN_PST_END[i];
+                    openingScore = openingScore + EvaluationParams.PAWN_PST_MID[i];
+                    endGameScore = endGameScore + EvaluationParams.PAWN_PST_END[i];
                 }else if((whiteKnights & index) != 0){
-                    openingScore = openingScore + TaperedPST.KNIGHT_PST_MID[i];
-                    endGameScore = endGameScore + TaperedPST.KNIGHT_PST_END[i];
+                    openingScore = openingScore + EvaluationParams.KNIGHT_PST_MID[i];
+                    endGameScore = endGameScore + EvaluationParams.KNIGHT_PST_END[i];
                 }else if((whiteBishops & index) != 0){
-                    openingScore = openingScore + TaperedPST.BISHOP_PST_MID[i];
-                    endGameScore = endGameScore + TaperedPST.BISHOP_PST_END[i];
+                    openingScore = openingScore + EvaluationParams.BISHOP_PST_MID[i];
+                    endGameScore = endGameScore + EvaluationParams.BISHOP_PST_END[i];
                 }else if((whiteRooks & index) != 0){
-                    openingScore = openingScore + TaperedPST.ROOK_PST_MID[i];
-                    endGameScore = endGameScore + TaperedPST.ROOK_PST_END[i];
+                    openingScore = openingScore + EvaluationParams.ROOK_PST_MID[i];
+                    endGameScore = endGameScore + EvaluationParams.ROOK_PST_END[i];
                 }else if((whiteQueens & index) != 0){
-                    openingScore = openingScore + TaperedPST.QUEEN_PST_MID[i];
-                    endGameScore = endGameScore + TaperedPST.QUEEN_PST_END[i];
+                    openingScore = openingScore + EvaluationParams.QUEEN_PST_MID[i];
+                    endGameScore = endGameScore + EvaluationParams.QUEEN_PST_END[i];
                 }else if((whiteKings & index) != 0){
-                    openingScore = openingScore + TaperedPST.KING_PST_MID[i];
-                    endGameScore = endGameScore + TaperedPST.KING_PST_END[i];
+                    openingScore = openingScore + EvaluationParams.KING_PST_MID[i];
+                    endGameScore = endGameScore + EvaluationParams.KING_PST_END[i];
                 }
             }else if((board.blackPieces & index) != 0){
-                int mirroredIndex = TaperedPST.getMirroredIndex(i);
+                int mirroredIndex = EvaluationParams.getMirroredIndex(i);
                 if((blackPawns & index) != 0){
-                    openingScore = openingScore - TaperedPST.PAWN_PST_MID[mirroredIndex];
-                    endGameScore = endGameScore - TaperedPST.PAWN_PST_END[mirroredIndex];
+                    openingScore = openingScore - EvaluationParams.PAWN_PST_MID[mirroredIndex];
+                    endGameScore = endGameScore - EvaluationParams.PAWN_PST_END[mirroredIndex];
                 }else if((blackKnights & index) != 0){
-                    openingScore = openingScore - TaperedPST.KNIGHT_PST_MID[mirroredIndex];
-                    endGameScore = endGameScore - TaperedPST.KNIGHT_PST_END[mirroredIndex];
+                    openingScore = openingScore - EvaluationParams.KNIGHT_PST_MID[mirroredIndex];
+                    endGameScore = endGameScore - EvaluationParams.KNIGHT_PST_END[mirroredIndex];
                 }else if((blackBishops & index) != 0){
-                    openingScore = openingScore - TaperedPST.BISHOP_PST_MID[mirroredIndex];
-                    endGameScore = endGameScore - TaperedPST.BISHOP_PST_END[mirroredIndex];
+                    openingScore = openingScore - EvaluationParams.BISHOP_PST_MID[mirroredIndex];
+                    endGameScore = endGameScore - EvaluationParams.BISHOP_PST_END[mirroredIndex];
                 }else if((blackRooks & index) != 0){
-                    openingScore = openingScore - TaperedPST.ROOK_PST_MID[mirroredIndex];
-                    endGameScore = endGameScore - TaperedPST.ROOK_PST_END[mirroredIndex];
+                    openingScore = openingScore - EvaluationParams.ROOK_PST_MID[mirroredIndex];
+                    endGameScore = endGameScore - EvaluationParams.ROOK_PST_END[mirroredIndex];
                 }else if((blackQueens & index) != 0){
-                    openingScore = openingScore - TaperedPST.QUEEN_PST_MID[mirroredIndex];
-                    endGameScore = endGameScore - TaperedPST.QUEEN_PST_END[mirroredIndex];
+                    openingScore = openingScore - EvaluationParams.QUEEN_PST_MID[mirroredIndex];
+                    endGameScore = endGameScore - EvaluationParams.QUEEN_PST_END[mirroredIndex];
                 }else if((blackKings & index) != 0){
-                    openingScore = openingScore - TaperedPST.KING_PST_MID[mirroredIndex];
-                    endGameScore = endGameScore - TaperedPST.KING_PST_END[mirroredIndex];
+                    openingScore = openingScore - EvaluationParams.KING_PST_MID[mirroredIndex];
+                    endGameScore = endGameScore - EvaluationParams.KING_PST_END[mirroredIndex];
                 }
             }
         }
 
-        return (int) Math.round((((openingScore * (256 - phase)) + (endGameScore * phase)) / 256) + materialScore + pawnStructureScore);
+        int[] mobilityBonus = calculateMobilityBonus(board, masks, currentTeamMoves);
+        openingScore = openingScore + mobilityBonus[0];
+        endGameScore = endGameScore + mobilityBonus[1];
+
+        int[] outpostBonus = calculateOutpostBonus(board, masks);
+        openingScore = openingScore + outpostBonus[0];
+        endGameScore = endGameScore + outpostBonus[1];
+
+        openingScore = openingScore + materialScoreMid;
+        endGameScore = endGameScore + materialScoreEnd;
+
+        return (int) Math.round((((openingScore * (256 - phase)) + (endGameScore * phase)) / 256) + pawnStructureScore);
     }
 
     public static void sortMoves(TranspositionTable table, Board board, Move[] moves){
@@ -214,6 +237,237 @@ public class Evaluation {
         }
 
         Arrays.sort(moves);
+    }
+
+    public static int[] calculateMobilityBonus(Board board, MoveMasks masks, Move[] currentTeamMoves){
+        int mobilityBonusMid = 0, mobilityBonusEnd = 0;
+        if(board.getTurn() == WHITE){
+            ArrayList<Integer> knightPositionsWhite = MoveGenerator.getSetBitIndices(board.knights & board.whitePieces);
+            ArrayList<Integer> bishopPositionsWhite = MoveGenerator.getSetBitIndices(board.bishops & board.whitePieces);
+            ArrayList<Integer> rookPositionsWhite = MoveGenerator.getSetBitIndices(board.rooks & board.whitePieces);
+            ArrayList<Integer> queenPositionsWhite = MoveGenerator.getSetBitIndices(board.queens & board.whitePieces);
+
+            int[] knightMobilitiesWhite = new int[knightPositionsWhite.size()], bishopMobilitiesWhite = new int[bishopPositionsWhite.size()], rookMobilitiesWhite = new int[rookPositionsWhite.size()], queenMobilitiesWhite = new int[queenPositionsWhite.size()];
+            for(int i = 0; i < currentTeamMoves.length; i++){
+                PieceType currentPiece = currentTeamMoves[i].getPieceType();
+                if(currentPiece == PieceType.KNIGHT){
+                    knightMobilitiesWhite[knightPositionsWhite.indexOf(currentTeamMoves[i].getStartFieldIndex())]++;
+                }else if(currentPiece == PieceType.BISHOP){
+                    bishopMobilitiesWhite[bishopPositionsWhite.indexOf(currentTeamMoves[i].getStartFieldIndex())]++;
+                }else if(currentPiece == PieceType.ROOK){
+                    rookMobilitiesWhite[rookPositionsWhite.indexOf(currentTeamMoves[i].getStartFieldIndex())]++;
+                }else if(currentPiece == PieceType.QUEEN){
+                    queenMobilitiesWhite[queenPositionsWhite.indexOf(currentTeamMoves[i].getStartFieldIndex())]++;
+                }
+            }
+
+            for(int i = 0; i < knightMobilitiesWhite.length; i++){
+                mobilityBonusMid = mobilityBonusMid + EvaluationParams.KNIGHT_MOBILITY_BONUS_MID[knightMobilitiesWhite[i]];
+                mobilityBonusEnd = mobilityBonusEnd + EvaluationParams.KNIGHT_MOBILITY_BONUS_END[knightMobilitiesWhite[i]];
+            }
+
+            for(int i = 0; i < bishopMobilitiesWhite.length; i++){
+                mobilityBonusMid = mobilityBonusMid + EvaluationParams.BISHOP_MOBILITY_BONUS_MID[bishopMobilitiesWhite[i]];
+                mobilityBonusEnd = mobilityBonusEnd + EvaluationParams.BISHOP_MOBILITY_BONUS_END[bishopMobilitiesWhite[i]];
+            }
+
+            for(int i = 0; i < rookMobilitiesWhite.length; i++){
+                mobilityBonusMid = mobilityBonusMid + EvaluationParams.ROOK_MOBILITY_BONUS_MID[rookMobilitiesWhite[i]];
+                mobilityBonusEnd = mobilityBonusEnd + EvaluationParams.ROOK_MOBILITY_BONUS_END[rookMobilitiesWhite[i]];
+            }
+
+            for(int i = 0; i < queenMobilitiesWhite.length; i++){
+                mobilityBonusMid = mobilityBonusMid + EvaluationParams.QUEEN_MOBILITY_BONUS_MID[queenMobilitiesWhite[i]];
+                mobilityBonusEnd = mobilityBonusEnd + EvaluationParams.QUEEN_MOBILITY_BONUS_END[queenMobilitiesWhite[i]];
+            }
+
+            ArrayList<Integer> knightPositionsBlack = MoveGenerator.getSetBitIndices(board.knights & board.blackPieces);
+            ArrayList<Integer> bishopPositionsBlack = MoveGenerator.getSetBitIndices(board.bishops & board.blackPieces);
+            ArrayList<Integer> rookPositionsBlack = MoveGenerator.getSetBitIndices(board.rooks & board.blackPieces);
+            ArrayList<Integer> queenPositionsBlack = MoveGenerator.getSetBitIndices(board.queens & board.blackPieces);
+
+            int[] knightMobilitiesBlack = new int[knightPositionsBlack.size()], bishopMobilitiesBlack = new int[bishopPositionsBlack.size()], rookMobilitiesBlack = new int[rookPositionsBlack.size()], queenMobilitiesBlack = new int[queenPositionsBlack.size()];
+            board.doNullMove();
+            Move[] enemyTeamMoves = MoveGenerator.generateLegalMoves(board, masks);
+            board.doNullMove();
+
+            for(int i = 0; i < enemyTeamMoves.length; i++){
+                PieceType currentPiece = enemyTeamMoves[i].getPieceType();
+                if(currentPiece == PieceType.KNIGHT){
+                    knightMobilitiesBlack[knightPositionsBlack.indexOf(enemyTeamMoves[i].getStartFieldIndex())]++;
+                }else if(currentPiece == PieceType.BISHOP){
+                    bishopMobilitiesBlack[bishopPositionsBlack.indexOf(enemyTeamMoves[i].getStartFieldIndex())]++;
+                }else if(currentPiece == PieceType.ROOK){
+                    rookMobilitiesBlack[rookPositionsBlack.indexOf(enemyTeamMoves[i].getStartFieldIndex())]++;
+                }else if(currentPiece == PieceType.QUEEN){
+                    queenMobilitiesBlack[queenPositionsBlack.indexOf(enemyTeamMoves[i].getStartFieldIndex())]++;
+                }
+            }
+
+            for(int i = 0; i < knightMobilitiesBlack.length; i++){
+                mobilityBonusMid = mobilityBonusMid - EvaluationParams.KNIGHT_MOBILITY_BONUS_MID[knightMobilitiesBlack[i]];
+                mobilityBonusEnd = mobilityBonusEnd - EvaluationParams.KNIGHT_MOBILITY_BONUS_END[knightMobilitiesBlack[i]];
+            }
+
+            for(int i = 0; i < bishopMobilitiesBlack.length; i++){
+                mobilityBonusMid = mobilityBonusMid - EvaluationParams.BISHOP_MOBILITY_BONUS_MID[bishopMobilitiesBlack[i]];
+                mobilityBonusEnd = mobilityBonusEnd - EvaluationParams.BISHOP_MOBILITY_BONUS_END[bishopMobilitiesBlack[i]];
+            }
+
+            for(int i = 0; i < rookMobilitiesBlack.length; i++){
+                mobilityBonusMid = mobilityBonusMid - EvaluationParams.ROOK_MOBILITY_BONUS_MID[rookMobilitiesBlack[i]];
+                mobilityBonusEnd = mobilityBonusEnd - EvaluationParams.ROOK_MOBILITY_BONUS_END[rookMobilitiesBlack[i]];
+            }
+
+            for(int i = 0; i < queenMobilitiesBlack.length; i++){
+                mobilityBonusMid = mobilityBonusMid - EvaluationParams.QUEEN_MOBILITY_BONUS_MID[queenMobilitiesBlack[i]];
+                mobilityBonusEnd = mobilityBonusEnd - EvaluationParams.QUEEN_MOBILITY_BONUS_END[queenMobilitiesBlack[i]];
+            }
+        }else{
+            ArrayList<Integer> knightPositionsBlack = MoveGenerator.getSetBitIndices(board.knights & board.blackPieces);
+            ArrayList<Integer> bishopPositionsBlack = MoveGenerator.getSetBitIndices(board.bishops & board.blackPieces);
+            ArrayList<Integer> rookPositionsBlack = MoveGenerator.getSetBitIndices(board.rooks & board.blackPieces);
+            ArrayList<Integer> queenPositionsBlack = MoveGenerator.getSetBitIndices(board.queens & board.blackPieces);
+
+            int[] knightMobilitiesBlack = new int[knightPositionsBlack.size()], bishopMobilitiesBlack = new int[bishopPositionsBlack.size()], rookMobilitiesBlack = new int[rookPositionsBlack.size()], queenMobilitiesBlack = new int[queenPositionsBlack.size()];
+
+            for(int i = 0; i < currentTeamMoves.length; i++){
+                PieceType currentPiece = currentTeamMoves[i].getPieceType();
+                if(currentPiece == PieceType.KNIGHT){
+                    knightMobilitiesBlack[knightPositionsBlack.indexOf(currentTeamMoves[i].getStartFieldIndex())]++;
+                }else if(currentPiece == PieceType.BISHOP){
+                    bishopMobilitiesBlack[bishopPositionsBlack.indexOf(currentTeamMoves[i].getStartFieldIndex())]++;
+                }else if(currentPiece == PieceType.ROOK){
+                    rookMobilitiesBlack[rookPositionsBlack.indexOf(currentTeamMoves[i].getStartFieldIndex())]++;
+                }else if(currentPiece == PieceType.QUEEN){
+                    queenMobilitiesBlack[queenPositionsBlack.indexOf(currentTeamMoves[i].getStartFieldIndex())]++;
+                }
+            }
+
+            for(int i = 0; i < knightMobilitiesBlack.length; i++){
+                mobilityBonusMid = mobilityBonusMid - EvaluationParams.KNIGHT_MOBILITY_BONUS_MID[knightMobilitiesBlack[i]];
+                mobilityBonusEnd = mobilityBonusEnd - EvaluationParams.KNIGHT_MOBILITY_BONUS_END[knightMobilitiesBlack[i]];
+            }
+
+            for(int i = 0; i < bishopMobilitiesBlack.length; i++){
+                mobilityBonusMid = mobilityBonusMid - EvaluationParams.BISHOP_MOBILITY_BONUS_MID[bishopMobilitiesBlack[i]];
+                mobilityBonusEnd = mobilityBonusEnd - EvaluationParams.BISHOP_MOBILITY_BONUS_END[bishopMobilitiesBlack[i]];
+            }
+
+            for(int i = 0; i < rookMobilitiesBlack.length; i++){
+                mobilityBonusMid = mobilityBonusMid - EvaluationParams.ROOK_MOBILITY_BONUS_MID[rookMobilitiesBlack[i]];
+                mobilityBonusEnd = mobilityBonusEnd - EvaluationParams.ROOK_MOBILITY_BONUS_END[rookMobilitiesBlack[i]];
+            }
+
+            for(int i = 0; i < queenMobilitiesBlack.length; i++){
+                mobilityBonusMid = mobilityBonusMid - EvaluationParams.QUEEN_MOBILITY_BONUS_MID[queenMobilitiesBlack[i]];
+                mobilityBonusEnd = mobilityBonusEnd - EvaluationParams.QUEEN_MOBILITY_BONUS_END[queenMobilitiesBlack[i]];
+            }
+
+            ArrayList<Integer> knightPositionsWhite = MoveGenerator.getSetBitIndices(board.knights & board.whitePieces);
+            ArrayList<Integer> bishopPositionsWhite = MoveGenerator.getSetBitIndices(board.bishops & board.whitePieces);
+            ArrayList<Integer> rookPositionsWhite = MoveGenerator.getSetBitIndices(board.rooks & board.whitePieces);
+            ArrayList<Integer> queenPositionsWhite = MoveGenerator.getSetBitIndices(board.queens & board.whitePieces);
+
+            int[] knightMobilitiesWhite = new int[knightPositionsWhite.size()], bishopMobilitiesWhite = new int[bishopPositionsWhite.size()], rookMobilitiesWhite = new int[rookPositionsWhite.size()], queenMobilitiesWhite = new int[queenPositionsWhite.size()];
+            board.doNullMove();
+            Move[] enemyTeamMoves = MoveGenerator.generateLegalMoves(board, masks);
+            board.doNullMove();
+
+            for(int i = 0; i < enemyTeamMoves.length; i++){
+                PieceType currentPiece = enemyTeamMoves[i].getPieceType();
+                if(currentPiece == PieceType.KNIGHT){
+                    knightMobilitiesWhite[knightPositionsWhite.indexOf(enemyTeamMoves[i].getStartFieldIndex())]++;
+                }else if(currentPiece == PieceType.BISHOP){
+                    bishopMobilitiesWhite[bishopPositionsWhite.indexOf(enemyTeamMoves[i].getStartFieldIndex())]++;
+                }else if(currentPiece == PieceType.ROOK){
+                    rookMobilitiesWhite[rookPositionsWhite.indexOf(enemyTeamMoves[i].getStartFieldIndex())]++;
+                }else if(currentPiece == PieceType.QUEEN){
+                    queenMobilitiesWhite[queenPositionsWhite.indexOf(enemyTeamMoves[i].getStartFieldIndex())]++;
+                }
+            }
+
+            for(int i = 0; i < knightMobilitiesWhite.length; i++){
+                mobilityBonusMid = mobilityBonusMid + EvaluationParams.KNIGHT_MOBILITY_BONUS_MID[knightMobilitiesWhite[i]];
+                mobilityBonusEnd = mobilityBonusEnd + EvaluationParams.KNIGHT_MOBILITY_BONUS_END[knightMobilitiesWhite[i]];
+            }
+
+            for(int i = 0; i < bishopMobilitiesWhite.length; i++){
+                mobilityBonusMid = mobilityBonusMid + EvaluationParams.BISHOP_MOBILITY_BONUS_MID[bishopMobilitiesWhite[i]];
+                mobilityBonusEnd = mobilityBonusEnd + EvaluationParams.BISHOP_MOBILITY_BONUS_END[bishopMobilitiesWhite[i]];
+            }
+
+            for(int i = 0; i < rookMobilitiesWhite.length; i++){
+                mobilityBonusMid = mobilityBonusMid + EvaluationParams.ROOK_MOBILITY_BONUS_MID[rookMobilitiesWhite[i]];
+                mobilityBonusEnd = mobilityBonusEnd + EvaluationParams.ROOK_MOBILITY_BONUS_END[rookMobilitiesWhite[i]];
+            }
+
+            for(int i = 0; i < queenMobilitiesWhite.length; i++){
+                mobilityBonusMid = mobilityBonusMid + EvaluationParams.QUEEN_MOBILITY_BONUS_MID[queenMobilitiesWhite[i]];
+                mobilityBonusEnd = mobilityBonusEnd + EvaluationParams.QUEEN_MOBILITY_BONUS_END[queenMobilitiesWhite[i]];
+            }
+        }
+
+        return new int[]{mobilityBonusMid, mobilityBonusEnd};
+    }
+
+    public static int[] calculateOutpostBonus(Board board, MoveMasks masks){
+        ArrayList<Integer> whiteKnightIndices = MoveGenerator.getSetBitIndices(board.knights & board.whitePieces);
+        ArrayList<Integer> whiteBishopIndices = MoveGenerator.getSetBitIndices(board.bishops & board.whitePieces);
+        ArrayList<Integer> blackKnightIndices = MoveGenerator.getSetBitIndices(board.knights & board.blackPieces);
+        ArrayList<Integer> blackBishopIndices = MoveGenerator.getSetBitIndices(board.bishops & board.blackPieces);
+
+        int outpostBonusMid = 0, outpostBonusEnd = 0;
+
+        for(int i = 0; i < whiteKnightIndices.size(); i++){
+            int index = whiteKnightIndices.get(i);
+            if(index >= 24 && index <= 47){
+                if((((1L << (index - 7)) & board.pawns & board.whitePieces & NOT_A_FILE) != 0) || (((1L << (index - 9)) & board.pawns & board.whitePieces & NOT_H_FILE) != 0)){
+                    if((masks.rays(Direction.NORTH, index - 1) & NOT_H_FILE & board.pawns & board.blackPieces) == 0 && (masks.rays(Direction.NORTH, index + 1) & NOT_A_FILE & board.pawns & board.blackPieces) == 0){
+                        outpostBonusMid  = outpostBonusMid + EvaluationParams.KNIGHT_OUTPOST_BONUS_MID;
+                        outpostBonusEnd  = outpostBonusEnd + EvaluationParams.KNIGHT_OUTPOST_BONUS_END;
+                    }
+                }
+            }
+        }
+
+        for(int i = 0; i < whiteBishopIndices.size(); i++){
+            int index = whiteBishopIndices.get(i);
+            if(index >= 24 && index <= 47){
+                if((((1L << (index - 7)) & board.pawns & board.whitePieces & NOT_A_FILE) != 0) || (((1L << (index - 9)) & board.pawns & board.whitePieces & NOT_H_FILE) != 0)){
+                    if((masks.rays(Direction.NORTH, index - 1) & NOT_H_FILE & board.pawns & board.blackPieces) == 0 && (masks.rays(Direction.NORTH, index + 1) & NOT_A_FILE & board.pawns & board.blackPieces) == 0){
+                        outpostBonusMid  = outpostBonusMid + EvaluationParams.BISHOP_OUTPOST_BONUS_MID;
+                        outpostBonusEnd  = outpostBonusEnd + EvaluationParams.BISHOP_OUTPOST_BONUS_END;
+                    }
+                }
+            }
+        }
+
+        for(int i = 0; i < blackKnightIndices.size(); i++){
+            int index = blackKnightIndices.get(i);
+            if(index >= 16 && index <= 39){
+                if((((1L << (index + 7)) & board.pawns & board.blackPieces & NOT_H_FILE) != 0) || (((1L << (index + 9)) & board.pawns & board.blackPieces & NOT_A_FILE) != 0)){
+                    if((masks.rays(Direction.SOUTH, index - 1) & NOT_H_FILE & board.pawns & board.whitePieces) == 0 && (masks.rays(Direction.SOUTH, index + 1) & NOT_A_FILE & board.pawns & board.whitePieces) == 0){
+                        outpostBonusMid  = outpostBonusMid - EvaluationParams.KNIGHT_OUTPOST_BONUS_MID;
+                        outpostBonusEnd  = outpostBonusEnd - EvaluationParams.KNIGHT_OUTPOST_BONUS_END;
+                    }
+                }
+            }
+        }
+
+        for(int i = 0; i < blackBishopIndices.size(); i++){
+            int index = blackBishopIndices.get(i);
+            if(index >= 16 && index <= 39){
+                if((((1L << (index + 7)) & board.pawns & board.blackPieces & NOT_H_FILE) != 0) || (((1L << (index + 9)) & board.pawns & board.blackPieces & NOT_A_FILE) != 0)){
+                    if((masks.rays(Direction.SOUTH, index - 1) & NOT_H_FILE & board.pawns & board.whitePieces) == 0 && (masks.rays(Direction.SOUTH, index + 1) & NOT_A_FILE & board.pawns & board.whitePieces) == 0){
+                        outpostBonusMid  = outpostBonusMid - EvaluationParams.BISHOP_OUTPOST_BONUS_MID;
+                        outpostBonusEnd  = outpostBonusEnd - EvaluationParams.BISHOP_OUTPOST_BONUS_END;
+                    }
+                }
+            }
+        }
+
+        return new int[]{outpostBonusMid, outpostBonusEnd};
     }
 
     private static int calculatePSTBonus(Board board){

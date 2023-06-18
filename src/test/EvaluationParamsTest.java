@@ -1,11 +1,11 @@
 package test;
 
-import engine.tools.TaperedPST;
+import engine.tools.EvaluationParams;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TaperedPSTTest {
+class EvaluationParamsTest {
 
     @Test
     void getMirroredIndex() {
@@ -13,7 +13,7 @@ class TaperedPSTTest {
         for(int i = 0; i < 8; i++){
             for(int j = 7; j >= 0; j--){
                 int mirroredIndex = i * 8 + j;
-                assertEquals(TaperedPST.PAWN_PST_MID[mirroredIndex], TaperedPST.PAWN_PST_MID[TaperedPST.getMirroredIndex(counter)]);
+                assertEquals(EvaluationParams.PAWN_PST_MID[mirroredIndex], EvaluationParams.PAWN_PST_MID[EvaluationParams.getMirroredIndex(counter)]);
                 counter--;
             }
         }

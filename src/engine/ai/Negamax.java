@@ -9,12 +9,12 @@ import engine.tools.TranspositionTableEntry;
 public class Negamax {
     private static final double EFFECTIVE_BRANCHING_FACTOR = Math.sqrt(35);
     private static final int QUIESCENCE_SEARCH_DEPTH = 2;
-    private static final int THREAD_COUNT = 2;
     private static final TranspositionTable table = new TranspositionTable();
 
     private static int search(Board board, int depth, MoveMasks masks, int alpha, int beta, int color){
         int startAlpha = alpha;
 
+        //Lesen aus der Transposition-Table
         TranspositionTableEntry entry = table.getEntry(board, depth);
         if(entry != null){
             if(entry.getType() == EvaluationType.EXACT){
@@ -43,15 +43,21 @@ public class Negamax {
                     return -quiescenceSearch(board, QUIESCENCE_SEARCH_DEPTH, masks, -beta, -alpha, -color);
                 }
             }
-            return color * Evaluation.evaluateNegamaxNew(board, masks);
+            return color * Evaluation.evaluateNegamaxNew(board, masks, moves);
         }
 
+        //Zugsortierung
         Evaluation.sortMoves(table, board, moves);
+
         int value = Integer.MIN_VALUE, bestValue = Integer.MIN_VALUE;
         Move bestMove = moves[0];
 
         for(int i = 0; i < moves.length; i++){
             board.doMove(moves[i]);
+
+            //value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color));
+
+            //PVS
             if(i == 0){
                 value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color));
             }else{
@@ -75,6 +81,7 @@ public class Negamax {
             }
         }
 
+        //Abspeichern in der Transposition-Table
         EvaluationType type = EvaluationType.EXACT;
         if(value <= startAlpha){
             type = EvaluationType.UPPERBOUND;
@@ -87,18 +94,20 @@ public class Negamax {
         return value;
     }
 
+
+    //Ruhesuche, um den Horizonteffekt zu umgehen
     private static int quiescenceSearch(Board board, int depth, MoveMasks masks, int alpha, int beta, int color){
         Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
 
-        if (depth == 0 || board.isGameLost(masks, moves.length) || moves.length == 0) {
-            return color * Evaluation.evaluateNegamaxNew(board, masks);
+        if (/*depth == 0 ||*/ board.isGameLost(masks, moves.length) || moves.length == 0) {         //Wenn man bis feste Tiefe suchen möchte, dann ersten teil einkommentieren
+            return color * Evaluation.evaluateNegamaxNew(board, masks, moves);
         }
 
         Evaluation.sortMoves(table, board, moves);
         int value = Integer.MIN_VALUE;
 
         for(int i = 0; i < moves.length; i++){
-            if(moves[i].capturedPieceType != null && moves[i].getPieceType().ordinal() >= moves[i].capturedPieceType.ordinal()){
+            if(moves[i].capturedPieceType != null && moves[i].getPieceType().ordinal() >= moves[i].capturedPieceType.ordinal()){        //Zweiter Teil der Bedingung, lässt nur Schlagzüge zu, bei welchem die schlagende Figur weniger wert ist als die geschlagene
                 board.doMove(moves[i]);
                 value = Math.max(value, -quiescenceSearch(board, depth - 1, masks, -beta, -alpha, -color));
                 board.undoLastMove();
@@ -111,7 +120,7 @@ public class Negamax {
         }
 
         if(value == Integer.MIN_VALUE){
-            value = color * Evaluation.evaluateNegamaxNew(board, masks);
+            value = color * Evaluation.evaluateNegamaxNew(board, masks, moves);
         }
 
         return value;
