@@ -63,6 +63,12 @@ public class AiPerformance {
         boolean winning = true;
         while (winning){
             winning = playAgainstFairyStockfish(startelo,calculationTime);
+            startelo = startelo +100;
+        }
+        winning = true;
+        startelo = startelo - 200;
+        while (winning){
+            winning = playAgainstFairyStockfish(startelo,calculationTime);
             startelo = startelo +10;
         }
         winning = true;
@@ -80,9 +86,12 @@ public class AiPerformance {
         GameState gameState;
         AlphaBeta alphaBeta = new AlphaBeta();
         Negamax negamax = new Negamax();
+        System.out.println(board.toFENString());
         while (true){
+
             Move m = Negamax.getBestMoveTimed(board,calcTimeMilli,masks); // alphaBeta.getBestMoveTimed(board,masks,calcTimeMilli);
             board.doMove(m);
+            System.out.println(board.toFENString());
             gameState = board.getGameState(masks);
             if (gameState == GameState.DRAW || gameState == GameState.WHITE_WON) {
                 System.out.println("The Ai won with elocount:"+elo);
@@ -90,6 +99,7 @@ public class AiPerformance {
             }
             Move fairyMove = fairyMove(getMoveFromFairy(elo, board.toFENString(), calcTimeMilli),board);
             board.doMove(fairyMove);
+            System.out.println(board.toFENString());
             gameState = board.getGameState(masks);
             if (gameState == GameState.DRAW || gameState == GameState.BLACK_WON) {
                 System.out.println("Stockfish won with elocount:"+elo);
