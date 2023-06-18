@@ -15,12 +15,17 @@ public class Main {
 
     public static void main(String[] args) {
         //playMove(args);
-        measureAverageTimeOnFENData(4);
+        //measureAverageTimeOnFENData(4);
         //performance();
 
         //WICHTIGER TEST
-        //Board b = new Board("r1bqkbnr/pppp1ppp/2n5/3Pp3/4P3/8/PPP2PPP/RNBQKBNR b KQkq - 0 3");
-        //System.out.println(Negamax.getBestMoveTimed(b, 5000, new MoveMasks()));
+        Board b = new Board("4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1");
+        long nanoStart = System.nanoTime();
+        System.out.println(Negamax.getBestMove(b, 5, new MoveMasks()));
+        long nanoEnd = System.nanoTime();
+        long nanoElapsed = nanoEnd-nanoStart;
+        System.out.println(nanoElapsed/1000000d);
+
     }
 
     static void measureAverageTimeOnFENData(int depth){
@@ -56,12 +61,13 @@ public class Main {
         String fens[] = new String[]{"2k5/6q1/3P1P2/4N3/8/1K6/8/8 w - - 0 1" ,"4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1","6k1/r4ppp/r7/1b6/8/8/4QPPP/4R1K1 w - - 0 1"};
         //MoveGeneratorPerformance moveGeneratorPerformance = new MoveGeneratorPerformance();
         //moveGeneratorPerformance.measureAveragePerformanceOnBoards(fens,10000);
-        EvaluationPeformance evaluationPeformance = new EvaluationPeformance();
-        evaluationPeformance.measureAveragePerformanceOfEvaluation(fens,10000);
+        //EvaluationPeformance evaluationPeformance = new EvaluationPeformance();
+        //evaluationPeformance.measureAveragePerformanceOfEvaluation(fens,10000);
         //AlphaBetaPerfomance.measureAveragePerformanceOfAlphaBeta(fens,1,4);
         //MiniMaxPerformance.measureAveragePerformanceOfMiniMax(fens,1,4);
         //AiPerformance.howMuchElohasMyAI(1320,5,1000);
         //AiPerformance.calcElo(1000,2000);
+        NegamaxPerformance.measureAveragePerformanceOfNegamax(fens,1,5);
     }
 
     static void aiArena(int depth){
