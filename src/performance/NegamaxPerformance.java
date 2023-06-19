@@ -55,7 +55,7 @@ public class NegamaxPerformance {
             board.doMove(moves[i]);
             counterboards++;
 
-            value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color));
+            //value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color));
 
             //PVS
             if(i == 0){
