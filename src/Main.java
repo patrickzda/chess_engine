@@ -58,7 +58,7 @@ public class Main {
     }
 
     static void performance(){
-        String fens[] = new String[]{"4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1" ,"r1bq4/pp1p1k1p/2p2p1p/2b5/3Nr1Q1/2N1P3/PPPK1PPP/3R1B1R w - - 0 1", "r1b2rk1/4qpp1/4p2R/p2pP3/2pP2QP/4P1P1/PqB4K/8 w - - 0 1"};
+        String fens[] = new String[]{"2k5/6q1/3P1P2/4N3/8/1K6/8/8 w - - 0 1" ,"4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1","6k1/r4ppp/r7/1b6/8/8/4QPPP/4R1K1 w - - 0 1"};
         //MoveGeneratorPerformance moveGeneratorPerformance = new MoveGeneratorPerformance();
         //moveGeneratorPerformance.measureAveragePerformanceOnBoards(fens,10000);
         //EvaluationPeformance evaluationPeformance = new EvaluationPeformance();

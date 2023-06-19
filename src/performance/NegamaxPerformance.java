@@ -40,20 +40,7 @@ public class NegamaxPerformance {
         Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
 
         if (depth == 0 || board.isGameLost(masks, moves.length) || moves.length == 0) {
-            if(board.getMovesSinceLastPawnMoveOrCapture() == 0 && board.moves.size() > 0){
-                Move lastMove = board.moves.get(board.moves.size() - 1);
-                board.undoLastMove();
-                PieceType capturedPiece = board.getCapturedPieceType(lastMove);
-                board.doMove(lastMove);
-                counterboards++;
-
-                if(capturedPiece != null){
-                    int finalEval = -quiescenceSearch(board, QUIESCENCE_SEARCH_DEPTH, masks, -beta, -alpha, -color);
-                    table.addEntry(board, null, depth, finalEval, EvaluationType.EXACT);
-                    return finalEval;
-                }
-            }
-            int finalEval = color * Evaluation.evaluateNegamaxNew(board, masks, moves);
+            int finalEval = color * Evaluation.evaluateNegamax(board, masks);
             table.addEntry(board, null, depth, finalEval, EvaluationType.EXACT);
             return finalEval;
         }
@@ -68,7 +55,7 @@ public class NegamaxPerformance {
             board.doMove(moves[i]);
             counterboards++;
 
-            //value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color));
+            value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color));
 
             //PVS
             if(i == 0){
@@ -107,36 +94,6 @@ public class NegamaxPerformance {
         return value;
     }
     //Ruhesuche, um den Horizonteffekt zu umgehen
-    private static int quiescenceSearch(Board board, int depth, MoveMasks masks, int alpha, int beta, int color){
-        Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
-
-        if (depth == 0 || board.isGameLost(masks, moves.length) || moves.length == 0) {         //Wenn man bis feste Tiefe suchen möchte, dann ersten teil einkommentieren
-            return color * Evaluation.evaluateNegamaxNew(board, masks, moves);
-        }
-
-        Evaluation.sortMoves(table, board, moves);
-        int value = Integer.MIN_VALUE;
-
-        for(int i = 0; i < moves.length; i++){
-            if(moves[i].capturedPieceType != null && moves[i].getPieceType().ordinal() >= moves[i].capturedPieceType.ordinal()){        //Zweiter Teil der Bedingung, lässt nur Schlagzüge zu, bei welchem die schlagende Figur weniger wert ist als die geschlagene
-                board.doMove(moves[i]);
-                counterboards++;
-                value = Math.max(value, -quiescenceSearch(board, depth - 1, masks, -beta, -alpha, -color));
-                board.undoLastMove();
-
-                alpha = Math.max(alpha, value);
-                if(alpha >= beta){
-                    break;
-                }
-            }
-        }
-
-        if(value == Integer.MIN_VALUE){
-            value = color * Evaluation.evaluateNegamaxNew(board, masks, moves);
-        }
-
-        return value;
-    }
     public static Move getBestMove(Board board, int depth, MoveMasks masks){
         Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
 
@@ -151,14 +108,17 @@ public class NegamaxPerformance {
         if(board.getTurn() == Color.WHITE){
             color = -1;
         }
+        int alpha = -Integer.MAX_VALUE;
+        int beta = Integer.MAX_VALUE;
 
         for(int i = 0; i < moves.length; i++){
             board.doMove(moves[i]);
             counterboards++;
-            int score = -search(board, depth - 1, masks, -Integer.MAX_VALUE, Integer.MAX_VALUE, color);
+            int score = -search(board, depth - 1, masks, -beta, -alpha, color);
             board.undoLastMove();
 
             if(score > bestScore){
+                alpha = score;
                 bestScore = score;
                 bestMove = moves[i];
             }
