@@ -46,7 +46,7 @@ public class NegamaxPerformance {
         }
 
         //Zugsortierung
-        Evaluation.sortMoves(table, board, moves);
+        //Evaluation.sortMoves(table, board, moves);
 
         int value = Integer.MIN_VALUE, bestValue = Integer.MIN_VALUE;
         Move bestMove = moves[0];
