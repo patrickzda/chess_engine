@@ -55,19 +55,19 @@ public class NegamaxPerformance {
             board.doMove(moves[i]);
             counterboards++;
 
-            //value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color));
+            value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color));
 
             //PVS
-            if(i == 0){
-                value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color));
-            }else{
-                int nullWindowValue = -search(board, depth - 1, masks, -alpha - 1, -alpha, -color);
-                if(alpha < nullWindowValue && nullWindowValue < beta){
-                    value = Math.max(value, -search(board, depth - 1, masks, -beta, -nullWindowValue, -color));
-                }else{
-                    value = Math.max(value, nullWindowValue);
-                }
-            }
+            //if(i == 0){
+            //    value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color));
+            //}else{
+            //    int nullWindowValue = -search(board, depth - 1, masks, -alpha - 1, -alpha, -color);
+            //    if(alpha < nullWindowValue && nullWindowValue < beta){
+            //        value = Math.max(value, -search(board, depth - 1, masks, -beta, -nullWindowValue, -color));
+            //    }else{
+            //        value = Math.max(value, nullWindowValue);
+            //    }
+            //}
             board.undoLastMove();
 
             if(bestValue < value){

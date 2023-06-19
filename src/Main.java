@@ -63,7 +63,7 @@ public class Main {
         //moveGeneratorPerformance.measureAveragePerformanceOnBoards(fens,10000);
         //EvaluationPeformance evaluationPeformance = new EvaluationPeformance();
         //evaluationPeformance.measureAveragePerformanceOfEvaluation(fens,10000);
-        AlphaBetaPerfomance.measureAveragePerformanceOfAlphaBeta(fens,1,5);
+        //AlphaBetaPerfomance.measureAveragePerformanceOfAlphaBeta(fens,1,5);
         //MiniMaxPerformance.measureAveragePerformanceOfMiniMax(fens,1,4);
         //AiPerformance.howMuchElohasMyAI(1320,5,1000);
         //AiPerformance.calcElo(1000,2000);
