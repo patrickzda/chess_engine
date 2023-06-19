@@ -16,15 +16,15 @@ public class Main {
     public static void main(String[] args) {
         //playMove(args);
         //measureAverageTimeOnFENData(4);
-        //performance();
+        performance();
 
         //WICHTIGER TEST
-        Board b = new Board("4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1");
-        long nanoStart = System.nanoTime();
-        System.out.println(Negamax.getBestMove(b, 5, new MoveMasks()));
-        long nanoEnd = System.nanoTime();
-        long nanoElapsed = nanoEnd-nanoStart;
-        System.out.println(nanoElapsed/1000000d);
+        //Board b = new Board("4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1");
+        //long nanoStart = System.nanoTime();
+        //System.out.println(Negamax.getBestMove(b, 5, new MoveMasks()));
+        //long nanoEnd = System.nanoTime();
+        //long nanoElapsed = nanoEnd-nanoStart;
+        //System.out.println(nanoElapsed/1000000d);
 
     }
 
@@ -58,12 +58,12 @@ public class Main {
     }
 
     static void performance(){
-        String fens[] = new String[]{"2k5/6q1/3P1P2/4N3/8/1K6/8/8 w - - 0 1" ,"4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1","6k1/r4ppp/r7/1b6/8/8/4QPPP/4R1K1 w - - 0 1"};
+        String fens[] = new String[]{"4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1" ,"r1bq4/pp1p1k1p/2p2p1p/2b5/3Nr1Q1/2N1P3/PPPK1PPP/3R1B1R w - - 0 1", "r1b2rk1/4qpp1/4p2R/p2pP3/2pP2QP/4P1P1/PqB4K/8 w - - 0 1"};
         //MoveGeneratorPerformance moveGeneratorPerformance = new MoveGeneratorPerformance();
         //moveGeneratorPerformance.measureAveragePerformanceOnBoards(fens,10000);
         //EvaluationPeformance evaluationPeformance = new EvaluationPeformance();
         //evaluationPeformance.measureAveragePerformanceOfEvaluation(fens,10000);
-        //AlphaBetaPerfomance.measureAveragePerformanceOfAlphaBeta(fens,1,4);
+        AlphaBetaPerfomance.measureAveragePerformanceOfAlphaBeta(fens,1,5);
         //MiniMaxPerformance.measureAveragePerformanceOfMiniMax(fens,1,4);
         //AiPerformance.howMuchElohasMyAI(1320,5,1000);
         //AiPerformance.calcElo(1000,2000);

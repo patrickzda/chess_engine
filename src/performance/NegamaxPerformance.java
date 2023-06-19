@@ -48,10 +48,14 @@ public class NegamaxPerformance {
                 counterboards++;
 
                 if(capturedPiece != null){
-                    return -quiescenceSearch(board, QUIESCENCE_SEARCH_DEPTH, masks, -beta, -alpha, -color);
+                    int finalEval = -quiescenceSearch(board, QUIESCENCE_SEARCH_DEPTH, masks, -beta, -alpha, -color);
+                    table.addEntry(board, null, depth, finalEval, EvaluationType.EXACT);
+                    return finalEval;
                 }
             }
-            return color * Evaluation.evaluateNegamaxNew(board, masks, moves);
+            int finalEval = color * Evaluation.evaluateNegamaxNew(board, masks, moves);
+            table.addEntry(board, null, depth, finalEval, EvaluationType.EXACT);
+            return finalEval;
         }
 
         //Zugsortierung
@@ -106,7 +110,7 @@ public class NegamaxPerformance {
     private static int quiescenceSearch(Board board, int depth, MoveMasks masks, int alpha, int beta, int color){
         Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
 
-        if (/*depth == 0 ||*/ board.isGameLost(masks, moves.length) || moves.length == 0) {         //Wenn man bis feste Tiefe suchen möchte, dann ersten teil einkommentieren
+        if (depth == 0 || board.isGameLost(masks, moves.length) || moves.length == 0) {         //Wenn man bis feste Tiefe suchen möchte, dann ersten teil einkommentieren
             return color * Evaluation.evaluateNegamaxNew(board, masks, moves);
         }
 

@@ -210,7 +210,7 @@ public class Evaluation {
         if(entry != null){
             Move bestSavedMove = entry.getBestMove();
             for(int i = 0; i < moves.length; i++){
-                if(bestSavedMove.getStartFieldIndex() == moves[i].getStartFieldIndex() && bestSavedMove.getEndFieldIndex() == moves[i].getEndFieldIndex()){
+                if(bestSavedMove != null && bestSavedMove.getStartFieldIndex() == moves[i].getStartFieldIndex() && bestSavedMove.getEndFieldIndex() == moves[i].getEndFieldIndex()){
                     moves[i].evaluation = moves[i].evaluation + 10000;
                     break;
                 }
