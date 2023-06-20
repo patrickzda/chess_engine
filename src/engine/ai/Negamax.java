@@ -14,7 +14,6 @@ public class Negamax {
     private static int search(Board board, int depth, MoveMasks masks, int alpha, int beta, int color){
         int startAlpha = alpha;
 
-        //Lesen aus der Transposition-Table
         TranspositionTableEntry entry = table.getEntry(board, depth);
         if(entry != null){
             if(entry.getType() == EvaluationType.EXACT){
@@ -50,7 +49,6 @@ public class Negamax {
             return finalEval;
         }
 
-        //Zugsortierung
         Evaluation.sortMoves(table, board, moves);
 
         int value = Integer.MIN_VALUE, bestValue = Integer.MIN_VALUE;
@@ -59,9 +57,6 @@ public class Negamax {
         for(int i = 0; i < moves.length; i++){
             board.doMove(moves[i]);
 
-            //value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color));
-
-            //PVS
             if(i == 0){
                 value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color));
             }else{
@@ -98,12 +93,10 @@ public class Negamax {
         return value;
     }
 
-
-    //Ruhesuche, um den Horizonteffekt zu umgehen
     private static int quiescenceSearch(Board board, int depth, MoveMasks masks, int alpha, int beta, int color){
         Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
 
-        if (depth == 0 || board.isGameLost(masks, moves.length) || moves.length == 0) {         //Wenn man bis feste Tiefe suchen möchte, dann ersten teil einkommentieren
+        if (depth == 0 || board.isGameLost(masks, moves.length) || moves.length == 0) {
             return color * Evaluation.evaluateNegamaxNew(board, masks, moves);
         }
 
@@ -111,7 +104,7 @@ public class Negamax {
         int value = Integer.MIN_VALUE;
 
         for(int i = 0; i < moves.length; i++){
-            if(moves[i].capturedPieceType != null && moves[i].getPieceType().ordinal() >= moves[i].capturedPieceType.ordinal()){        //Zweiter Teil der Bedingung, lässt nur Schlagzüge zu, bei welchem die schlagende Figur weniger wert ist als die geschlagene
+            if(moves[i].capturedPieceType != null && moves[i].getPieceType().ordinal() >= moves[i].capturedPieceType.ordinal()){
                 board.doMove(moves[i]);
                 value = Math.max(value, -quiescenceSearch(board, depth - 1, masks, -beta, -alpha, -color));
                 board.undoLastMove();
@@ -132,12 +125,11 @@ public class Negamax {
 
     public static Move getBestMove(Board board, int depth, MoveMasks masks){
         Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
-
         if(moves.length == 0){
             return null;
         }
 
-        int bestScore = Integer.MIN_VALUE;
+        int bestScore = Integer.MIN_VALUE, alpha = -Integer.MAX_VALUE, beta = Integer.MAX_VALUE;
         Move bestMove = moves[0];
 
         int color = 1;
@@ -147,10 +139,11 @@ public class Negamax {
 
         for(int i = 0; i < moves.length; i++){
             board.doMove(moves[i]);
-            int score = -search(board, depth - 1, masks, -Integer.MAX_VALUE, Integer.MAX_VALUE, color);
+            int score = -search(board, depth - 1, masks, -beta, -alpha, color);
             board.undoLastMove();
 
             if(score > bestScore){
+                alpha = score;
                 bestScore = score;
                 bestMove = moves[i];
             }
@@ -172,7 +165,7 @@ public class Negamax {
             nextDepthSearchTime = (long) ((System.nanoTime() - startTime) * EFFECTIVE_BRANCHING_FACTOR);
         }
 
-        //System.out.println("REACHED DEPTH " + currentSearchDepth + " in " + (System.nanoTime() - (endTime - timeInMilliseconds * 1000000L)) / 1000000L + " ms");
+        System.out.println("REACHED DEPTH " + currentSearchDepth + " in " + (System.nanoTime() - (endTime - timeInMilliseconds * 1000000L)) / 1000000L + " ms");
 
         return bestMove;
     }
