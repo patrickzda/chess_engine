@@ -109,7 +109,7 @@ public class Evaluation {
 
         long whitePawns, whiteKnights, whiteBishops, whiteRooks, whiteQueens, whiteKings;
         long blackPawns, blackKnights, blackBishops, blackRooks, blackQueens, blackKings;
-        int openingScore = 0, endGameScore = 0, materialScoreMid = 0, materialScoreEnd = 0, pawnStructureScore = 0;
+        int openingScore = 0, endGameScore = 0, materialScoreMid = 0, materialScoreEnd = 0, pawnStructureScoreMid = 0, pawnStructureScoreEnd = 0;
         double phase = getGamePhase(board);
 
         whitePawns = board.pawns & board.whitePieces;
@@ -140,9 +140,17 @@ public class Evaluation {
         materialScoreEnd = materialScoreEnd + (getSetBits(whiteQueens) - getSetBits(blackQueens)) * EvaluationParams.QUEEN_VALUE_END;
         materialScoreEnd = materialScoreEnd + (getSetBits(whiteKings) - getSetBits(blackKings)) * KING_VALUE;
 
-        pawnStructureScore = pawnStructureScore + (getIsolatedPawnCount(board, WHITE) - getIsolatedPawnCount(board, BLACK)) * BAD_PAWN_STRUCTURE_PENALTY;
-        pawnStructureScore = pawnStructureScore + (getDoubledPawnCount(board, WHITE) - getDoubledPawnCount(board, BLACK)) * BAD_PAWN_STRUCTURE_PENALTY;
-        pawnStructureScore = pawnStructureScore + (getBlockedPawnCount(board, WHITE) - getBlockedPawnCount(board, BLACK)) * BAD_PAWN_STRUCTURE_PENALTY;
+        int isolatedPawnCount = getIsolatedPawnCount(board, WHITE) - getIsolatedPawnCount(board, BLACK);
+        int doubledPawnCount = getDoubledPawnCount(board, WHITE) - getDoubledPawnCount(board, BLACK);
+        int blockedPawnCount = getBlockedPawnCount(board, WHITE) - getBlockedPawnCount(board, BLACK);
+
+        pawnStructureScoreMid = pawnStructureScoreMid + isolatedPawnCount * EvaluationParams.ISOLATED_PAWN_PENALTY_MID;
+        pawnStructureScoreMid = pawnStructureScoreMid + doubledPawnCount * EvaluationParams.DOUBLED_PAWN_PENALTY_MID;
+        pawnStructureScoreMid = pawnStructureScoreMid + blockedPawnCount * EvaluationParams.BLOCKED_PAWN_PENALTY_MID;
+
+        pawnStructureScoreEnd = pawnStructureScoreEnd + isolatedPawnCount * EvaluationParams.ISOLATED_PAWN_PENALTY_END;
+        pawnStructureScoreEnd = pawnStructureScoreEnd + doubledPawnCount *  EvaluationParams.DOUBLED_PAWN_PENALTY_END;
+        pawnStructureScoreEnd = pawnStructureScoreEnd + blockedPawnCount *  EvaluationParams.BLOCKED_PAWN_PENALTY_END;
 
         for(int i = 0; i < 64; i++){
             long index = 1L << i;
@@ -190,7 +198,21 @@ public class Evaluation {
             }
         }
 
-        int[] mobilityBonus = calculateMobilityBonus(board, masks, currentTeamMoves);
+        board.doNullMove();
+        Move[] enemyTeamMoves = MoveGenerator.generateLegalMoves(board, masks);
+        board.doNullMove();
+
+        if(getSetBits(board.whitePieces & board.bishops) == 2){
+            openingScore = openingScore + EvaluationParams.BISHOP_PAIR_BONUS_MID;
+            endGameScore = endGameScore + EvaluationParams.BISHOP_PAIR_BONUS_END;
+        }
+
+        if(getSetBits(board.blackPieces & board.bishops) == 2){
+            openingScore = openingScore - EvaluationParams.BISHOP_PAIR_BONUS_MID;
+            endGameScore = endGameScore - EvaluationParams.BISHOP_PAIR_BONUS_END;
+        }
+
+        int[] mobilityBonus = calculateMobilityBonus(board, currentTeamMoves, enemyTeamMoves);
         openingScore = openingScore + mobilityBonus[0];
         endGameScore = endGameScore + mobilityBonus[1];
 
@@ -198,10 +220,18 @@ public class Evaluation {
         openingScore = openingScore + outpostBonus[0];
         endGameScore = endGameScore + outpostBonus[1];
 
+        //Testen
+        //int[] kingMobilityBonus = calculateKingMobilityBonus(board, currentTeamMoves, enemyTeamMoves);
+        //openingScore = openingScore + kingMobilityBonus[0];
+        //endGameScore = endGameScore + kingMobilityBonus[1];
+
         openingScore = openingScore + materialScoreMid;
         endGameScore = endGameScore + materialScoreEnd;
 
-        return (int) Math.round((((openingScore * (256 - phase)) + (endGameScore * phase)) / 256) + pawnStructureScore);
+        openingScore = openingScore + pawnStructureScoreMid;
+        endGameScore = endGameScore + pawnStructureScoreEnd;
+
+        return (int) Math.round(((openingScore * (256 - phase)) + (endGameScore * phase)) / 256);
     }
 
     public static void sortMoves(TranspositionTable table, Board board, Move[] moves){
@@ -239,7 +269,40 @@ public class Evaluation {
         Arrays.sort(moves);
     }
 
-    public static int[] calculateMobilityBonus(Board board, MoveMasks masks, Move[] currentTeamMoves){
+    private static int getKingDistanceToCenter(Board board, Color color){
+        int kingIndex;
+        if(color == WHITE){
+            kingIndex = Long.numberOfTrailingZeros(board.whitePieces & board.kings);
+        }else{
+            kingIndex = Long.numberOfTrailingZeros(board.blackPieces & board.kings);
+        }
+        return EvaluationParams.SINGLE_MOVES_TO_CENTER_COUNT[kingIndex];
+    }
+
+    private static int[] calculateKingMobilityBonus(Board board, Move[] currentTeamMoves, Move[] enemyTeamMoves){
+        int currenTeamBonusMid = 0, currenTeamBonusEnd = 0, enemyTeamBonusMid = 0, enemyTeamBonusEnd = 0;
+        for(int i = 0; i < currentTeamMoves.length; i++){
+            if(currentTeamMoves[i].getPieceType() == PieceType.KING){
+                currenTeamBonusMid = currenTeamBonusMid + EvaluationParams.KING_MOBILITY_BONUS_MID;
+                currenTeamBonusEnd = currenTeamBonusEnd + EvaluationParams.KING_MOBILITY_BONUS_END;
+            }
+        }
+
+        for(int i = 0; i < enemyTeamMoves.length; i++){
+            if(enemyTeamMoves[i].getPieceType() == PieceType.KING){
+                enemyTeamBonusMid = enemyTeamBonusMid + EvaluationParams.KING_MOBILITY_BONUS_MID;
+                enemyTeamBonusEnd = enemyTeamBonusEnd + EvaluationParams.KING_MOBILITY_BONUS_END;
+            }
+        }
+
+        if(board.getTurn() == WHITE){
+            return new int[]{currenTeamBonusMid - enemyTeamBonusMid, currenTeamBonusEnd - enemyTeamBonusEnd};
+        }else{
+            return new int[]{enemyTeamBonusMid - currenTeamBonusMid, enemyTeamBonusEnd - currenTeamBonusEnd};
+        }
+    }
+
+    private static int[] calculateMobilityBonus(Board board, Move[] currentTeamMoves, Move[] enemyTeamMoves){
         int mobilityBonusMid = 0, mobilityBonusEnd = 0;
         if(board.getTurn() == WHITE){
             ArrayList<Integer> knightPositionsWhite = MoveGenerator.getSetBitIndices(board.knights & board.whitePieces);
@@ -287,9 +350,6 @@ public class Evaluation {
             ArrayList<Integer> queenPositionsBlack = MoveGenerator.getSetBitIndices(board.queens & board.blackPieces);
 
             int[] knightMobilitiesBlack = new int[knightPositionsBlack.size()], bishopMobilitiesBlack = new int[bishopPositionsBlack.size()], rookMobilitiesBlack = new int[rookPositionsBlack.size()], queenMobilitiesBlack = new int[queenPositionsBlack.size()];
-            board.doNullMove();
-            Move[] enemyTeamMoves = MoveGenerator.generateLegalMoves(board, masks);
-            board.doNullMove();
 
             for(int i = 0; i < enemyTeamMoves.length; i++){
                 PieceType currentPiece = enemyTeamMoves[i].getPieceType();
@@ -370,9 +430,6 @@ public class Evaluation {
             ArrayList<Integer> queenPositionsWhite = MoveGenerator.getSetBitIndices(board.queens & board.whitePieces);
 
             int[] knightMobilitiesWhite = new int[knightPositionsWhite.size()], bishopMobilitiesWhite = new int[bishopPositionsWhite.size()], rookMobilitiesWhite = new int[rookPositionsWhite.size()], queenMobilitiesWhite = new int[queenPositionsWhite.size()];
-            board.doNullMove();
-            Move[] enemyTeamMoves = MoveGenerator.generateLegalMoves(board, masks);
-            board.doNullMove();
 
             for(int i = 0; i < enemyTeamMoves.length; i++){
                 PieceType currentPiece = enemyTeamMoves[i].getPieceType();
@@ -411,7 +468,7 @@ public class Evaluation {
         return new int[]{mobilityBonusMid, mobilityBonusEnd};
     }
 
-    public static int[] calculateOutpostBonus(Board board, MoveMasks masks){
+    private static int[] calculateOutpostBonus(Board board, MoveMasks masks){
         ArrayList<Integer> whiteKnightIndices = MoveGenerator.getSetBitIndices(board.knights & board.whitePieces);
         ArrayList<Integer> whiteBishopIndices = MoveGenerator.getSetBitIndices(board.bishops & board.whitePieces);
         ArrayList<Integer> blackKnightIndices = MoveGenerator.getSetBitIndices(board.knights & board.blackPieces);

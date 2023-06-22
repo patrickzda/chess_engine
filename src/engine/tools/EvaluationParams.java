@@ -134,8 +134,19 @@ public class EvaluationParams {
          103,  156,  572,  C_B,  C_B,  572,  156,  103,
           96,  166,  599,  C_B,  C_B,  599,  166,   96,
           92,  172,  584,  591,  591,  584,  172,   92,
-          47,  121,  116,  131,  131,  116,  121,   47,
+          47,  121,  316,  331,  331,  316,  121,   47,
           11,   59,   73,   78,   78,   73,   59,   11
+    };
+
+    public static final int[] SINGLE_MOVES_TO_CENTER_COUNT = new int[]{
+        3, 3, 3, 3, 3, 3, 3, 3,
+        3, 2, 2, 2, 2, 2, 2, 3,
+        3, 2, 1, 1, 1, 1, 2, 3,
+        3, 2, 1, 0, 0, 1, 2, 3,
+        3, 2, 1, 0, 0, 1, 2, 3,
+        3, 2, 1, 1, 1, 1, 2, 3,
+        3, 2, 2, 2, 2, 2, 2, 3,
+        3, 3, 3, 3, 3, 3, 3, 3
     };
 
     public static final int[] KNIGHT_MOBILITY_BONUS_MID = new int[]{-62, -53, -12, -3, 3, 12, 21, 28, 37};
@@ -147,10 +158,25 @@ public class EvaluationParams {
     public static final int[] QUEEN_MOBILITY_BONUS_MID = new int[]{-29, -16, -8, -8, 18, 25, 23, 37, 41, 54, 65, 68, 69, 70, 70, 70, 71, 72, 74, 76, 90, 104, 105, 106, 112, 114, 114, 119};
     public static final int[] QUEEN_MOBILITY_BONUS_END = new int[]{-49, -29, -8, 17, 39, 54, 59, 73, 76, 95, 95, 101, 124, 128, 132, 133, 136, 140, 147, 149, 153, 169, 171, 171, 178, 185, 187, 221};
 
+    public static final int ISOLATED_PAWN_PENALTY_MID = -1;
+    public static final int ISOLATED_PAWN_PENALTY_END = -20;
+    public static final int DOUBLED_PAWN_PENALTY_MID = -11;
+    public static final int DOUBLED_PAWN_PENALTY_END = -51;
+    public static final int BLOCKED_PAWN_PENALTY_MID = -6;
+    public static final int BLOCKED_PAWN_PENALTY_END = -1;
+
     public static final int KNIGHT_OUTPOST_BONUS_MID = 54;
     public static final int KNIGHT_OUTPOST_BONUS_END = 34;
     public static final int BISHOP_OUTPOST_BONUS_MID = 31;
     public static final int BISHOP_OUTPOST_BONUS_END = 25;
+
+    public static final int BISHOP_PAIR_BONUS_MID = 120;
+    public static final int BISHOP_PAIR_BONUS_END = 175;
+
+    public static final int KING_MOBILITY_BONUS_MID = 14;
+    public static final int KING_MOBILITY_BONUS_END = 23;
+    public static final int MOVES_TO_CENTER_PENALTY_MID = -8;
+    public static final int MOVES_TO_CENTER_PENALTY_END = -34;
 
     public static int getMirroredIndex(int index){
         int mirroredRank = 7 - (index / 8);
