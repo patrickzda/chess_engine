@@ -126,6 +126,7 @@ public class Evaluation {
         blackQueens = board.queens & board.blackPieces;
         blackKings = board.kings & board.blackPieces;
 
+        //Score für das Material
         materialScoreMid = materialScoreMid + (getSetBits(whitePawns) - getSetBits(blackPawns)) * EvaluationParams.PAWN_VALUE_MID;
         materialScoreMid = materialScoreMid + (getSetBits(whiteKnights) - getSetBits(blackKnights)) * EvaluationParams.KNIGHT_VALUE_MID;
         materialScoreMid = materialScoreMid + (getSetBits(whiteBishops) - getSetBits(blackBishops)) * EvaluationParams.BISHOP_VALUE_MID;
@@ -140,6 +141,7 @@ public class Evaluation {
         materialScoreEnd = materialScoreEnd + (getSetBits(whiteQueens) - getSetBits(blackQueens)) * EvaluationParams.QUEEN_VALUE_END;
         materialScoreEnd = materialScoreEnd + (getSetBits(whiteKings) - getSetBits(blackKings)) * KING_VALUE;
 
+        //Abzüge für schlechte Bauernstrukturen
         int isolatedPawnCount = getIsolatedPawnCount(board, WHITE) - getIsolatedPawnCount(board, BLACK);
         int doubledPawnCount = getDoubledPawnCount(board, WHITE) - getDoubledPawnCount(board, BLACK);
         int blockedPawnCount = getBlockedPawnCount(board, WHITE) - getBlockedPawnCount(board, BLACK);
@@ -152,6 +154,7 @@ public class Evaluation {
         pawnStructureScoreEnd = pawnStructureScoreEnd + doubledPawnCount *  EvaluationParams.DOUBLED_PAWN_PENALTY_END;
         pawnStructureScoreEnd = pawnStructureScoreEnd + blockedPawnCount *  EvaluationParams.BLOCKED_PAWN_PENALTY_END;
 
+        //Boni der PST
         for(int i = 0; i < 64; i++){
             long index = 1L << i;
             if((board.whitePieces & index) != 0){
@@ -202,6 +205,7 @@ public class Evaluation {
         Move[] enemyTeamMoves = MoveGenerator.generateLegalMoves(board, masks);
         board.doNullMove();
 
+        //Boni für das Läuferpaar
         if(getSetBits(board.whitePieces & board.bishops) == 2){
             openingScore = openingScore + EvaluationParams.BISHOP_PAIR_BONUS_MID;
             endGameScore = endGameScore + EvaluationParams.BISHOP_PAIR_BONUS_END;
@@ -212,10 +216,12 @@ public class Evaluation {
             endGameScore = endGameScore - EvaluationParams.BISHOP_PAIR_BONUS_END;
         }
 
+        //Boni für Mobilität
         int[] mobilityBonus = calculateMobilityBonus(board, currentTeamMoves, enemyTeamMoves);
         openingScore = openingScore + mobilityBonus[0];
         endGameScore = endGameScore + mobilityBonus[1];
 
+        //Boni für Outposts
         int[] outpostBonus = calculateOutpostBonus(board, masks);
         openingScore = openingScore + outpostBonus[0];
         endGameScore = endGameScore + outpostBonus[1];
