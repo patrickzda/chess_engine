@@ -3,15 +3,17 @@ package engine.ai;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
+import engine.tools.EvaluationParams;
 import engine.tools.TranspositionTable;
 import engine.tools.TranspositionTableEntry;
 
 public class Negamax {
-    private static final double EFFECTIVE_BRANCHING_FACTOR = Math.sqrt(35);
     private static final int QUIESCENCE_SEARCH_DEPTH = 3;
+    private static final int NULL_MOVE_DEPTH_REDUCTION = 2;
+    private static final int NULL_MOVE_PHASE_LIMIT = 175;
     private static final TranspositionTable table = new TranspositionTable();
 
-    private static int search(Board board, int depth, MoveMasks masks, int alpha, int beta, int color, long endTime){
+    private static int search(Board board, int depth, MoveMasks masks, int alpha, int beta, int color, long endTime, boolean nullMoveAllowed){
         int startAlpha = alpha;
 
         TranspositionTableEntry entry = table.getEntry(board, depth);
@@ -53,6 +55,19 @@ public class Negamax {
             return finalEval;
         }
 
+        //Null-Move-Pruning
+        if(nullMoveAllowed && !board.isInCheck(masks) && board.moves.size() > 0 && Evaluation.getGamePhase(board) < NULL_MOVE_PHASE_LIMIT && depth >= (1 + NULL_MOVE_DEPTH_REDUCTION)){
+            board.doNullMove();
+            int nullMoveScore = -search(board, depth - 1 - NULL_MOVE_DEPTH_REDUCTION, masks, -beta, -beta + 1, -color, endTime, false);
+            board.doNullMove();
+            if(System.nanoTime() >= endTime){
+                return 0;
+            }
+            if(nullMoveScore >= beta){
+                return beta;
+            }
+        }
+
         Evaluation.sortMoves(table, board, moves);
 
         int value = Integer.MIN_VALUE, bestValue = Integer.MIN_VALUE;
@@ -62,11 +77,11 @@ public class Negamax {
             board.doMove(moves[i]);
 
             if(i == 0){
-                value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color, endTime));
+                value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color, endTime, true));
             }else{
-                int nullWindowValue = -search(board, depth - 1, masks, -alpha - 1, -alpha, -color, endTime);
+                int nullWindowValue = -search(board, depth - 1, masks, -alpha - 1, -alpha, -color, endTime, false);
                 if(alpha < nullWindowValue && nullWindowValue < beta){
-                    value = Math.max(value, -search(board, depth - 1, masks, -beta, -nullWindowValue, -color, endTime));
+                    value = Math.max(value, -search(board, depth - 1, masks, -beta, -nullWindowValue, -color, endTime, true));
                 }else{
                     value = Math.max(value, nullWindowValue);
                 }
@@ -143,7 +158,7 @@ public class Negamax {
 
         for(int i = 0; i < moves.length; i++){
             board.doMove(moves[i]);
-            int score = -search(board, depth - 1, masks, -beta, -alpha, color, Long.MAX_VALUE);
+            int score = -search(board, depth - 1, masks, -beta, -alpha, color, Long.MAX_VALUE, true);
             board.undoLastMove();
 
             if(score > bestScore){
@@ -173,7 +188,7 @@ public class Negamax {
 
         for(int i = 0; i < moves.length; i++){
             board.doMove(moves[i]);
-            int score = -search(board, depth - 1, masks, -beta, -alpha, color, endTime);
+            int score = -search(board, depth - 1, masks, -beta, -alpha, color, endTime, true);
             board.undoLastMove();
 
             if(score > bestScore){
@@ -188,18 +203,16 @@ public class Negamax {
     }
 
     public static Move getBestMoveTimed(Board board, int timeInMilliseconds, MoveMasks masks){
-        long endTime = System.nanoTime() + timeInMilliseconds * 1000000L, nextDepthSearchTime = 0L;
+        long endTime = System.nanoTime() + timeInMilliseconds * 1000000L;
         int currentSearchDepth = 1;
         Move bestMove = null;
 
-        while(System.nanoTime() + nextDepthSearchTime < endTime){
-            long startTime = System.nanoTime();
+        while(System.nanoTime() < endTime){
             Move current = getBestMove(board, currentSearchDepth, masks, endTime);
             if(System.nanoTime() < endTime){
                 bestMove = current;
             }
             currentSearchDepth++;
-            nextDepthSearchTime = (long) ((System.nanoTime() - startTime) * EFFECTIVE_BRANCHING_FACTOR);
         }
 
         //System.out.println("REACHED DEPTH " + currentSearchDepth + " in " + (System.nanoTime() - (endTime - timeInMilliseconds * 1000000L)) / 1000000L + " ms");

@@ -458,6 +458,14 @@ public class Board {
         return isKingOfTheHill() || checkMate;
     }
 
+    public boolean isInCheck(MoveMasks masks){
+        if(turn == Color.WHITE) {
+            return MoveGenerator.isAttacked(this, masks, Long.numberOfTrailingZeros(kings & whitePieces), Color.BLACK);
+        }else {
+            return MoveGenerator.isAttacked(this, masks, Long.numberOfTrailingZeros(kings & blackPieces), Color.WHITE);
+        }
+    }
+
     public PieceType getCapturedPieceType(Move move){
         long enemyPieces;
         long beforePawns, beforeKnights, beforeBishops, beforeRooks, beforeQueens;
