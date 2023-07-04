@@ -11,9 +11,9 @@ public class Negamax {
     private static final int QUIESCENCE_SEARCH_DEPTH = 3;
     private static final int NULL_MOVE_DEPTH_REDUCTION = 2;
     private static final int NULL_MOVE_PHASE_LIMIT = 175;
-    private static final TranspositionTable table = new TranspositionTable();
+    private final TranspositionTable table = new TranspositionTable();
 
-    private static int search(Board board, int depth, MoveMasks masks, int alpha, int beta, int color, long endTime, boolean nullMoveAllowed){
+    private int search(Board board, int depth, MoveMasks masks, int alpha, int beta, int color, long endTime, boolean nullMoveAllowed){
         int startAlpha = alpha;
 
         TranspositionTableEntry entry = table.getEntry(board, depth);
@@ -112,7 +112,7 @@ public class Negamax {
         return value;
     }
 
-    private static int quiescenceSearch(Board board, int depth, MoveMasks masks, int alpha, int beta, int color){
+    private int quiescenceSearch(Board board, int depth, MoveMasks masks, int alpha, int beta, int color){
         Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
 
         if (depth == 0 || board.isGameLost(masks, moves.length) || moves.length == 0) {
@@ -142,7 +142,7 @@ public class Negamax {
         return value;
     }
 
-    public static Move getBestMove(Board board, int depth, MoveMasks masks){
+    public Move getBestMove(Board board, int depth, MoveMasks masks){
         Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
         if(moves.length == 0){
             return null;
@@ -172,7 +172,7 @@ public class Negamax {
         return bestMove;
     }
 
-    private static Move getBestMove(Board board, int depth, MoveMasks masks, long endTime){
+    private Move getBestMove(Board board, int depth, MoveMasks masks, long endTime){
         Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
         if(moves.length == 0){
             return null;
@@ -202,7 +202,7 @@ public class Negamax {
         return bestMove;
     }
 
-    public static Move getBestMoveTimed(Board board, int timeInMilliseconds, MoveMasks masks){
+    public Move getBestMoveTimed(Board board, int timeInMilliseconds, MoveMasks masks){
         long endTime = System.nanoTime() + timeInMilliseconds * 1000000L;
         int currentSearchDepth = 1;
         Move bestMove = null;
@@ -220,7 +220,7 @@ public class Negamax {
         return bestMove;
     }
 
-    public static void clearTable(){
+    public void clearTable(){
         table.clear();
     }
 

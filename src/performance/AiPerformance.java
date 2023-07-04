@@ -89,7 +89,7 @@ public class AiPerformance {
         System.out.println(board.toFENString());
         while (true){
 
-            Move m = Negamax.getBestMoveTimed(board,calcTimeMilli,masks); // alphaBeta.getBestMoveTimed(board,masks,calcTimeMilli);
+            Move m = negamax.getBestMoveTimed(board,calcTimeMilli,masks); // alphaBeta.getBestMoveTimed(board,masks,calcTimeMilli);
             board.doMove(m);
             System.out.println(board.toFENString());
             gameState = board.getGameState(masks);

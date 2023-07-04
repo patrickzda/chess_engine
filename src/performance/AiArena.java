@@ -1,5 +1,6 @@
 package performance;
 
+import com.sun.jdi.InvocationException;
 import engine.ai.Negamax;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
@@ -7,6 +8,11 @@ import engine.representation.Board;
 import engine.representation.Color;
 import engine.representation.Move;
 import test.AlphaBetaTest;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.*;
 
 public class AiArena {
     private final String[] FEN_DATA = new String[]{
@@ -526,6 +532,7 @@ public class AiArena {
 
     public void playAgainstBasicAlphaBeta(){
         MoveMasks masks = new MoveMasks();
+        Negamax negamax = new Negamax();
         int wonByNewAi = 0, draws = 0;
 
         for(int i = 0; i < FEN_DATA.length; i++){
@@ -533,7 +540,7 @@ public class AiArena {
             while(!board.isGameLost(masks, MoveGenerator.generateLegalMoves(board, masks).length) && board.moves.size() < movesToDraw){
                 Move next;
                 if(board.getTurn() == Color.WHITE){
-                    next = Negamax.getBestMoveTimed(board, millisPerMove, masks);
+                    next = negamax.getBestMoveTimed(board, millisPerMove, masks);
                 }else{
                     next = AlphaBetaTest.getBestMoveTimed(board, millisPerMove, masks);
                 }
@@ -554,7 +561,7 @@ public class AiArena {
             while(!board.isGameLost(masks, MoveGenerator.generateLegalMoves(board, masks).length) && board.moves.size() < movesToDraw){
                 Move next;
                 if(board.getTurn() == Color.BLACK){
-                    next = Negamax.getBestMoveTimed(board, millisPerMove, masks);
+                    next = negamax.getBestMoveTimed(board, millisPerMove, masks);
                 }else{
                     next = AlphaBetaTest.getBestMoveTimed(board, millisPerMove, masks);
                 }
@@ -574,16 +581,120 @@ public class AiArena {
         double oldAiWonPercentage = 10 - (newAiWonPercentage + drawPercentage);
 
         System.out.println("Neue KI: " + wonByNewAi + ", Unentschieden: " + draws + ", Alte KI: " + (FEN_DATA.length * 2 - (wonByNewAi + draws)));
-        for(int i = 0; i < newAiWonPercentage; i++){
+        for(int i = 0; i < (int) newAiWonPercentage; i++){
             System.out.print("🟩");
         }
-        for(int i = 0; i < drawPercentage; i++){
+        for(int i = 0; i < (int) drawPercentage; i++){
             System.out.print("🟨");
         }
-        for(int i = 0; i < oldAiWonPercentage; i++){
+        for(int i = 0; i < (int) oldAiWonPercentage; i++){
             System.out.print("🟥");
         }
         System.out.printf("\n");
+    }
+
+    public void playAgainstBasicAlphaBeta(int threadCount){
+        MoveMasks masks = new MoveMasks();
+        int wonByNewAi = 0, draws = 0;
+
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        ArrayList<Callable<int[]>> tasks = new ArrayList<Callable<int[]>>();
+        int fensPerThread = FEN_DATA.length / threadCount;
+
+        for(int i = 0; i < threadCount; i++){
+            final String[] currentFens = Arrays.copyOfRange(FEN_DATA, i * fensPerThread, i * fensPerThread + fensPerThread);
+            Callable<int[]> c = new Callable<int[]>() {
+                @Override
+                public int[] call() throws Exception {
+                    return playOnThread(currentFens);
+                }
+            };
+            tasks.add(c);
+        }
+
+        try {
+            List<Future<int[]>> results = executorService.invokeAll(tasks);
+            for(int i = 0; i < results.size(); i++){
+                int[] values = results.get(i).get();
+                wonByNewAi += values[0];
+                draws += values[1];
+            }
+
+            double newAiWonPercentage = (((double) wonByNewAi) / (FEN_DATA.length * 2)) * 10;
+            double drawPercentage = (((double) draws) / (FEN_DATA.length * 2)) * 10;
+            double oldAiWonPercentage = 10 - (newAiWonPercentage + drawPercentage);
+
+            System.out.println("Neue KI: " + wonByNewAi + ", Unentschieden: " + draws + ", Alte KI: " + (FEN_DATA.length * 2 - (wonByNewAi + draws)));
+            for(int i = 0; i < (int) newAiWonPercentage; i++){
+                System.out.print("🟩");
+            }
+            for(int i = 0; i < (int) drawPercentage; i++){
+                System.out.print("🟨");
+            }
+            for(int i = 0; i < (int) oldAiWonPercentage; i++){
+                System.out.print("🟥");
+            }
+            System.out.printf("\n");
+        }catch (InterruptedException | ExecutionException e){
+            System.out.println(e.toString());
+        }
+
+        executorService.shutdown();
+    }
+
+    private int[] playOnThread(String[] fens){
+        MoveMasks masks = new MoveMasks();
+        Negamax negamax = new Negamax();
+        int wonByNewAi = 0, draws = 0;
+
+        for(int i = 0; i < fens.length; i++){
+            Board board = new Board(fens[i]);
+            while(!board.isGameLost(masks, MoveGenerator.generateLegalMoves(board, masks).length) && board.moves.size() < movesToDraw){
+                Move next;
+                if(board.getTurn() == Color.WHITE){
+                    next = negamax.getBestMoveTimed(board, millisPerMove, masks);
+                }else{
+                    next = AlphaBetaTest.getBestMoveTimed(board, millisPerMove, masks);
+                }
+                if(next != null){
+                    board.doMove(next);
+                }else{
+                    break;
+                }
+            }
+
+            if(board.isGameLost(masks, MoveGenerator.generateLegalMoves(board, masks).length) && board.getTurn() == Color.BLACK){
+                wonByNewAi++;
+            }else if(board.moves.size() == movesToDraw){
+                draws++;
+            }
+            System.out.println("NEXT GAME");
+            negamax.clearTable();
+        }
+
+        for(int i = 0; i < fens.length; i++){
+            Board board = new Board(fens[i]);
+            while(!board.isGameLost(masks, MoveGenerator.generateLegalMoves(board, masks).length) && board.moves.size() < movesToDraw){
+                Move next;
+                if(board.getTurn() == Color.BLACK){
+                    next = negamax.getBestMoveTimed(board, millisPerMove, masks);
+                }else{
+                    next = AlphaBetaTest.getBestMoveTimed(board, millisPerMove, masks);
+                }
+                if(next != null){
+                    board.doMove(next);
+                }
+            }
+
+            if(board.isGameLost(masks, MoveGenerator.generateLegalMoves(board, masks).length) && board.getTurn() == Color.WHITE){
+                wonByNewAi++;
+            }else if(board.moves.size() == movesToDraw){
+                draws++;
+            }
+            System.out.println("NEXT GAME");
+        }
+
+        return new int[]{wonByNewAi, draws};
     }
 
 }

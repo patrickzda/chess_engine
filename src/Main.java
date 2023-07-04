@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) {
         //playMove(args);
-        measureAverageTimeOnFENData(4);
+        //measureAverageTimeOnFENData(4);
         //performance();
 
         //WICHTIGER TEST
@@ -29,13 +29,14 @@ public class Main {
         //String[] fens = new String[]{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "2k5/6q1/3P1P2/4N3/8/1K6/8/8 w - - 0 1", "4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1","6k1/r4ppp/r7/1b6/8/8/4QPPP/4R1K1 w - - 0 1", "r2qk2r/p1p1p1P1/1pn4b/1N1Pb3/1PB1N1nP/8/1B1PQPp1/R3K2R b Qkq - 0 1", "r1bq4/pp1p1k1p/2p2p1p/2b5/3Nr1Q1/2N1P3/PPPK1PPP/3R1B1R w - - 0 1", "3r1rk1/p1p1qp1p/1p2b1p1/6n1/R1PNp3/2QP2P1/3B1P1P/5RK1 w - - 0 1", "3r4/7p/2p2kp1/2P2p2/3P4/2K3P1/8/5R2 b - - 0 1", "5rk1/1p4pp/2R1p3/p5Q1/P4P2/6qr/2n3PP/5RK1 w - - 0 1", "r1b2rk1/4qpp1/4p2R/p2pP3/2pP2QP/4P1P1/PqB4K/8 w - - 0 1"};
         //playTimed(fens, 1000);
 
-        //AiArena arena = new AiArena(100);
-        //arena.playAgainstBasicAlphaBeta();
+        AiArena arena = new AiArena(100);
+        arena.playAgainstBasicAlphaBeta(8);
     }
 
     static void measureAverageTimeOnFENData(int depth){
         String[] fens = new String[]{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "2k5/6q1/3P1P2/4N3/8/1K6/8/8 w - - 0 1", "4r1k1/1bqr1pbp/p2p2p1/4p1B1/2p1P3/PnP2N1P/BP2QPP1/3RR1K1 w Qq - 0 1","6k1/r4ppp/r7/1b6/8/8/4QPPP/4R1K1 w - - 0 1", "r2qk2r/p1p1p1P1/1pn4b/1N1Pb3/1PB1N1nP/8/1B1PQPp1/R3K2R b Qkq - 0 1", "r1bq4/pp1p1k1p/2p2p1p/2b5/3Nr1Q1/2N1P3/PPPK1PPP/3R1B1R w - - 0 1", "3r1rk1/p1p1qp1p/1p2b1p1/6n1/R1PNp3/2QP2P1/3B1P1P/5RK1 w - - 0 1", "3r4/7p/2p2kp1/2P2p2/3P4/2K3P1/8/5R2 b - - 0 1", "5rk1/1p4pp/2R1p3/p5Q1/P4P2/6qr/2n3PP/5RK1 w - - 0 1", "r1b2rk1/4qpp1/4p2R/p2pP3/2pP2QP/4P1P1/PqB4K/8 w - - 0 1"};
         MoveMasks masks = new MoveMasks();
+        Negamax negamax = new Negamax();
 
         long totalTime = 0L;
         AlphaBeta alphaBeta = new AlphaBeta();
@@ -43,9 +44,9 @@ public class Main {
             Board b = new Board(fens[i]);
             Move[] moves = MoveGenerator.generateLegalMoves(b, masks);
             long startTime = System.nanoTime();
-            Negamax.getBestMove(b, depth, new MoveMasks());
+            negamax.getBestMove(b, depth, new MoveMasks());
             totalTime = totalTime + (System.nanoTime() - startTime);
-            alphaBeta.clearTable();
+            negamax.clearTable();
         }
 
         long totalBasicTime = 0L;
@@ -78,9 +79,10 @@ public class Main {
     static void aiArena(int depth){
         String[] fens = new String[]{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "r1bqkb1r/pppp1ppp/2n2n2/4p3/4P3/2N2N2/PPPP1PPP/R1BQKB1R w KQkq - 0 1", "rnbqkb1r/pp2pppp/5n2/3p4/2PP4/2N5/PP3PPP/R1BQKBNR b KQkq - 0 1", "rnbqkbnr/ppp2ppp/4p3/3pP3/3P4/8/PPP2PPP/RNBQKBNR b KQkq - 0 1", "r1bq1rk1/2p1bppp/p1n2n2/1p1pp3/4P3/1BP2N2/PP1P1PPP/RNBQR1K1 w - - 0 1"};
         int winCountAdvancedAI = 0, winCountClassicAlphaBeta = 0;
+        Negamax negamax = new Negamax();
 
         for(int i = 0; i < fens.length; i++){
-            Negamax.clearTable();
+            negamax.clearTable();
             Board b = new Board(fens[i]);
             Move[] moves = MoveGenerator.generateLegalMoves(b, new MoveMasks());
             AlphaBeta alphaBeta = new AlphaBeta();
@@ -88,7 +90,7 @@ public class Main {
             while(!b.isGameLost(new MoveMasks(), moves.length) && moveCount < 200){
                 Move m;
                 if(b.getTurn() == Color.WHITE){
-                    m = Negamax.getBestMove(b, depth, new MoveMasks());
+                    m = negamax.getBestMove(b, depth, new MoveMasks());
                 }else{
                     m = AlphaBetaTest.bestMove(b, MoveGenerator.generateLegalMoves(b, new MoveMasks()), depth, new MoveMasks());
                 }
@@ -112,7 +114,7 @@ public class Main {
         System.out.println("FARBENTAUSCH");
 
         for(int i = 0; i < fens.length; i++){
-            Negamax.clearTable();
+            negamax.clearTable();
             Board b = new Board(fens[i]);
             Move[] moves = MoveGenerator.generateLegalMoves(b, new MoveMasks());
             AlphaBeta alphaBeta = new AlphaBeta();
@@ -120,7 +122,7 @@ public class Main {
             while(!b.isGameLost(new MoveMasks(), moves.length) && moveCount < 200){
                 Move m;
                 if(b.getTurn() == Color.BLACK){
-                    m = Negamax.getBestMove(b, depth, new MoveMasks());
+                    m = negamax.getBestMove(b, depth, new MoveMasks());
                 }else{
                     m = AlphaBetaTest.bestMove(b, MoveGenerator.generateLegalMoves(b, new MoveMasks()), depth, new MoveMasks());
                 }
@@ -146,7 +148,7 @@ public class Main {
     }
 
     static void playMove(String[] args){
-        AlphaBeta alphaBeta = new AlphaBeta();
+        Negamax negamax = new Negamax();
         MoveMasks masks = new MoveMasks();
         Board board = new Board(args[0]);
         //Move m = alphaBeta.getBestMoveTimed(board, new MoveMasks(), 2000);
@@ -154,7 +156,7 @@ public class Main {
         Move m;
         if(board.getTurn() == Color.BLACK){
             //m = Negamax.getBestMove(board, Integer.parseInt(args[1]), masks);
-            m = Negamax.getBestMoveTimed(board, 5000, masks);
+            m = negamax.getBestMoveTimed(board, 5000, masks);
         }else{
             //m = AlphaBetaTest.bestMove(board, MoveGenerator.generateLegalMoves(board, masks), Integer.parseInt(args[1]), masks);
             m = AlphaBetaTest.getBestMoveTimed(board, 5000, masks);
@@ -196,9 +198,10 @@ public class Main {
 
     static void playTimed(String[] fens, int millis){
         MoveMasks m = new MoveMasks();
+        Negamax negamax = new Negamax();
         for (int i = 0; i < fens.length; i++) {
             Board b = new Board(fens[i]);
-            Move move = Negamax.getBestMoveTimed(b, millis, m);
+            Move move = negamax.getBestMoveTimed(b, millis, m);
             System.out.println(move);
         }
     }
