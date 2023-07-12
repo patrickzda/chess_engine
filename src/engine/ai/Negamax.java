@@ -4,14 +4,18 @@ import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
 import engine.tools.EvaluationParams;
+import engine.tools.OpeningBookReader;
 import engine.tools.TranspositionTable;
 import engine.tools.TranspositionTableEntry;
+
+import java.io.IOException;
 
 public class Negamax {
     private static final int QUIESCENCE_SEARCH_DEPTH = 3;
     private static final int NULL_MOVE_DEPTH_REDUCTION = 2;
     private static final int NULL_MOVE_PHASE_LIMIT = 175;
     private final TranspositionTable table = new TranspositionTable();
+    private final OpeningBookReader openingBookReader = new OpeningBookReader("opening_book.txt", false);
 
     private int search(Board board, int depth, MoveMasks masks, int alpha, int beta, int color, long endTime, boolean nullMoveAllowed){
         int startAlpha = alpha;
@@ -205,7 +209,16 @@ public class Negamax {
     public Move getBestMoveTimed(Board board, int timeInMilliseconds, MoveMasks masks){
         long endTime = System.nanoTime() + timeInMilliseconds * 1000000L;
         int currentSearchDepth = 1;
-        Move bestMove = null;
+        Move bestMove = getBestMove(board, currentSearchDepth, masks, endTime);
+
+        try {
+            Move savedMove = openingBookReader.readBestMove(board);
+            if(savedMove != null){
+                return savedMove;
+            }
+        }catch (Exception e) {
+            System.out.println("Beim Lesen der Eröffnungsdatenbank ist ein Fehler unterlaufen.");
+        }
 
         while(System.nanoTime() < endTime){
             Move current = getBestMove(board, currentSearchDepth, masks, endTime);
