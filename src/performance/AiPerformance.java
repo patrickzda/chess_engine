@@ -8,11 +8,9 @@ import engine.representation.GameState;
 import engine.representation.Move;
 import engine.representation.PieceType;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.Arrays;
+import java.util.Random;
 
 public class AiPerformance {
 
@@ -186,14 +184,23 @@ public class AiPerformance {
                 "a5","b5","c5","d5","e5","f5","g5","h5",
                 "a6","b6","c6","d6","e6","f6","g6","h6",
                 "a7","b7","c7","d7","e7","f7","g7","h7",
-                "a8","b8","c8","d8","e8","f8","g8","h8",};
+                "a8","b8","c8","d8","e8","f8","g8","h8"};
 
         int startPos = Arrays.asList(fields).indexOf(move.substring(0,2));
         int endPos = Arrays.asList(fields).indexOf(move.substring(2));
         String aktuellesB = board.toString();
+        if (reoderString(aktuellesB).length() < 64 || startPos < 0
+        ){
+
+            return new Move(startPos,startPos,PieceType.KING);
+        }
+        try{
         PieceType pieceType = getPieceTyp(reoderString(aktuellesB).charAt(startPos));
 
         return new Move(startPos,endPos,pieceType);
+        } catch (Exception e) {
+            return new Move(startPos,startPos,PieceType.KING);
+        }
     }
     public static String getMoveFromStockfish(int elo, String fen, int timeInMillis){
         try {
@@ -246,6 +253,7 @@ public class AiPerformance {
                 //System.out.println(currentLine);
                 currentLine = reader.readLine();
             }
+            engine.destroy();
             return currentLine.split(" ")[1];
         }catch (IOException | InterruptedException e){
             System.out.println(e.getMessage());
@@ -253,7 +261,98 @@ public class AiPerformance {
         }
     }
 
+    public static String getEvaluateFromFairy(int elo, String fen, int timeInMillis){
+        try {
+            Process engine = Runtime.getRuntime().exec("../fairystockfish");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(engine.getInputStream()));
+            OutputStreamWriter writer = new OutputStreamWriter(engine.getOutputStream());
+            writer.write("setoption name UCI_Variant value kingofthehill\n");
+            writer.flush();
+            writer.write("setoption name UCI_LimitStrength value true\n");
+            writer.flush();
+            writer.write("setoption name UCI_Elo value " + elo + "\n");
+            writer.flush();
+
+            writer.write("position fen " + fen + "\n");
+            writer.flush();
+            writer.write("eval"+"\n");
+            writer.flush();
+
+            Thread.sleep( 1000);
+            String currentLine = reader.readLine();
+            while (!currentLine.contains("Final evaluation")) {
+                //System.out.println(currentLine);
+                currentLine = reader.readLine();
+            }
+            engine.destroy();
+            if(currentLine.split(" ").length < 8){
+                return "10000.999";
+            }
+
+            return currentLine.split(" ")[8];
+        }catch (IOException | InterruptedException e){
+            System.out.println(e.getMessage());
+            return "";
+        }
+    }
+
+
+    public static void readGamesFromFile() throws IOException {
+        Random r = new Random();
+        File path = new File("C:\\Users\\adamg\\Desktop\\chess_engine\\fens.java");
+        File pathmove = new File("C:\\Users\\adamg\\Desktop\\chess_engine\\ove.java");
+        File patheval = new File("C:\\Users\\adamg\\Desktop\\chess_engine\\eval.java");
+        File file = new File("C:\\Users\\adamg\\PycharmProjects\\pythonProject\\fen_games.txt");
+        FileWriter wr = new FileWriter(path);
+        FileWriter wrmove = new FileWriter(pathmove);
+        FileWriter wreval = new FileWriter(patheval);
+        wr.write("private final String[] FEN_DATA = new String[]{\n");
+        wrmove.write("import engine.representation.Move;\n" +
+                "import engine.representation.PieceType;\n" +
+                "\n" +
+                "class test1 {\n\tprivate final Move[] MOVE = new Move[]{\n");
+        wreval.write("private final double[] EVAL = new double[]{\n");
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            int x = r.nextInt(10,20);
+            int counter = 0;
+            int i = 0;
+            while ((line = br.readLine()) != null) {
+                if(line.contains("Game")){
+                    counter = 0;
+                    i++;
+                    System.out.println("game"+i);
+                    x = r.nextInt(10,20);
+                }
+                counter++;
+                if (counter == x){
+                    String eval = getEvaluateFromFairy(3500,line,10000);
+                    double evaluate = Double.parseDouble(eval);
+                    String back = getMoveFromFairy(3500,line,10000);
+                    Board board = new Board(line);
+                    Move move = fairyMove(back,board);
+                    //System.out.println(move.getPieceType());
+                    wr.write("\""+line+"\",\n");
+                    wrmove.write("new Move(" + move.getStartFieldIndex() +","+ move.getEndFieldIndex() +", PieceType."+move.getPieceType()+"),\n" );
+                    wreval.write(evaluate+",\n");
+                    wr.flush();
+                    wrmove.flush();
+                    wreval.flush();
+                }
+            }
+            wr.write("\t}\n");
+            wrmove.write("\t};\n}");
+            wreval.write("\t}\n");
+            wr.close();
+            wrmove.close();
+            wreval.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
+
+
 
 /*
 package performance;
@@ -495,5 +594,8 @@ public class AiPerformance {
     }
 
 }
+
+
+
 
  */
