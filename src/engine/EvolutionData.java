@@ -10,7 +10,7 @@ public class EvolutionData {
 
 	public ArrayList<Move> moves = new ArrayList<Move>();
 	public ArrayList<String> fens = new ArrayList<String>();
-	public ArrayList<Double> evals  = new ArrayList<Double>();
+	public ArrayList<Double> evaluations = new ArrayList<Double>();
 
 	public void setup(){
 		for (int i = 0; i < MOVE.size(); i++) {
@@ -18,8 +18,7 @@ public class EvolutionData {
 			if(move.getStartFieldIndex() != -1 & EVAL[i] != 10000.999){
 				moves.add(move);
 				fens.add(FEN_DATA[i]);
-				evals.add(EVAL[i]);
-
+				evaluations.add(EVAL[i]);
 			}
 		}
 	}
