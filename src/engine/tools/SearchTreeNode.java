@@ -5,13 +5,15 @@ import engine.move_generation.MoveMasks;
 import engine.representation.Board;
 import engine.representation.Color;
 import engine.representation.Move;
+import engine.representation.PieceType;
 
 public class SearchTreeNode {
     private static final double c = Math.sqrt(2);
     private final Move move;
     private final SearchTreeNode parent;
     private SearchTreeNode[] children;
-    private double visits = 0, score = 0;
+    private double visits = 0;
+    private int score = 0;
 
     private final Color color;
 
@@ -43,6 +45,9 @@ public class SearchTreeNode {
     public Move getMove() {
         return move;
     }
+
+    public int getScore() { return score; }
+    public double getVisits() { return visits; }
 
     private void generateChildren(Board board) {
         Move[] moves = MoveGenerator.generateLegalMoves(board, new MoveMasks());
@@ -86,7 +91,48 @@ public class SearchTreeNode {
 
     }
 
+    public Move getMoveWithBestRatio() {
+        double bestRatio = -Double.MAX_VALUE;
+        Move bestMove = new Move(0, 0, PieceType.PAWN);
+
+        for (SearchTreeNode child: children) {
+            if (child.getScore() / child.getVisits() > bestRatio) {
+                bestRatio = child.getScore() / child.getVisits();
+                bestMove = child.getMove();
+            }
+        }
+
+        return bestMove;
+    }
+
     public boolean isExplored() {
         return this.explored;
+    }
+
+    public SearchTreeNode[] getChildren() {
+        return children;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder buffer = new StringBuilder(50);
+        print(buffer, "", "");
+        return buffer.toString();
+    }
+
+    private void print(StringBuilder buffer, String prefix, String childrenPrefix) {
+        buffer.append(prefix);
+        buffer.append(move + ": " + score);
+        buffer.append('\n');
+        if (children != null) {
+            for (int i = 0; i < children.length; i++) {
+                SearchTreeNode next = children[i];
+                if (i < children.length - 1) {
+                    next.print(buffer, childrenPrefix + "├── ", childrenPrefix + "│   ");
+                } else {
+                    next.print(buffer, childrenPrefix + "└── ", childrenPrefix + "    ");
+                }
+            }
+        }
     }
 }

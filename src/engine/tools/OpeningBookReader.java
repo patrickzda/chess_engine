@@ -14,12 +14,12 @@ import java.nio.channels.FileChannel;
 /*
 Die Datei mit den Eröffnungen muss wie folgt formatiert sein:
 - Jede Zeile besteht aus einer 23-stelligen HEX Zahl
-- Bits 0 bis 15: Zobrist-Key der Stellung (in HEX)
-- Bits 16 und 17: Index des Startfeldes des besten Zuges (in HEX)
-- Bits 18 und 19: Index des Endfeldes des besten Zuges (in HEX)
-- 20. Bit: Repräsentiert die Figur, die bewegt werden soll (0: König, 1: Dame, 2: Turm, 3: Läufer, 4: Springer, 5: Bauer)
-- 21. Bit: Handelt es sich um eine Rochade? 0: Nein, 1: Ja
-- 22. Bit: Handelt es sich um eine Bauernumwandlung? 0: Nein, 1: Zur Dame, 2: Zum Turm, 3: Zum Läufer, 4: Zum Springer
+- char 0 bis 15: Zobrist-Key der Stellung (in HEX)
+- char 16 und 17: Index des Startfeldes des besten Zuges (in HEX)
+- char 18 und 19: Index des Endfeldes des besten Zuges (in HEX)
+- 20. char: Repräsentiert die Figur, die bewegt werden soll (0: König, 1: Dame, 2: Turm, 3: Läufer, 4: Springer, 5: Bauer)
+- 21. char: Handelt es sich um eine Rochade? 0: Nein, 1: Ja
+- 22. char: Handelt es sich um eine Bauernumwandlung? 0: Nein, 1: Zur Dame, 2: Zum Turm, 3: Zum Läufer, 4: Zum Springer
 - Zahlen, die weniger Bits benötigen als Platz vorhanden ist, erhalten führende Nullen
 - Alle Zeilen sind nach der ersten 16-Bit-Zahl geordnet, beginnend mit der Kleinsten
 - Am Ende jeder Zeile ist ein Newline-Char: \n
