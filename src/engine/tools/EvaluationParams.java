@@ -173,10 +173,10 @@ public class EvaluationParams {
     public static final int BISHOP_PAIR_BONUS_MID = 120;
     public static final int BISHOP_PAIR_BONUS_END = 175;
 
-    public static final int KING_MOBILITY_BONUS_MID = 14;
-    public static final int KING_MOBILITY_BONUS_END = 23;
-    public static final int MOVES_TO_CENTER_PENALTY_MID = -8;
-    public static final int MOVES_TO_CENTER_PENALTY_END = -34;
+    public static final int KING_MOBILITY_BONUS_MID = 8;
+    public static final int KING_MOBILITY_BONUS_END = 45;
+    public static final int MOVES_TO_CENTER_PENALTY_MID = 1;
+    public static final int MOVES_TO_CENTER_PENALTY_END = -100;
 
     public static int getMirroredIndex(int index){
         int mirroredRank = 7 - (index / 8);

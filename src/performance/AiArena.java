@@ -518,16 +518,18 @@ public class AiArena {
         "r2qk2r/1pp2ppp/p1npbn2/2bNp1B1/2B1P3/3P1N1P/PPP2PP1/R2QK2R b KQkq - 3 8",
     };
 
-    private final int millisPerMove, movesToDraw;
+    private final int millisPerMove, movesToDraw, totalPositions;
 
     public AiArena(int millisPerMove){
         this.millisPerMove = millisPerMove;
         this.movesToDraw = 150;
+        this.totalPositions = FEN_DATA.length;
     }
 
-    public AiArena(int millisPerMove, int movesToDraw){
+    public AiArena(int millisPerMove, int movesToDraw, int totalPositions){
         this.millisPerMove = millisPerMove;
         this.movesToDraw = movesToDraw;
+        this.totalPositions = totalPositions;
     }
 
     public void playAgainstBasicAlphaBeta(){
@@ -535,7 +537,7 @@ public class AiArena {
         Negamax negamax = new Negamax();
         int wonByNewAi = 0, draws = 0;
 
-        for(int i = 0; i < FEN_DATA.length; i++){
+        for(int i = 0; i < totalPositions; i++){
             Board board = new Board(FEN_DATA[i]);
             while(!board.isGameLost(masks, MoveGenerator.generateLegalMoves(board, masks).length) && board.moves.size() < movesToDraw){
                 Move next;
@@ -552,11 +554,11 @@ public class AiArena {
             }else if(board.moves.size() == movesToDraw){
                 draws++;
             }
-
+            negamax.clearTable();
             System.out.println("NEXT GAME");
         }
 
-        for(int i = 0; i < FEN_DATA.length; i++){
+        for(int i = 0; i < totalPositions; i++){
             Board board = new Board(FEN_DATA[i]);
             while(!board.isGameLost(masks, MoveGenerator.generateLegalMoves(board, masks).length) && board.moves.size() < movesToDraw){
                 Move next;
@@ -573,14 +575,15 @@ public class AiArena {
             }else if(board.moves.size() == movesToDraw){
                 draws++;
             }
+            negamax.clearTable();
             System.out.println("NEXT GAME");
         }
 
-        double newAiWonPercentage = (((double) wonByNewAi) / (FEN_DATA.length * 2)) * 10;
-        double drawPercentage = (((double) draws) / (FEN_DATA.length * 2)) * 10;
+        double newAiWonPercentage = (((double) wonByNewAi) / (totalPositions * 2)) * 10;
+        double drawPercentage = (((double) draws) / (totalPositions * 2)) * 10;
         double oldAiWonPercentage = 10 - (newAiWonPercentage + drawPercentage);
 
-        System.out.println("Neue KI: " + wonByNewAi + ", Unentschieden: " + draws + ", Alte KI: " + (FEN_DATA.length * 2 - (wonByNewAi + draws)));
+        System.out.println("Neue KI: " + wonByNewAi + ", Unentschieden: " + draws + ", Alte KI: " + (totalPositions * 2 - (wonByNewAi + draws)));
         for(int i = 0; i < (int) newAiWonPercentage; i++){
             System.out.print("🟩");
         }
@@ -599,7 +602,7 @@ public class AiArena {
 
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         ArrayList<Callable<int[]>> tasks = new ArrayList<Callable<int[]>>();
-        int fensPerThread = FEN_DATA.length / threadCount;
+        int fensPerThread = totalPositions / threadCount;
 
         for(int i = 0; i < threadCount; i++){
             final String[] currentFens = Arrays.copyOfRange(FEN_DATA, i * fensPerThread, i * fensPerThread + fensPerThread);
@@ -620,11 +623,11 @@ public class AiArena {
                 draws += values[1];
             }
 
-            double newAiWonPercentage = (((double) wonByNewAi) / (FEN_DATA.length * 2)) * 10;
-            double drawPercentage = (((double) draws) / (FEN_DATA.length * 2)) * 10;
+            double newAiWonPercentage = (((double) wonByNewAi) / (totalPositions * 2)) * 10;
+            double drawPercentage = (((double) draws) / (totalPositions * 2)) * 10;
             double oldAiWonPercentage = 10 - (newAiWonPercentage + drawPercentage);
 
-            System.out.println("Neue KI: " + wonByNewAi + ", Unentschieden: " + draws + ", Alte KI: " + (FEN_DATA.length * 2 - (wonByNewAi + draws)));
+            System.out.println("Neue KI: " + wonByNewAi + ", Unentschieden: " + draws + ", Alte KI: " + (totalPositions * 2 - (wonByNewAi + draws)));
             for(int i = 0; i < (int) newAiWonPercentage; i++){
                 System.out.print("🟩");
             }

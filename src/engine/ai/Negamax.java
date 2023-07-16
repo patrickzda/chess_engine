@@ -9,6 +9,7 @@ import engine.tools.TranspositionTable;
 import engine.tools.TranspositionTableEntry;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Negamax {
     private static final int QUIESCENCE_SEARCH_DEPTH = 3;
@@ -17,7 +18,7 @@ public class Negamax {
     private final TranspositionTable table = new TranspositionTable();
     private final OpeningBookReader openingBookReader = new OpeningBookReader("opening_book.txt", false);
 
-    private int search(Board board, int depth, MoveMasks masks, int alpha, int beta, int color, long endTime, boolean nullMoveAllowed){
+    private int search(Board board, int depth, MoveMasks masks, int alpha, int beta, int color, long endTime, boolean nullMoveAllowed, boolean wasNullMove){
         int startAlpha = alpha;
 
         TranspositionTableEntry entry = table.getEntry(board, depth);
@@ -41,8 +42,15 @@ public class Negamax {
 
         Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
 
-        if (depth == 0 || board.isGameLost(masks, moves.length) || moves.length == 0) {
-            if(board.getMovesSinceLastPawnMoveOrCapture() == 0 && board.moves.size() > 0){
+        boolean isGameLost = board.isGameLost(masks, moves.length);
+        if (depth == 0 || isGameLost || moves.length == 0) {
+            if(wasNullMove && !isGameLost && moves.length > 0){
+                int finalEval = -quiescenceSearch(board, QUIESCENCE_SEARCH_DEPTH, masks, -beta, -alpha, -color);
+                table.addEntry(board, null, depth, finalEval, EvaluationType.EXACT);
+                return finalEval;
+            }
+
+            if(board.getMovesSinceLastPawnMoveOrCapture() == 0 && board.moves.size() > 0 && !isGameLost && moves.length > 0){
                 Move lastMove = board.moves.get(board.moves.size() - 1);
                 board.undoLastMove();
                 PieceType capturedPiece = board.getCapturedPieceType(lastMove);
@@ -54,6 +62,7 @@ public class Negamax {
                     return finalEval;
                 }
             }
+
             int finalEval = color * Evaluation.evaluateNegamaxNew(board, masks, moves);
             table.addEntry(board, null, depth, finalEval, EvaluationType.EXACT);
             return finalEval;
@@ -62,7 +71,7 @@ public class Negamax {
         //Null-Move-Pruning
         if(nullMoveAllowed && !board.isInCheck(masks) && board.moves.size() > 0 && Evaluation.getGamePhase(board) < NULL_MOVE_PHASE_LIMIT && depth >= (1 + NULL_MOVE_DEPTH_REDUCTION)){
             board.doNullMove();
-            int nullMoveScore = -search(board, depth - 1 - NULL_MOVE_DEPTH_REDUCTION, masks, -beta, -beta + 1, -color, endTime, false);
+            int nullMoveScore = -search(board, depth - 1 - NULL_MOVE_DEPTH_REDUCTION, masks, -beta, -beta + 1, -color, endTime, false, true);
             board.doNullMove();
             if(System.nanoTime() >= endTime){
                 return 0;
@@ -81,11 +90,11 @@ public class Negamax {
             board.doMove(moves[i]);
 
             if(i == 0){
-                value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color, endTime, true));
+                value = Math.max(value, -search(board, depth - 1, masks, -beta, -alpha, -color, endTime, true, false));
             }else{
-                int nullWindowValue = -search(board, depth - 1, masks, -alpha - 1, -alpha, -color, endTime, false);
+                int nullWindowValue = -search(board, depth - 1, masks, -alpha - 1, -alpha, -color, endTime, false, false);
                 if(alpha < nullWindowValue && nullWindowValue < beta){
-                    value = Math.max(value, -search(board, depth - 1, masks, -beta, -nullWindowValue, -color, endTime, true));
+                    value = Math.max(value, -search(board, depth - 1, masks, -beta, -nullWindowValue, -color, endTime, true, false));
                 }else{
                     value = Math.max(value, nullWindowValue);
                 }
@@ -162,7 +171,7 @@ public class Negamax {
 
         for(int i = 0; i < moves.length; i++){
             board.doMove(moves[i]);
-            int score = -search(board, depth - 1, masks, -beta, -alpha, color, Long.MAX_VALUE, true);
+            int score = -search(board, depth - 1, masks, -beta, -alpha, color, Long.MAX_VALUE, true, false);
             board.undoLastMove();
 
             if(score > bestScore){
@@ -192,7 +201,7 @@ public class Negamax {
 
         for(int i = 0; i < moves.length; i++){
             board.doMove(moves[i]);
-            int score = -search(board, depth - 1, masks, -beta, -alpha, color, endTime, true);
+            int score = -search(board, depth - 1, masks, -beta, -alpha, color, endTime, true, false);
             board.undoLastMove();
 
             if(score > bestScore){

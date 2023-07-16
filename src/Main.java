@@ -1,18 +1,13 @@
+import engine.tools.genetic_algorithm.EvolutionData;
 import engine.ai.AlphaBeta;
-import engine.ai.Evaluation;
 import engine.ai.Negamax;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
-import engine.tools.EvaluationParams;
-import engine.tools.OpeningBookReader;
 import performance.*;
 import test.AlphaBetaTest;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
 public class Main {
 
@@ -20,8 +15,11 @@ public class Main {
         //playMove(args);
         //measureAverageTimeOnFENData(4);
         //performance();
-        Negamax negamax = new Negamax();
-        System.out.println(negamax.getBestMoveTimed(new Board(), 1000, new MoveMasks()));
+        //Negamax negamax = new Negamax();
+        //System.out.println(negamax.getBestMoveTimed(new Board(), 1000, new MoveMasks()));
+
+        AiArena arena = new AiArena(100, 150, 50);
+        arena.playAgainstBasicAlphaBeta();
     }
 
     static void measureAverageTimeOnFENData(int depth){

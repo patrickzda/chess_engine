@@ -7,6 +7,7 @@ import engine.tools.PST;
 import engine.tools.EvaluationParams;
 import engine.tools.TranspositionTable;
 import engine.tools.TranspositionTableEntry;
+import engine.tools.genetic_algorithm.Chromosome;
 
 
 import java.lang.reflect.Array;
@@ -227,9 +228,14 @@ public class Evaluation {
         endGameScore = endGameScore + outpostBonus[1];
 
         //Testen
-        //int[] kingMobilityBonus = calculateKingMobilityBonus(board, currentTeamMoves, enemyTeamMoves);
-        //openingScore = openingScore + kingMobilityBonus[0];
-        //endGameScore = endGameScore + kingMobilityBonus[1];
+        int[] kingMobilityBonus = calculateKingMobilityBonus(board, currentTeamMoves, enemyTeamMoves);
+        openingScore = openingScore + kingMobilityBonus[0];
+        endGameScore = endGameScore + kingMobilityBonus[1];
+
+        //Testen
+        int whiteKingDistanceToCenter = getKingDistanceToCenter(board, WHITE), blackKingDistanceToCenter = getKingDistanceToCenter(board, BLACK);
+        openingScore = openingScore + (whiteKingDistanceToCenter - blackKingDistanceToCenter) * EvaluationParams.MOVES_TO_CENTER_PENALTY_MID;
+        endGameScore = endGameScore + (whiteKingDistanceToCenter - blackKingDistanceToCenter) * EvaluationParams.MOVES_TO_CENTER_PENALTY_END;
 
         openingScore = openingScore + materialScoreMid;
         endGameScore = endGameScore + materialScoreEnd;
@@ -281,6 +287,10 @@ public class Evaluation {
             kingIndex = Long.numberOfTrailingZeros(board.whitePieces & board.kings);
         }else{
             kingIndex = Long.numberOfTrailingZeros(board.blackPieces & board.kings);
+        }
+        if(kingIndex == 64){
+            System.out.println(Arrays.toString(board.moves.toArray()));
+            System.out.println(board.toFENString());
         }
         return EvaluationParams.SINGLE_MOVES_TO_CENTER_COUNT[kingIndex];
     }

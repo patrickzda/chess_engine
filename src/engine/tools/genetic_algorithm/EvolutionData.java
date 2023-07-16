@@ -1,4 +1,4 @@
-package engine;
+package engine.tools.genetic_algorithm;
 
 import engine.representation.Move;
 import engine.representation.PieceType;

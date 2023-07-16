@@ -139,6 +139,7 @@ public class MoveGenerator {
         long shortCastlingMask, longCastlingMask;
         Move shortCastle, longCastle;
         int kingIndex, shortCastlePassingIndex, longCastlePassingIndex;
+        long shortRookMask, longRookMask;
         Color attackingColor;
 
         if(current.getTurn() == Color.WHITE){
@@ -154,6 +155,8 @@ public class MoveGenerator {
             kingIndex = 4;
             shortCastlePassingIndex = 5;
             longCastlePassingIndex = 3;
+            shortRookMask = 128L;
+            longRookMask = 1L;
             attackingColor = Color.BLACK;
         }else{
             currentTeam = current.blackPieces;
@@ -168,6 +171,8 @@ public class MoveGenerator {
             kingIndex = 60;
             shortCastlePassingIndex = 61;
             longCastlePassingIndex = 59;
+            shortRookMask = -9223372036854775808L;
+            longRookMask = 72057594037927936L;
             attackingColor = Color.WHITE;
         }
         shortCastle.isCastling = true;
@@ -212,11 +217,11 @@ public class MoveGenerator {
         }
 
         if(!hasKingMoved){
-            if(!hasShortRookMoved && ((current.whitePieces | current.blackPieces) & shortCastlingMask) == 0 && !isAttacked(current, moveMasks, shortCastlePassingIndex, attackingColor) && !isAttacked(current, moveMasks, kingIndex, attackingColor)){
+            if(!hasShortRookMoved && (currentTeam & current.rooks & shortRookMask) != 0 && ((current.whitePieces | current.blackPieces) & shortCastlingMask) == 0 && !isAttacked(current, moveMasks, shortCastlePassingIndex, attackingColor) && !isAttacked(current, moveMasks, kingIndex, attackingColor)){
                 kingMoves.add(shortCastle);
             }
 
-            if(!hasLongRookMoved && ((current.whitePieces | current.blackPieces) & longCastlingMask) == 0 && !isAttacked(current, moveMasks, longCastlePassingIndex, attackingColor) && !isAttacked(current, moveMasks, kingIndex, attackingColor)){
+            if(!hasLongRookMoved && (currentTeam & current.rooks & longRookMask) != 0 && ((current.whitePieces | current.blackPieces) & longCastlingMask) == 0 && !isAttacked(current, moveMasks, longCastlePassingIndex, attackingColor) && !isAttacked(current, moveMasks, kingIndex, attackingColor)){
                 kingMoves.add(longCastle);
             }
         }
