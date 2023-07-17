@@ -546,6 +546,13 @@ public class AiArena {
                 }else{
                     next = AlphaBetaTest.getBestMoveTimed(board, millisPerMove, masks);
                 }
+                if(next == null){
+                    System.out.println("Fehler in der ersten Schleife!");
+                    System.out.println("Bei Position " + i + " gab es einen Null-Zug");
+                    System.out.println(board.toFENString());
+                    System.out.println(board.getTurn());
+                    break;
+                }
                 board.doMove(next);
             }
 
@@ -566,6 +573,13 @@ public class AiArena {
                     next = negamax.getBestMoveTimed(board, millisPerMove, masks);
                 }else{
                     next = AlphaBetaTest.getBestMoveTimed(board, millisPerMove, masks);
+                }
+                if(next == null){
+                    System.out.println("Fehler in der zweiten Schleife!");
+                    System.out.println("Bei Position " + i + " gab es einen Null-Zug");
+                    System.out.println(board.toFENString());
+                    System.out.println(board.getTurn());
+                    break;
                 }
                 board.doMove(next);
             }

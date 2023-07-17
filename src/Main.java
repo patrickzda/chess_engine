@@ -18,7 +18,7 @@ public class Main {
         //Negamax negamax = new Negamax();
         //System.out.println(negamax.getBestMoveTimed(new Board(), 1000, new MoveMasks()));
 
-        AiArena arena = new AiArena(100, 150, 50);
+        AiArena arena = new AiArena(100);
         arena.playAgainstBasicAlphaBeta();
     }
 

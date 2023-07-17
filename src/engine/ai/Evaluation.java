@@ -226,13 +226,11 @@ public class Evaluation {
         int[] outpostBonus = calculateOutpostBonus(board, masks);
         openingScore = openingScore + outpostBonus[0];
         endGameScore = endGameScore + outpostBonus[1];
-
-        //Testen
+        
         int[] kingMobilityBonus = calculateKingMobilityBonus(board, currentTeamMoves, enemyTeamMoves);
         openingScore = openingScore + kingMobilityBonus[0];
         endGameScore = endGameScore + kingMobilityBonus[1];
 
-        //Testen
         int whiteKingDistanceToCenter = getKingDistanceToCenter(board, WHITE), blackKingDistanceToCenter = getKingDistanceToCenter(board, BLACK);
         openingScore = openingScore + (whiteKingDistanceToCenter - blackKingDistanceToCenter) * EvaluationParams.MOVES_TO_CENTER_PENALTY_MID;
         endGameScore = endGameScore + (whiteKingDistanceToCenter - blackKingDistanceToCenter) * EvaluationParams.MOVES_TO_CENTER_PENALTY_END;
