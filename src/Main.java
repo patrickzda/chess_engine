@@ -26,7 +26,7 @@ public class Main {
 //        AiArena arena = new AiArena(100);
 //        arena.playAgainstBasicAlphaBeta();
 
-        monteCarloOpeningLibraryBuilder(100, 100000, 5);
+        monteCarloOpeningLibraryBuilder(1000, 10000, 5);
 
     }
 

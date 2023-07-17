@@ -22,12 +22,8 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="MoveGeneratorTest: Test für isAttacked()">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/opening_book.txt" beforeDir="false" afterPath="$PROJECT_DIR$/opening_book.txt" afterDir="false" />
+    <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="OpeningLibrary wird jetzt mit Monte Carlo gebaut">
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/engine/tools/MonteCarlo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/tools/MonteCarlo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/engine/tools/SearchTreeNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/tools/SearchTreeNode.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -287,7 +283,14 @@
       <option name="project" value="LOCAL" />
       <updated>1683106759143</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="OpeningLibrary wird jetzt mit Monte Carlo gebaut">
+      <created>1689621405613</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1689621405614</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -317,7 +320,8 @@
     <MESSAGE value="Movegenerator: Zugberechnung für das Rochieren angepasst, Zugberechnung für den Springer ist fertig, isAttacked() prüft, ob ein gegebenes Feld von einer gegebenen Farbe angegriffen wird (wichtig für Rochage + Legale Züge)&#10;Main: Random Code" />
     <MESSAGE value="Board: FEN-Strings besitzen nun die Farbe und die Rochade-Rechte&#10;Test-Dateien: Tests für das neue FEN-Format angepasst" />
     <MESSAGE value="MoveGeneratorTest: Test für isAttacked()" />
-    <option name="LAST_COMMIT_MESSAGE" value="MoveGeneratorTest: Test für isAttacked()" />
+    <MESSAGE value="OpeningLibrary wird jetzt mit Monte Carlo gebaut" />
+    <option name="LAST_COMMIT_MESSAGE" value="OpeningLibrary wird jetzt mit Monte Carlo gebaut" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
