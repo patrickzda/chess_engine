@@ -5,7 +5,9 @@ import engine.move_generation.MoveMasks;
 import engine.representation.Board;
 import engine.representation.Color;
 import engine.representation.Move;
-import engine.representation.PieceType;
+
+import java.util.Collections;
+import java.util.LinkedList;
 
 public class SearchTreeNode {
     private static final double c = Math.sqrt(2);
@@ -91,18 +93,24 @@ public class SearchTreeNode {
 
     }
 
-    public Move getMoveWithBestRatio() {
-        double bestRatio = -Double.MAX_VALUE;
-        Move bestMove = new Move(0, 0, PieceType.PAWN);
+    public LinkedList<Move> getMovesWithBestRatio(int amount) {
+        LinkedList<Move> bestMoves = new LinkedList<>();
 
+        double score;
+        Move move;
         for (SearchTreeNode child: children) {
-            if (child.getScore() / child.getVisits() > bestRatio) {
-                bestRatio = child.getScore() / child.getVisits();
-                bestMove = child.getMove();
+            score = child.getScore() / child.getVisits();
+            move = child.getMove();
+            move.evaluation = (int) (score * 1000000);
+            bestMoves.add(move);
+            Collections.sort(bestMoves);
+
+            if (bestMoves.size() > amount) {
+                bestMoves.remove(bestMoves.size() - 1);
             }
         }
 
-        return bestMove;
+        return bestMoves;
     }
 
     public boolean isExplored() {

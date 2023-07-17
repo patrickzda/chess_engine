@@ -1,3 +1,5 @@
+import engine.tools.MonteCarlo;
+import engine.tools.OpeningBookReader;
 import engine.tools.genetic_algorithm.EvolutionData;
 import engine.ai.AlphaBeta;
 import engine.ai.Negamax;
@@ -7,19 +9,58 @@ import engine.representation.*;
 import performance.*;
 import test.AlphaBetaTest;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         //playMove(args);
         //measureAverageTimeOnFENData(4);
         //performance();
         //Negamax negamax = new Negamax();
         //System.out.println(negamax.getBestMoveTimed(new Board(), 1000, new MoveMasks()));
 
-        AiArena arena = new AiArena(100);
-        arena.playAgainstBasicAlphaBeta();
+//        AiArena arena = new AiArena(100);
+//        arena.playAgainstBasicAlphaBeta();
+
+        monteCarloOpeningLibraryBuilder(100, 100000, 5);
+
+    }
+
+    static void monteCarloOpeningLibraryBuilder(int totalStates, int iterationsPerState, int movesPerIteration) throws IOException {
+        OpeningBookReader openingBookReader = new OpeningBookReader("opening_book.txt", true);
+
+        Queue<String> queue = new LinkedList<>();
+        queue.add("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+
+        String FEN;
+        Board b;
+        MonteCarlo MC;
+        LinkedList<Move> moves;
+
+        for (int i = 0; i < totalStates; i++) {
+            FEN = queue.remove();
+            b = new Board(FEN);
+            MC = new MonteCarlo(b);
+
+            System.out.println(b.toFENString());
+            moves = MC.getBestMoves(iterationsPerState, movesPerIteration);
+            b = new Board(FEN);
+            System.out.println(b.toFENString());
+            System.out.println();
+
+            openingBookReader.writeBestMove(b, moves.getFirst());
+
+            for (Move move: moves) {
+                b.doMove(move);
+                queue.add(b.toFENString());
+                b.undoLastMove();
+            }
+        }
+
     }
 
     static void measureAverageTimeOnFENData(int depth){

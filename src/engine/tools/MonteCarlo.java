@@ -4,9 +4,8 @@ import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
+import java.io.IOException;
+import java.util.*;
 
 public class MonteCarlo {
 
@@ -55,7 +54,13 @@ public class MonteCarlo {
         GameState gameState = board.getGameState(new MoveMasks());
 
         // so lange random Rollout machen, bis ein Spielende oder die maximale Suchtiefe erreicht ist
-        while ((gameState != GameState.DRAW && gameState != GameState.BLACK_WON && gameState != GameState.WHITE_WON) || currentDepth < limit) {
+        while (gameState != GameState.DRAW && gameState != GameState.BLACK_WON && gameState != GameState.WHITE_WON && currentDepth < limit) {
+            if (legalMoves.length < 1) {
+                System.out.println(originalFEN);
+                System.out.println(board.toFENString());
+                System.out.println(Arrays.toString(board.moves.toArray()));
+
+            }
             Move randomMove = legalMoves[new Random().nextInt(legalMoves.length)];
 
             board.doMove(randomMove);
@@ -110,11 +115,25 @@ public class MonteCarlo {
 
         for (int i = 0; i < root.getChildren().length; i++) {
             SearchTreeNode child = root.getChildren()[i];
-            System.out.println(i + ": Move: " + child.getMove() + ", Score: " + child.getScore() + ", Ratio: " + child.getScore() / child.getVisits());
+            //System.out.println(i + ": Move: " + child.getMove() + ", Score: " + child.getScore() + ", Ratio: " + child.getScore() / child.getVisits());
         }
 
+        return root.getMovesWithBestRatio(1).getFirst();
+    }
 
-        return root.getMoveWithBestRatio();
+    public LinkedList<Move> getBestMoves(int iterations, int amount) {
+        for (int i = 0; i < iterations; i++) {
+            totalSimulations++;
+            this.exploreNextMove();
+        }
+
+        for (int i = 0; i < root.getChildren().length; i++) {
+            SearchTreeNode child = root.getChildren()[i];
+            //System.out.println(i + ": Move: " + child.getMove() + ", Score: " + child.getScore() + ", Ratio: " + child.getScore() / child.getVisits());
+        }
+
+        board = new Board(originalFEN);
+        return root.getMovesWithBestRatio(amount);
     }
 
     public void printTree() {
