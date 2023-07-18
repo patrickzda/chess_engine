@@ -13,7 +13,7 @@ public class SearchTreeNode {
     private static final double c = Math.sqrt(2);
     private final Move move;
     private final SearchTreeNode parent;
-    private SearchTreeNode[] children;
+    private LinkedList<SearchTreeNode> children;
     private double visits = 0;
     private int score = 0;
 
@@ -53,10 +53,10 @@ public class SearchTreeNode {
 
     private void generateChildren(Board board) {
         Move[] moves = MoveGenerator.generateLegalMoves(board, new MoveMasks());
-        children = new SearchTreeNode[moves.length];
+        children = new LinkedList<>();
 
         for (int i = 0; i < moves.length; i++) {
-            children[i] = new SearchTreeNode(moves[i], this, color == Color.BLACK ? Color.WHITE : Color.BLACK);
+            children.add(new SearchTreeNode(moves[i], this, color == Color.BLACK ? Color.WHITE : Color.BLACK));
         }
     }
 
@@ -64,34 +64,79 @@ public class SearchTreeNode {
         // wenn die Children noch nicht generiert wurden, tu das und returne den ersten
         if (children == null) {
             this.generateChildren(board);
-            return children[0];
+
+            // wenn keine Children generiert werden konnten, dann Fehler zurückgeben
+            if (children.size() == 0) {
+                return null;
+            }
+
+            return children.get(0);
         }
 
         // dann checken, ob noch unerkundete Children existieren
-        for (SearchTreeNode child : children) {
+        for (SearchTreeNode child: children) {
             if (!child.isExplored()) {
                 return child;
             }
         }
 
-        // Ansonsten den mit dem höchsten UCB Score nehmen
-        int highestUCBIndex = 0;
-        double highestUCB = 0;
-        for (int i = 0; i < children.length; i++) {
-            double UCB = children[i].calculateUCB(totalSimulations);
-            if (UCB > highestUCB) {
-                highestUCB = UCB;
-                highestUCBIndex = i;
-            }
-        }
+        // Ansonsten den mit dem höchsten UCB Score nehmen, wenn von ihm auch ein Child gefunden werden kann
 
-        board.doMove(children[highestUCBIndex].getMove());
-        SearchTreeNode result = children[highestUCBIndex].getNextChild(board, totalSimulations);
-        board.undoLastMove();
+        SearchTreeNode result = null;
+        while (result == null) {
+            int highestUCBIndex = 0;
+            double highestUCB = -Double.MAX_VALUE;
+            for (int i = 0; i < children.size(); i++) {
+                double UCB = children.get(i).calculateUCB(totalSimulations);
+                if (UCB > highestUCB) {
+                    highestUCB = UCB;
+                    highestUCBIndex = i;
+                }
+            }
+
+            board.doMove(children.get(highestUCBIndex).getMove());
+            result = children.get(highestUCBIndex).getNextChild(board, totalSimulations);
+            if (result == null) {
+                children.remove(highestUCBIndex);
+            }
+            board.undoLastMove();
+        }
 
         return result;
 
     }
+//public SearchTreeNode getNextChild(Board board, int totalSimulations) {
+//        // wenn die Children noch nicht generiert wurden, tu das und returne den ersten
+//        if (children == null) {
+//            this.generateChildren(board);
+//            return children[0];
+//        }
+//
+//        // dann checken, ob noch unerkundete Children existieren
+//        for (SearchTreeNode child : children) {
+//            if (!child.isExplored()) {
+//                return child;
+//            }
+//        }
+//
+//        // Ansonsten den mit dem höchsten UCB Score nehmen
+//        int highestUCBIndex = 0;
+//        double highestUCB = 0;
+//        for (int i = 0; i < children.length; i++) {
+//            double UCB = children[i].calculateUCB(totalSimulations);
+//            if (UCB > highestUCB) {
+//                highestUCB = UCB;
+//                highestUCBIndex = i;
+//            }
+//        }
+//
+//        board.doMove(children[highestUCBIndex].getMove());
+//        SearchTreeNode result = children[highestUCBIndex].getNextChild(board, totalSimulations);
+//        board.undoLastMove();
+//
+//        return result;
+//
+//    }
 
     public LinkedList<Move> getMovesWithBestRatio(int amount) {
         LinkedList<Move> bestMoves = new LinkedList<>();
@@ -118,7 +163,9 @@ public class SearchTreeNode {
     }
 
     public SearchTreeNode[] getChildren() {
-        return children;
+        SearchTreeNode array[] = new SearchTreeNode[children.size()];
+        children.toArray(array);
+        return array;
     }
 
     @Override
@@ -133,9 +180,9 @@ public class SearchTreeNode {
         buffer.append(move + ": " + score);
         buffer.append('\n');
         if (children != null) {
-            for (int i = 0; i < children.length; i++) {
-                SearchTreeNode next = children[i];
-                if (i < children.length - 1) {
+            for (int i = 0; i < children.size(); i++) {
+                SearchTreeNode next = children.get(i);
+                if (i < children.size() - 1) {
                     next.print(buffer, childrenPrefix + "├── ", childrenPrefix + "│   ");
                 } else {
                     next.print(buffer, childrenPrefix + "└── ", childrenPrefix + "    ");

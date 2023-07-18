@@ -22,8 +22,11 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="OpeningLibrary wird jetzt mit Monte Carlo gebaut">
+    <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="Eine Opening Library wurde gebaut mit 10000 MonteCarlo Iterationen pro Boardzustand">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/opening_book.txt" beforeDir="false" afterPath="$PROJECT_DIR$/opening_book.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/engine/tools/SearchTreeNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/tools/SearchTreeNode.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -290,7 +293,14 @@
       <option name="project" value="LOCAL" />
       <updated>1689621405614</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Eine Opening Library wurde gebaut mit 10000 MonteCarlo Iterationen pro Boardzustand">
+      <created>1689621955892</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1689621955892</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -321,7 +331,8 @@
     <MESSAGE value="Board: FEN-Strings besitzen nun die Farbe und die Rochade-Rechte&#10;Test-Dateien: Tests für das neue FEN-Format angepasst" />
     <MESSAGE value="MoveGeneratorTest: Test für isAttacked()" />
     <MESSAGE value="OpeningLibrary wird jetzt mit Monte Carlo gebaut" />
-    <option name="LAST_COMMIT_MESSAGE" value="OpeningLibrary wird jetzt mit Monte Carlo gebaut" />
+    <MESSAGE value="Eine Opening Library wurde gebaut mit 10000 MonteCarlo Iterationen pro Boardzustand" />
+    <option name="LAST_COMMIT_MESSAGE" value="Eine Opening Library wurde gebaut mit 10000 MonteCarlo Iterationen pro Boardzustand" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
