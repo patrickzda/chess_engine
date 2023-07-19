@@ -6,6 +6,7 @@ import engine.move_generation.MoveMasks;
 import engine.representation.Board;
 import engine.representation.Move;
 import engine.tools.genetic_algorithm.Chromosome;
+import engine.tools.genetic_algorithm.EvolutionData;
 import org.junit.jupiter.api.Test;
 import performance.AiArena;
 
@@ -517,7 +518,7 @@ class ChromosomeTest {
 
     @Test
     void evaluate() {
-        Chromosome chromosome = new Chromosome();
+        Chromosome chromosome = new Chromosome(new EvolutionData());
         MoveMasks masks = new MoveMasks();
 
         for(int i = 0; i < FEN_DATA.length; i++){

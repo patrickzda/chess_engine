@@ -1,5 +1,6 @@
 package engine.tools.genetic_algorithm;
 
+import engine.ai.Negamax;
 import engine.move_generation.MoveGenerator;
 import engine.move_generation.MoveMasks;
 import engine.representation.*;
@@ -7,18 +8,21 @@ import engine.tools.EvaluationParams;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static engine.ai.Evaluation.getGamePhase;
 import static engine.ai.Evaluation.getSetBits;
 import static engine.representation.Color.BLACK;
 import static engine.representation.Color.WHITE;
 
-public class Chromosome {
-    private static final double CROSSOVER_RATE = 0.25;
-    private static final double MUTATION_RATE = 0.007;
+public class Chromosome implements Comparable<Chromosome>{
     private static final int CHECKMATE_BONUS = 60000 + 10 * 930, KING_VALUE = 60000;
     private static final long NOT_A_FILE = -72340172838076674L, NOT_H_FILE = 9187201950435737471L;
+    private static final int TOP_MOVES_PICK_COUNT = 3;
+    private static final double INITIAL_MUTATION_FACTOR = 0.1;
+    private static final int FITNESS_EVALUATION_DEPTH = 2;
 
     /*
     Struktur von params:
@@ -88,9 +92,13 @@ public class Chromosome {
     ATTACKED_BY_ROOK_MID                942
     ATTACKED_BY_ROOK_END                947
     */
-    private Integer[] parameters;
+    public Integer[] parameters;
+    private double fitness = 0;
+    private final EvolutionData data;
 
-    public Chromosome(){
+    public Chromosome(EvolutionData data){
+        this.data = data;
+
         ArrayList<Integer> parameterList = new ArrayList<Integer>(952);
         parameters = new Integer[952];
 
@@ -160,6 +168,160 @@ public class Chromosome {
         parameterList.addAll(Arrays.stream(Arrays.copyOf(EvaluationParams.ATTACKED_BY_ROOK_END, EvaluationParams.ATTACKED_BY_ROOK_END.length)).boxed().toList());
 
         parameterList.toArray(parameters);
+        Random random = new Random();
+
+        for(int i = 0; i < parameters.length; i++){
+            if(random.nextBoolean()){
+                if(random.nextBoolean()){
+                    parameters[i] = parameters[i] + (int) (parameters[i] * INITIAL_MUTATION_FACTOR);
+                }else{
+                    parameters[i] = parameters[i] - (int) (parameters[i] * INITIAL_MUTATION_FACTOR);
+                }
+            }
+        }
+    }
+
+    public Chromosome(EvolutionData data, Integer[] parameters){
+        this.data = data;
+        this.parameters = parameters;
+    }
+
+    public void calculateFitnessStatic(){
+        MoveMasks masks = new MoveMasks();
+        fitness = 0;
+
+        for(int i = 0; i < data.fens.size(); i++){
+            Board board = new Board(data.fens.get(i));
+            Move[] sortedMoves = evaluateMovesStatic(board, masks);
+            for(int j = 0; j < sortedMoves.length; j++){
+                if(j == TOP_MOVES_PICK_COUNT){
+                    break;
+                }else if(equalMoves(data.moves.get(i), sortedMoves[j])){
+                    fitness = fitness + 1;
+                }
+            }
+        }
+
+        fitness = fitness / data.fens.size();
+    }
+
+    private Move[] evaluateMovesStatic(Board board, MoveMasks masks){
+        Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
+        for(int i = 0; i < moves.length; i++){
+            board.doMove(moves[i]);
+            moves[i].evaluation = evaluate(board, masks, MoveGenerator.generateLegalMoves(board, masks));
+            board.undoLastMove();
+        }
+
+        Arrays.sort(moves);
+        return moves;
+    }
+
+    public void calculateFitnessNegamax(){
+        MoveMasks masks = new MoveMasks();
+        fitness = 0;
+
+        for(int i = 0; i < data.fens.size(); i++){
+            Board board = new Board(data.fens.get(i));
+            Move[] sortedMoves = evaluateMovesNegamax(board, masks);
+            for(int j = 0; j < sortedMoves.length; j++){
+                if(j == TOP_MOVES_PICK_COUNT){
+                    break;
+                }else if(equalMoves(data.moves.get(i), sortedMoves[j])){
+                    fitness = fitness + 1;
+                }
+            }
+        }
+
+        fitness = fitness / data.fens.size();
+    }
+
+    private Move[] evaluateMovesNegamax(Board board, MoveMasks masks){
+        Move[] moves = MoveGenerator.generateLegalMoves(board, masks);
+        GeneticNegamax geneticNegamax = new GeneticNegamax(this);
+        return geneticNegamax.getSortedMoves(board, FITNESS_EVALUATION_DEPTH, masks);
+    }
+
+    public double getFitness() {
+        return fitness;
+    }
+
+    private boolean equalMoves(Move first, Move second){
+        return first.getStartFieldIndex() == second.getStartFieldIndex() && first.getEndFieldIndex() == second.getEndFieldIndex() && first.getPieceType() == second.getPieceType();
+    }
+
+    public void printParams(){
+        System.out.println("public static final int PAWN_VALUE_MID = " + parameters[0] + ";");
+        System.out.println("public static final int KNIGHT_VALUE_MID = " + parameters[1] + ";");
+        System.out.println("public static final int BISHOP_VALUE_MID = " + parameters[2] + ";");
+        System.out.println("public static final int ROOK_VALUE_MID = " + parameters[3] + ";");
+        System.out.println("public static final int QUEEN_VALUE_MID = " + parameters[4] + ";");
+        System.out.println("public static final int PAWN_VALUE_END = " + parameters[5] + ";");
+        System.out.println("public static final int KNIGHT_VALUE_END = " + parameters[6] + ";");
+        System.out.println("public static final int BISHOP_VALUE_END = " + parameters[7] + ";");
+        System.out.println("public static final int ROOK_VALUE_END = " + parameters[8] + ";");
+        System.out.println("public static final int QUEEN_VALUE_END = " + parameters[9] + ";");
+
+        System.out.println("public static final int[] PAWN_PST_MID = new int[]{" + createSubArray(10, 74) + "};");
+        System.out.println("public static final int[] PAWN_PST_END = new int[]{" + createSubArray(74, 138) + "};");
+        System.out.println("public static final int[] KNIGHT_PST_MID = new int[]{" + createSubArray(138, 202) + "};");
+        System.out.println("public static final int[] KNIGHT_PST_END = new int[]{" + createSubArray(202, 266) + "};");
+        System.out.println("public static final int[] BISHOP_PST_MID = new int[]{" + createSubArray(266, 330) + "};");
+        System.out.println("public static final int[] BISHOP_PST_END = new int[]{" + createSubArray(330, 394) + "};");
+        System.out.println("public static final int[] ROOK_PST_MID = new int[]{" + createSubArray(394, 458) + "};");
+        System.out.println("public static final int[] ROOK_PST_END = new int[]{" + createSubArray(458, 522) + "};");
+        System.out.println("public static final int[] QUEEN_PST_MID = new int[]{" + createSubArray(522, 586) + "};");
+        System.out.println("public static final int[] QUEEN_PST_END = new int[]{" + createSubArray(586, 650) + "};");
+        System.out.println("public static final int[] KING_PST_MID = new int[]{" + createSubArray(650, 714) + "};");
+        System.out.println("public static final int[] KING_PST_END = new int[]{" + createSubArray(714, 778) + "};");
+
+        System.out.println("public static final int[] KNIGHT_MOBILITY_BONUS_MID = new int[]{" + createSubArray(778, 787) + "};");
+        System.out.println("public static final int[] KNIGHT_MOBILITY_BONUS_END = new int[]{" + createSubArray(787, 796) + "};");
+        System.out.println("public static final int[] BISHOP_MOBILITY_BONUS_MID = new int[]{" + createSubArray(796, 810) + "};");
+        System.out.println("public static final int[] BISHOP_MOBILITY_BONUS_END = new int[]{" + createSubArray(810, 824) + "};");
+        System.out.println("public static final int[] ROOK_MOBILITY_BONUS_MID = new int[]{" + createSubArray(824, 839) + "};");
+        System.out.println("public static final int[] ROOK_MOBILITY_BONUS_END = new int[]{" + createSubArray(839, 854) + "};");
+        System.out.println("public static final int[] QUEEN_MOBILITY_BONUS_MID = new int[]{" + createSubArray(854, 882) + "};");
+        System.out.println("public static final int[] QUEEN_MOBILITY_BONUS_END = new int[]{" + createSubArray(882, 910) + "};");
+
+        System.out.println("public static final int ISOLATED_PAWN_PENALTY_MID = " + parameters[910] + ";");
+        System.out.println("public static final int ISOLATED_PAWN_PENALTY_END = " + parameters[911] + ";");
+        System.out.println("public static final int DOUBLED_PAWN_PENALTY_MID = " + parameters[912] + ";");
+        System.out.println("public static final int DOUBLED_PAWN_PENALTY_END = " + parameters[913] + ";");
+        System.out.println("public static final int BLOCKED_PAWN_PENALTY_MID = " + parameters[914] + ";");
+        System.out.println("public static final int BLOCKED_PAWN_PENALTY_END = " + parameters[915] + ";");
+
+        System.out.println("public static final int KNIGHT_OUTPOST_BONUS_MID = " + parameters[916] + ";");
+        System.out.println("public static final int KNIGHT_OUTPOST_BONUS_END = " + parameters[917] + ";");
+        System.out.println("public static final int BISHOP_OUTPOST_BONUS_MID = " + parameters[918] + ";");
+        System.out.println("public static final int BISHOP_OUTPOST_BONUS_END = " + parameters[919] + ";");
+
+        System.out.println("public static final int BISHOP_PAIR_BONUS_MID = " + parameters[920] + ";");
+        System.out.println("public static final int BISHOP_PAIR_BONUS_END = " + parameters[921] + ";");
+
+        System.out.println("public static final int KING_MOBILITY_BONUS_MID = " + parameters[922] + ";");
+        System.out.println("public static final int KING_MOBILITY_BONUS_END = " + parameters[923] + ";");
+        System.out.println("public static final int MOVES_TO_CENTER_PENALTY_MID = " + parameters[924] + ";");
+        System.out.println("public static final int MOVES_TO_CENTER_PENALTY_END = " + parameters[925] + ";");
+
+        System.out.println("public static final int ROOK_ON_CLOSED_FILE_BONUS_MID = " + parameters[926] + ";");
+        System.out.println("public static final int ROOK_ON_CLOSED_FILE_BONUS_END = " + parameters[927] + ";");
+        System.out.println("public static final int ROOK_ON_SEMI_OPEN_FILE_BONUS_MID = " + parameters[928] + ";");
+        System.out.println("public static final int ROOK_ON_SEMI_OPEN_FILE_BONUS_END = " + parameters[929] + ";");
+        System.out.println("public static final int ROOK_ON_OPEN_FILE_BONUS_MID = " + parameters[930] + ";");
+        System.out.println("public static final int ROOK_ON_OPEN_FILE_BONUS_END = " + parameters[931] + ";");
+
+        System.out.println("public static final int[] ATTACKED_BY_KNIGHT_OR_BISHOP_MID = new int[]{" + createSubArray(932, 937) + "};");
+        System.out.println("public static final int[] ATTACKED_BY_KNIGHT_OR_BISHOP_END = new int[]{" + createSubArray(937, 942) + "};");
+        System.out.println("public static final int[] ATTACKED_BY_ROOK_MID = new int[]{" + createSubArray(942, 947) + "};");
+        System.out.println("public static final int[] ATTACKED_BY_ROOK_END = new int[]{" + createSubArray(947, 952) + "};");
+
+        System.out.println("\n" + Arrays.toString(parameters) + "\n");
+    }
+
+    private String createSubArray(int startIndex, int endIndex){
+        String result = Arrays.toString(IntStream.range(startIndex, endIndex).map(i -> parameters[i]).toArray());
+        return result.substring(1, result.length() - 1);
     }
 
     public int evaluate(Board board, MoveMasks masks, Move[] currentTeamMoves){
@@ -797,6 +959,15 @@ public class Chromosome {
         }
 
         return isolatedPawns;
+    }
+
+    public Chromosome copy(){
+        return new Chromosome(data, parameters);
+    }
+
+    @Override
+    public int compareTo(Chromosome other) {
+        return -Double.compare(fitness, other.getFitness());
     }
 
 }
