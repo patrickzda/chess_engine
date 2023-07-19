@@ -226,14 +226,36 @@ public class Evaluation {
         int[] outpostBonus = calculateOutpostBonus(board, masks);
         openingScore = openingScore + outpostBonus[0];
         endGameScore = endGameScore + outpostBonus[1];
-        
+
+        //Boni für Königsmobilität
         int[] kingMobilityBonus = calculateKingMobilityBonus(board, currentTeamMoves, enemyTeamMoves);
         openingScore = openingScore + kingMobilityBonus[0];
         endGameScore = endGameScore + kingMobilityBonus[1];
 
+        //Boni, wenn der König in der Nähe des Zentrums ist
         int whiteKingDistanceToCenter = getKingDistanceToCenter(board, WHITE), blackKingDistanceToCenter = getKingDistanceToCenter(board, BLACK);
         openingScore = openingScore + (whiteKingDistanceToCenter - blackKingDistanceToCenter) * EvaluationParams.MOVES_TO_CENTER_PENALTY_MID;
         endGameScore = endGameScore + (whiteKingDistanceToCenter - blackKingDistanceToCenter) * EvaluationParams.MOVES_TO_CENTER_PENALTY_END;
+
+        //Boni für Türme auf offenen Linien
+        int[] whiteRooksOnOpenFiles = getRookOnOpenFilesCount(board, masks, WHITE), blackRooksOnOpenFiles = getRookOnOpenFilesCount(board, masks, BLACK);
+        openingScore = openingScore + (whiteRooksOnOpenFiles[0] - blackRooksOnOpenFiles[0]) * EvaluationParams.ROOK_ON_OPEN_FILE_BONUS_MID;
+        openingScore = openingScore + (whiteRooksOnOpenFiles[1] - blackRooksOnOpenFiles[1]) * EvaluationParams.ROOK_ON_SEMI_OPEN_FILE_BONUS_MID;
+        openingScore = openingScore + (whiteRooksOnOpenFiles[2] - blackRooksOnOpenFiles[2]) * EvaluationParams.ROOK_ON_CLOSED_FILE_BONUS_MID;
+        endGameScore = endGameScore + (whiteRooksOnOpenFiles[0] - blackRooksOnOpenFiles[0]) * EvaluationParams.ROOK_ON_OPEN_FILE_BONUS_END;
+        endGameScore = endGameScore + (whiteRooksOnOpenFiles[1] - blackRooksOnOpenFiles[1]) * EvaluationParams.ROOK_ON_SEMI_OPEN_FILE_BONUS_END;
+        endGameScore = endGameScore + (whiteRooksOnOpenFiles[2] - blackRooksOnOpenFiles[2]) * EvaluationParams.ROOK_ON_CLOSED_FILE_BONUS_END;
+
+        //Boni für angegriffene Figuren
+        if(board.getTurn() == WHITE){
+            int[] attackedPieceBonus = calculateAttackedPieceBonus(board, currentTeamMoves, enemyTeamMoves);
+            openingScore = openingScore + attackedPieceBonus[0];
+            endGameScore = endGameScore + attackedPieceBonus[1];
+        }else{
+            int[] attackedPieceBonus = calculateAttackedPieceBonus(board, enemyTeamMoves, currentTeamMoves);
+            openingScore = openingScore + attackedPieceBonus[0];
+            endGameScore = endGameScore + attackedPieceBonus[1];
+        }
 
         openingScore = openingScore + materialScoreMid;
         endGameScore = endGameScore + materialScoreEnd;
@@ -277,6 +299,152 @@ public class Evaluation {
         }
 
         Arrays.sort(moves);
+    }
+
+    public static int[] calculateAttackedPieceBonus(Board board, Move[] whiteMoves, Move[] blackMoves){
+        int openingScore = 0, endGameScore = 0;
+
+        for(int i = 0; i < whiteMoves.length; i++){
+            long endFieldMask = 1L << whiteMoves[i].getEndFieldIndex();
+            PieceType pieceType = whiteMoves[i].getPieceType();
+            if((pieceType == PieceType.KNIGHT || pieceType == PieceType.BISHOP || pieceType == PieceType.ROOK) && ((endFieldMask & board.blackPieces) != 0L)){
+                if(pieceType == PieceType.ROOK){
+                    if((endFieldMask & board.knights) != 0){
+                        if(((1L << (whiteMoves[i].getEndFieldIndex() + 7)) & board.blackPieces & board.pawns & NOT_H_FILE) != 0L){
+                            continue;
+                        }
+                        if(((1L << (whiteMoves[i].getEndFieldIndex() + 9)) & board.blackPieces & board.pawns & NOT_A_FILE) != 0L){
+                            continue;
+                        }
+                        openingScore = openingScore + EvaluationParams.ATTACKED_BY_ROOK_MID[0];
+                        endGameScore = endGameScore + EvaluationParams.ATTACKED_BY_ROOK_END[0];
+                    }else if((endFieldMask & board.bishops) != 0){
+                        if(((1L << (whiteMoves[i].getEndFieldIndex() + 7)) & board.blackPieces & board.pawns & NOT_H_FILE) != 0L){
+                            continue;
+                        }
+                        if(((1L << (whiteMoves[i].getEndFieldIndex() + 9)) & board.blackPieces & board.pawns & NOT_A_FILE) != 0L){
+                            continue;
+                        }
+                        openingScore = openingScore + EvaluationParams.ATTACKED_BY_ROOK_MID[1];
+                        endGameScore = endGameScore + EvaluationParams.ATTACKED_BY_ROOK_END[1];
+                    }else if((endFieldMask & board.rooks) != 0){
+                        openingScore = openingScore + EvaluationParams.ATTACKED_BY_ROOK_MID[2];
+                        endGameScore = endGameScore + EvaluationParams.ATTACKED_BY_ROOK_END[2];
+                    }else if((endFieldMask & board.queens) != 0){
+                        openingScore = openingScore + EvaluationParams.ATTACKED_BY_ROOK_MID[3];
+                        endGameScore = endGameScore + EvaluationParams.ATTACKED_BY_ROOK_END[3];
+                    }else if((endFieldMask & board.kings) != 0){
+                        openingScore = openingScore + EvaluationParams.ATTACKED_BY_ROOK_MID[4];
+                        endGameScore = endGameScore + EvaluationParams.ATTACKED_BY_ROOK_END[4];
+                    }
+                }else{
+                    if((endFieldMask & board.knights) != 0){
+                        openingScore = openingScore + EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_MID[0];
+                        endGameScore = endGameScore + EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_END[0];
+                    }else if((endFieldMask & board.bishops) != 0){
+                        openingScore = openingScore + EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_MID[1];
+                        endGameScore = endGameScore + EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_END[1];
+                    }else if((endFieldMask & board.rooks) != 0){
+                        openingScore = openingScore + EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_MID[2];
+                        endGameScore = endGameScore + EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_END[2];
+                    }else if((endFieldMask & board.queens) != 0){
+                        openingScore = openingScore + EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_MID[3];
+                        endGameScore = endGameScore + EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_END[3];
+                    }else if((endFieldMask & board.kings) != 0){
+                        openingScore = openingScore + EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_MID[4];
+                        endGameScore = endGameScore + EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_END[4];
+                    }
+                }
+            }
+        }
+
+        for(int i = 0; i < blackMoves.length; i++){
+            long endFieldMask = 1L << blackMoves[i].getEndFieldIndex();
+            PieceType pieceType = blackMoves[i].getPieceType();
+            if((pieceType == PieceType.KNIGHT || pieceType == PieceType.BISHOP || pieceType == PieceType.ROOK) && ((endFieldMask & board.whitePieces) != 0L)){
+                if(pieceType == PieceType.ROOK){
+                    if((endFieldMask & board.knights) != 0){
+                        if(((1L << (blackMoves[i].getEndFieldIndex() - 7)) & board.whitePieces & board.pawns & NOT_A_FILE) != 0L){
+                            continue;
+                        }
+                        if(((1L << (blackMoves[i].getEndFieldIndex() - 9)) & board.whitePieces & board.pawns & NOT_H_FILE) != 0L){
+                            continue;
+                        }
+                        openingScore = openingScore - EvaluationParams.ATTACKED_BY_ROOK_MID[0];
+                        endGameScore = endGameScore - EvaluationParams.ATTACKED_BY_ROOK_END[0];
+                    }else if((endFieldMask & board.bishops) != 0){
+                        if(((1L << (blackMoves[i].getEndFieldIndex() - 7)) & board.whitePieces & board.pawns & NOT_A_FILE) != 0L){
+                            continue;
+                        }
+                        if(((1L << (blackMoves[i].getEndFieldIndex() - 9)) & board.whitePieces & board.pawns & NOT_H_FILE) != 0L){
+                            continue;
+                        }
+                        openingScore = openingScore - EvaluationParams.ATTACKED_BY_ROOK_MID[1];
+                        endGameScore = endGameScore - EvaluationParams.ATTACKED_BY_ROOK_END[1];
+                    }else if((endFieldMask & board.rooks) != 0){
+                        openingScore = openingScore - EvaluationParams.ATTACKED_BY_ROOK_MID[2];
+                        endGameScore = endGameScore - EvaluationParams.ATTACKED_BY_ROOK_END[2];
+                    }else if((endFieldMask & board.queens) != 0){
+                        openingScore = openingScore - EvaluationParams.ATTACKED_BY_ROOK_MID[3];
+                        endGameScore = endGameScore - EvaluationParams.ATTACKED_BY_ROOK_END[3];
+                    }else if((endFieldMask & board.kings) != 0){
+                        openingScore = openingScore - EvaluationParams.ATTACKED_BY_ROOK_MID[4];
+                        endGameScore = endGameScore - EvaluationParams.ATTACKED_BY_ROOK_END[4];
+                    }
+                }else{
+                    if((endFieldMask & board.knights) != 0){
+                        openingScore = openingScore - EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_MID[0];
+                        endGameScore = endGameScore - EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_END[0];
+                    }else if((endFieldMask & board.bishops) != 0){
+                        openingScore = openingScore - EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_MID[1];
+                        endGameScore = endGameScore - EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_END[1];
+                    }else if((endFieldMask & board.rooks) != 0){
+                        openingScore = openingScore - EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_MID[2];
+                        endGameScore = endGameScore - EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_END[2];
+                    }else if((endFieldMask & board.queens) != 0){
+                        openingScore = openingScore - EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_MID[3];
+                        endGameScore = endGameScore - EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_END[3];
+                    }else if((endFieldMask & board.kings) != 0){
+                        openingScore = openingScore - EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_MID[4];
+                        endGameScore = endGameScore - EvaluationParams.ATTACKED_BY_KNIGHT_OR_BISHOP_END[4];
+                    }
+                }
+            }
+        }
+
+        return new int[]{openingScore, endGameScore};
+    }
+
+    public static int[] getRookOnOpenFilesCount(Board board, MoveMasks masks, Color color){
+        long rooks;
+        long enemyPawns, ownPawns;
+        int openFilesCount = 0, semiOpenFilesCount = 0, closedFilesCount = 0;
+
+        if(color == WHITE){
+            rooks = board.whitePieces & board.rooks;
+            ownPawns = board.whitePieces & board.pawns;
+            enemyPawns = board.blackPieces & board.pawns;
+        }else{
+            rooks = board.blackPieces & board.rooks;
+            ownPawns = board.blackPieces & board.pawns;
+            enemyPawns = board.whitePieces & board.pawns;
+        }
+
+        for(int i = 0; i < 64; i++){
+            if((rooks & (1L << i)) != 0){
+                if(((masks.rays(Direction.NORTH, i) | masks.rays(Direction.SOUTH, i)) & ownPawns) == 0L){
+                    if(((masks.rays(Direction.NORTH, i) | masks.rays(Direction.SOUTH, i)) & enemyPawns) == 0L){
+                        openFilesCount++;
+                    }else{
+                        semiOpenFilesCount++;
+                    }
+                }else{
+                    closedFilesCount++;
+                }
+            }
+        }
+
+        return new int[]{openFilesCount, semiOpenFilesCount, closedFilesCount};
     }
 
     private static int getKingDistanceToCenter(Board board, Color color){

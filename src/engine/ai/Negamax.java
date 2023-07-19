@@ -237,7 +237,7 @@ public class Negamax {
             currentSearchDepth++;
         }
 
-        //System.out.println("REACHED DEPTH " + currentSearchDepth + " in " + (System.nanoTime() - (endTime - timeInMilliseconds * 1000000L)) / 1000000L + " ms");
+        //System.out.println("REACHED DEPTH " + (currentSearchDepth - 1) + " in " + (System.nanoTime() - (endTime - timeInMilliseconds * 1000000L)) / 1000000L + " ms");
 
         return bestMove;
     }

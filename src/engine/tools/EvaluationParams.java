@@ -178,6 +178,18 @@ public class EvaluationParams {
     public static final int MOVES_TO_CENTER_PENALTY_MID = 1;
     public static final int MOVES_TO_CENTER_PENALTY_END = -100;
 
+    public static final int ROOK_ON_CLOSED_FILE_BONUS_MID = 10;
+    public static final int ROOK_ON_CLOSED_FILE_BONUS_END = 5;
+    public static final int ROOK_ON_SEMI_OPEN_FILE_BONUS_MID = 18;
+    public static final int ROOK_ON_SEMI_OPEN_FILE_BONUS_END = 8;
+    public static final int ROOK_ON_OPEN_FILE_BONUS_MID = 49;
+    public static final int ROOK_ON_OPEN_FILE_BONUS_END = 26;
+
+    public static final int[] ATTACKED_BY_KNIGHT_OR_BISHOP_MID = new int[]{6, 64, 82, 103, 81};
+    public static final int[] ATTACKED_BY_KNIGHT_OR_BISHOP_END = new int[]{37, 50, 57, 130, 163};
+    public static final int[] ATTACKED_BY_ROOK_MID = new int[]{3, 36, 44, 0, 60};
+    public static final int[] ATTACKED_BY_ROOK_END = new int[]{44, 71, 59, 39, 39};
+
     public static int getMirroredIndex(int index){
         int mirroredRank = 7 - (index / 8);
         int file = index % 8;
