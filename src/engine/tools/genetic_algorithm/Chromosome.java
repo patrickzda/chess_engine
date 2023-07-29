@@ -21,7 +21,7 @@ public class Chromosome implements Comparable<Chromosome>{
     private static final int CHECKMATE_BONUS = 60000 + 10 * 930, KING_VALUE = 60000;
     private static final long NOT_A_FILE = -72340172838076674L, NOT_H_FILE = 9187201950435737471L;
     private static final int TOP_MOVES_PICK_COUNT = 3;
-    private static final double INITIAL_MUTATION_FACTOR = 0.1;
+    private static final double INITIAL_MUTATION_FACTOR = 0.3;
     private static final int FITNESS_EVALUATION_DEPTH = 2;
 
     /*

@@ -612,6 +612,84 @@ public class AiArena {
         System.out.printf("\n");
     }
 
+    public void playAgainstBasicAlphaBeta(Chromosome chromosome){
+        MoveMasks masks = new MoveMasks();
+        GeneticNegamax negamax = new GeneticNegamax(chromosome);
+        int wonByNewAi = 0, draws = 0;
+
+        for(int i = 0; i < totalPositions; i++){
+            Board board = new Board(FEN_DATA[i]);
+            while(!board.isGameLost(masks, MoveGenerator.generateLegalMoves(board, masks).length) && board.moves.size() < movesToDraw){
+                Move next;
+                if(board.getTurn() == Color.WHITE){
+                    next = negamax.getBestMoveTimed(board, millisPerMove, masks);
+                }else{
+                    next = AlphaBetaTest.getBestMoveTimed(board, millisPerMove, masks);
+                }
+                if(next == null){
+                    System.out.println("Fehler in der ersten Schleife!");
+                    System.out.println("Bei Position " + i + " gab es einen Null-Zug");
+                    System.out.println(board.toFENString());
+                    System.out.println(board.getTurn());
+                    break;
+                }
+                board.doMove(next);
+            }
+
+            if(board.isGameLost(masks, MoveGenerator.generateLegalMoves(board, masks).length) && board.getTurn() == Color.BLACK){
+                wonByNewAi++;
+            }else if(board.moves.size() == movesToDraw){
+                draws++;
+            }
+            negamax.clearTable();
+            System.out.println("NEXT GAME");
+        }
+
+        for(int i = 0; i < totalPositions; i++){
+            Board board = new Board(FEN_DATA[i]);
+            while(!board.isGameLost(masks, MoveGenerator.generateLegalMoves(board, masks).length) && board.moves.size() < movesToDraw){
+                Move next;
+                if(board.getTurn() == Color.BLACK){
+                    next = negamax.getBestMoveTimed(board, millisPerMove, masks);
+                }else{
+                    next = AlphaBetaTest.getBestMoveTimed(board, millisPerMove, masks);
+                }
+                if(next == null){
+                    System.out.println("Fehler in der zweiten Schleife!");
+                    System.out.println("Bei Position " + i + " gab es einen Null-Zug");
+                    System.out.println(board.toFENString());
+                    System.out.println(board.getTurn());
+                    break;
+                }
+                board.doMove(next);
+            }
+
+            if(board.isGameLost(masks, MoveGenerator.generateLegalMoves(board, masks).length) && board.getTurn() == Color.WHITE){
+                wonByNewAi++;
+            }else if(board.moves.size() == movesToDraw){
+                draws++;
+            }
+            negamax.clearTable();
+            System.out.println("NEXT GAME");
+        }
+
+        double newAiWonPercentage = (((double) wonByNewAi) / (totalPositions * 2)) * 10;
+        double drawPercentage = (((double) draws) / (totalPositions * 2)) * 10;
+        double oldAiWonPercentage = 10 - (newAiWonPercentage + drawPercentage);
+
+        System.out.println("Neue KI: " + wonByNewAi + ", Unentschieden: " + draws + ", Alte KI: " + (totalPositions * 2 - (wonByNewAi + draws)));
+        for(int i = 0; i < (int) newAiWonPercentage; i++){
+            System.out.print("🟩");
+        }
+        for(int i = 0; i < (int) drawPercentage; i++){
+            System.out.print("🟨");
+        }
+        for(int i = 0; i < (int) oldAiWonPercentage; i++){
+            System.out.print("🟥");
+        }
+        System.out.printf("\n");
+    }
+
     public void playAgainstGeneticNegamax(Chromosome chromosome){
         MoveMasks masks = new MoveMasks();
         Negamax negamax = new Negamax();

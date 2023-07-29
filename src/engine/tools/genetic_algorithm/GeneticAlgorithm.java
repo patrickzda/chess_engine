@@ -5,12 +5,12 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class GeneticAlgorithm {
-    private static final double CROSSOVER_RATE = 0.25;
-    private static final double MUTATION_RATE = 0.007;
-    private static final double MUTATION_FACTOR = 0.1;
+    private static final double CROSSOVER_RATE = 0.75;
+    private static final double MUTATION_RATE = 0.01;
+    private static final double MUTATION_FACTOR = 0.6;
     private static final int POPULATION_SIZE = 20;
     private static final int ELITISM_SELECTION_COUNT = 2;
-    private static final double SELECT_FROM_WHOLE_POPULATION_PROBABILITY = 0.3;
+    private static final double SELECT_FROM_WHOLE_POPULATION_PROBABILITY = 0.1;
     private static final int NUMBER_OF_GENERATIONS = 200;
     private static final EvolutionData data = new EvolutionData();
     private final Random random;
@@ -42,7 +42,7 @@ public class GeneticAlgorithm {
 
     private void calculateFitness(Chromosome[] currentGeneration){
         for(int i = 0; i < currentGeneration.length; i++){
-            currentGeneration[i].calculateFitnessNegamax();
+            currentGeneration[i].calculateFitnessStatic();
             System.out.print("=");
         }
     }
@@ -55,7 +55,7 @@ public class GeneticAlgorithm {
         }
 
         while(nextGeneration.size() < POPULATION_SIZE){
-            int populationBound = POPULATION_SIZE / 2;
+            int populationBound = POPULATION_SIZE / 3;
             if(random.nextDouble() < SELECT_FROM_WHOLE_POPULATION_PROBABILITY){
                 populationBound = POPULATION_SIZE;
             }
@@ -86,7 +86,7 @@ public class GeneticAlgorithm {
 
             return new Chromosome(data, newParameters);
         }else{
-            return null;
+            return first.copy();
         }
     }
 

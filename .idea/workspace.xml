@@ -24,9 +24,10 @@
   <component name="ChangeListManager">
     <list default="true" id="fb622826-3fa1-454f-8814-2ba280061b0e" name="Changes" comment="Eine Opening Library wurde gebaut mit 10000 MonteCarlo Iterationen pro Boardzustand">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/opening_book.txt" beforeDir="false" afterPath="$PROJECT_DIR$/opening_book.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/engine/tools/SearchTreeNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/tools/SearchTreeNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/engine/tools/genetic_algorithm/Chromosome.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/tools/genetic_algorithm/Chromosome.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/engine/tools/genetic_algorithm/GeneticAlgorithm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine/tools/genetic_algorithm/GeneticAlgorithm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/performance/AiArena.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/performance/AiArena.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -201,6 +202,7 @@
       <workItem from="1683103429657" duration="7771000" />
       <workItem from="1683634980839" duration="4411000" />
       <workItem from="1689251617985" duration="552000" />
+      <workItem from="1690203114478" duration="1436000" />
     </task>
     <task id="LOCAL-00001" summary="Board: Brett kann ausgegeben werden.">
       <created>1682438269949</created>
