@@ -285,6 +285,8 @@ public class Evaluation {
 
             if(capturedPiece != null){
                 moves[i].evaluation = PIECE_VALUES[capturedPiece.ordinal()] - PIECE_VALUES[moves[i].getPieceType().ordinal()];
+            }else{
+                moves[i].evaluation = -50;
             }
 
             if(moves[i].isPromotionToQueen){

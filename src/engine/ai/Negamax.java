@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class Negamax {
-    private static final int QUIESCENCE_SEARCH_DEPTH = 3;
+    private static final int QUIESCENCE_SEARCH_DEPTH = 2;
     private static final int NULL_MOVE_DEPTH_REDUCTION = 2;
     private static final int NULL_MOVE_PHASE_LIMIT = 175;
     private final TranspositionTable table = new TranspositionTable();
@@ -119,7 +119,6 @@ public class Negamax {
         }else if(value >= beta){
             type = EvaluationType.LOWERBOUND;
         }
-
         table.addEntry(board, bestMove, depth, value, type);
 
         return value;
@@ -161,6 +160,8 @@ public class Negamax {
             return null;
         }
 
+        Evaluation.sortMoves(table, board, moves);
+
         int bestScore = Integer.MIN_VALUE, alpha = -Integer.MAX_VALUE, beta = Integer.MAX_VALUE;
         Move bestMove = moves[0];
 
@@ -190,6 +191,8 @@ public class Negamax {
         if(moves.length == 0){
             return null;
         }
+
+        Evaluation.sortMoves(table, board, moves);
 
         int bestScore = Integer.MIN_VALUE, alpha = -Integer.MAX_VALUE, beta = Integer.MAX_VALUE;
         Move bestMove = moves[0];
